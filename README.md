@@ -1,6 +1,6 @@
 # Harfang GUI
 
-**Harfang GUI** is a _immediate mode_ GUI library built on top of for HARFANG® 3D.
+**Harfang GUI** is a _immediate mode_ GUI library built on top of HARFANG® 3D.
 It supports 2D, 3D & VR (wip).  
 
 ![hgui](screenshots/gui.png)
