@@ -1,0 +1,8 @@
+{
+	"profiles": {
+		"default": {
+			"mag-filter": "Anisotropic",
+			"min-filter": "Anisotropic"
+		}
+	}
+}
