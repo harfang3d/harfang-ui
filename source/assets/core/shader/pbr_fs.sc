@@ -293,5 +293,7 @@ void main() {
 
 	gl_FragColor = vec4(color, opacity);
 #endif // FORWARD_PIPELINE_AAA_PREPASS
+#else
+	gl_FragColor = vec4_splat(0.0); // note: fix required to stop glsl-optimizer from removing the whole function body
 #endif // DEPTH_ONLY
 }
