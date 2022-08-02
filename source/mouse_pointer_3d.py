@@ -34,7 +34,7 @@ class MousePointer3D:
 
         cls.vtx = hg.Vertices(cls.vtx_layout, 256)
 
-        cls.shader_texture = hg.LoadProgramFromAssets('shaders/hgui_texture')
+        cls.shader_texture = hg.LoadProgramFromAssets('hgui_shaders/hgui_texture')
 
         cls.uniforms_values_list = hg.UniformSetValueList()
         cls.uniforms_textures_list = hg.UniformSetTextureList()
