@@ -1,3 +1,4 @@
 /.vscode
 /source/assets_compiled
 /source/__pycache__
+/source/debug.py

@@ -2538,6 +2538,9 @@ class HarfangUI:
 	def scrollbar(cls, widget_id, width, height, part_size, total_size, scroll_position = None, flag_reset = False, flag_horizontal = False):
 		widget = cls.get_widget("scrollbar_h" if flag_horizontal else "scrollbar_v", widget_id)
 		
+		widget["components"]["scrollbar"]["size"].x = width if flag_horizontal else max(cls.get_property_value(widget["components"]["scrollbar"], "scrollbar_thickness"), width)
+		widget["components"]["scrollbar"]["size"].y = max(cls.get_property_value(widget["components"]["scrollbar"], "scrollbar_thickness"), height) if flag_horizontal else height
+
 		if scroll_position is None:
 					scroll_position = widget["scrollbar_position_dest"]
 
@@ -2547,14 +2550,14 @@ class HarfangUI:
 				cls.set_ui_state(cls.UI_STATE_MAIN)
 			elif cls.ui_state == cls.UI_STATE_WIDGET_MOUSE_FOCUS:
 				mouse_dt = HarfangGUISceneGraph.get_current_container()["pointer_local_dt"]
-				scroll_position += mouse_dt.x if flag_horizontal else mouse_dt.y
+				s = total_size / (widget["components"]["scrollbar"]["size"].x if flag_horizontal else widget["components"]["scrollbar"]["size"].y)
+				scroll_step = mouse_dt.x if flag_horizontal else mouse_dt.y
+				scroll_position += scroll_step * s
 		else:
 			if "MLB_pressed" in cls.current_signals and widget["widget_id"] in cls.current_signals["MLB_pressed"]:
 				cls.set_widget_state(widget, "mouse_move")
 				cls.set_ui_state(cls.UI_STATE_WIDGET_MOUSE_FOCUS)
 		
-		widget["components"]["scrollbar"]["size"].x = width if flag_horizontal else max(cls.get_property_value(widget["components"]["scrollbar"], "scrollbar_thickness"), width)
-		widget["components"]["scrollbar"]["size"].y = max(cls.get_property_value(widget["components"]["scrollbar"], "scrollbar_thickness"), height) if flag_horizontal else height
 		widget["part_size"] = part_size
 		widget["total_size"] = total_size
 		widget["scrollbar_position_dest"] = max(0, min(total_size - part_size, scroll_position))
@@ -2566,6 +2569,7 @@ class HarfangUI:
 			widget["scrollbar_position"] = widget["scrollbar_position_dest"]
 		else:
 			widget["scrollbar_position"] += (widget["scrollbar_position_dest"] - widget["scrollbar_position"]) * widget["bar_inertia"]
+		print(str(widget["scrollbar_position"]))
 		return widget["scrollbar_position"]
 
 
