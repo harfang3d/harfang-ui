@@ -68,7 +68,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 	
     if hgui.begin_frame(dt, mouse, keyboard, width, height, camera):
 
-        if hgui.begin_window("my_window", hg.Vec3(-5, 5.65, 10), hg.Vec3(0, 0, 0), hg.Vec3(1280, 720, 0), 20/1280 ):
+        if hgui.begin_window("my_window", hg.Vec3(-5, 5.65, 10), hg.Vec3(0, 0, 0), hg.Vec3(1280, 720, 0), 10/1280 ):
 
             if hgui.button("Hello button 0"):
                 print("Click btn 0")
@@ -76,7 +76,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
             if f:
                 flag_check_box0 = d
 
-            hgui.info_text("Information text")
+            hgui.info_text("info1", "Information text")
 
             hgui.same_line()
 

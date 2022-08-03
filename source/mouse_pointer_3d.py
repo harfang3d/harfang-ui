@@ -1,7 +1,5 @@
-
 import harfang as hg
 from math import tan, pi
-#import HarfangHighLevel as hl
 
 class MousePointer3D:
     vtx_layout = None

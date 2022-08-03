@@ -85,9 +85,9 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 
     if hgui.begin_frame_vr(dt, mouse, keyboard, scene.GetCurrentCamera(), width, height, vr_state, vr_left_fb, vr_right_fb):
     
-        if hgui.begin_window("my_window", hg.Vec3(-2, 2.65, 5), hg.Vec3(0, 0, 0), hg.Vec3(500, 300, 0), 10/1280 ):
+        if hgui.begin_window("My window", hg.Vec3(-2, 2.65, 5), hg.Vec3(0, 0, 0), hg.Vec3(500, 300, 0), 10/1280 ):
 
-            hgui.info_text("Simple Window3D")
+            hgui.info_text("info1", "Simple Window3D")
             
             if hgui.button("Button 0"):
                 print("Click btn 0")

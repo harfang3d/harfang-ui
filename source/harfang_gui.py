@@ -1,9 +1,5 @@
-
-from queue import Empty
-from threading import local
-from tkinter import DOTBOX, N
 import harfang as hg
-from math import sin, cos, pi, inf, floor, ceil, isinf
+from math import sin, cos, inf
 from mouse_pointer_3d import MousePointer3D
 
 
@@ -508,9 +504,7 @@ class HarfangUISkin:
 												"operator": "set",
 												"default_state": "idle",
 												"states":{
-													"idle": {"value": hg.Vec3(10, 10, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(15, 15, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(15, 15, 0), "delay": mb_down_t}
+													"idle": {"value": hg.Vec3(10, 10, 0), "delay": idle_t}
 													}
 												}
 											]
@@ -538,9 +532,7 @@ class HarfangUISkin:
 												"operator": "set",
 												"default_state": "idle",
 												"states":{
-													"idle": {"value": hg.Vec3(15, 15, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(20, 20, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(25,25, 0), "delay": mb_down_t}
+													"idle": {"value": hg.Vec3(15, 15, 0), "delay": idle_t}
 													}
 												}
 											]
@@ -568,9 +560,7 @@ class HarfangUISkin:
 												"operator": "set",
 												"default_state": "idle",
 												"states":{
-													"idle": {"value": hg.Vec3(15 , 15, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(20, 20, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(25, 25, 0), "delay": mb_down_t}
+													"idle": {"value": hg.Vec3(15 , 15, 0), "delay": idle_t}
 													}
 												}
 											]
@@ -584,7 +574,7 @@ class HarfangUISkin:
 												"operator": "set",
 												"default_state": "idle",
 												"states":{
-													"idle": {"value": hg.Vec3(20, 20, 0), "delay": 0},
+													"idle": {"value": hg.Vec3(15, 15, 0), "delay": 0},
 													}
 												}
 											]
@@ -625,9 +615,7 @@ class HarfangUISkin:
 												"operator": "set",
 												"default_state": "idle",
 												"states":{
-													"idle": {"value": hg.Vec3(0, 0, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(2.5, 2.5, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(0, 0, 0), "delay": mb_down_t}
+													"idle": {"value": hg.Vec3(0, 0, 0), "delay": idle_t}
 													}
 												}
 											]
@@ -640,8 +628,7 @@ class HarfangUISkin:
 												"operator": "set",
 												"default_state": "idle",
 												"states":{
-													"idle": {"value": hg.Vec3(0, 0, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(0, 10, 0), "delay": hover_t},
+													"idle": {"value": hg.Vec3(0, 0, 0), "delay": idle_t}
 													}
 												}
 											]
@@ -727,8 +714,7 @@ class HarfangUISkin:
 												"operator": "set",
 												"default_state": "idle",
 												"states":{
-													"idle": {"value": hg.Color(0.7, 0.7, 0.7, 1), "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.White, "delay": hover_t}
+													"idle": {"value": hg.Color(0.7, 0.7, 0.7, 1), "delay": idle_t}
 													}
 												}
 											]
@@ -1713,7 +1699,7 @@ class HarfangUI:
 							rotmat = hg.GetRotationMatrix(cls.camera3D_matrix)
 							ax = hg.GetX(rotmat)
 							ay = hg.GetY(rotmat)
-							mdt = (mouse_dt) * hg.Len(widget["pointer_world_position"] - hg.GetT(cls.camera3D_matrix)) 
+							mdt = (mouse_dt) * hg.Len(widget["pointer_world_position"] - hg.GetT(cls.camera3D_matrix)) * 2
 
 							v =  (ax * mdt.x / cls.width ) - (ay * mdt.y / cls.width )
 							v.y *= -1
@@ -2468,9 +2454,9 @@ class HarfangUI:
 
 
 	@classmethod
-	def info_text(cls, text):
-		widget = cls.get_widget("info_text", text)
-		widget["components"]["info_text"]["text"] = cls.get_label_from_id(text)
+	def info_text(cls, label, text):
+		widget = cls.get_widget("info_text", label)
+		widget["components"]["info_text"]["text"] = text
 		widget["position"] = cls.get_cursor_position()
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
