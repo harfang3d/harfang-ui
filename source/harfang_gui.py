@@ -156,7 +156,7 @@ class HarfangGUIRenderer:
 		
 		hg.SetViewOrthographic(view_id, 0, 0, w, h, hg.TransformationMat4(hg.Vec3(w / 2 + container["scroll_position"].x, h / 2 + container["scroll_position"].y, 0), hg.Vec3(0, 0, 0), hg.Vec3(1, -1, 1)), 0, 101, h)
 		flag_clear_z = hg.CF_Depth | hg.CF_Color
-		hg.SetViewClear(view_id, flag_clear_z, hg.Color.Black, 1, 0)
+		hg.SetViewClear(view_id, flag_clear_z, hg.Color(0, 0, 0, 0), 1, 0)
 
 		for draw_element in draw_list:
 			if draw_element["type"] == "box":
@@ -388,7 +388,7 @@ class HarfangUISkin:
 												"default_state": "idle",
 												"states":{
 													"idle": {"value":  hg.Color(0.2, 0.2, 0.2, 1), "delay": idle_t},
-													"mouse_hover": {"value":  hg.Color(0.2, 0.2, 0.2, 1), "delay": hover_t} #,"MLB_down": {"value":  hg.Color(0.5, 0.2, 0.2, 1), "delay": mb_down_t}
+													"mouse_hover": {"value":  hg.Color(0.2, 0.2, 0.2, 0), "delay": hover_t} #,"MLB_down": {"value":  hg.Color(0.5, 0.2, 0.2, 1), "delay": mb_down_t}
 													}
 												}
 											]
@@ -670,8 +670,8 @@ class HarfangUISkin:
 												"operator": "set",
 												"default_state": "idle",
 												"states":{
-													"idle": {"value": hg.Color.Grey * 0.25, "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.Grey * 0.5, "delay": hover_t},
+													"idle": {"value": hg.Color(0.125, 0.125, 0.125, 1), "delay": idle_t},
+													"mouse_hover": {"value": hg.Color(0.25, 0.25, 0.25, 1), "delay": hover_t},
 													"MLB_down": {"value": hg.Color.Grey, "delay": mb_down_t}
 													}
 												}

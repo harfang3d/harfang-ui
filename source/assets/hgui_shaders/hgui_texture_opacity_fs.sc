@@ -5,7 +5,6 @@ $input v_texcoord0, v_color0
 SAMPLER2D(s_texTexture,0);
 
 void main(){
-    vec4 color = 
-    float opacity = 
-    gl_FragColor=vec4((texture2D(s_texTexture,v_texcoord0)*v_color0).rgb,v_color0.a);
+    vec4 color = texture2D(s_texTexture,v_texcoord0) * v_color0;
+    gl_FragColor = color;
 }
