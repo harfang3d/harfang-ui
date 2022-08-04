@@ -33,7 +33,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 	
     if hgui.begin_frame(dt, mouse, keyboard, width, height):
         
-        if hgui.begin_window_2D("My window",  hg.Vec2(50, 50), hg.Vec2(500, 300), 1 ):
+        if hgui.begin_window_2D("My window",  hg.Vec2(50, 50), hg.Vec2(500, 300), 1):
 
             hgui.info_text("info1", "Simple Window2D")
             

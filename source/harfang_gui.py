@@ -1123,7 +1123,7 @@ class HarfangUI:
 
 	# Windows flags:
 	HGUIWF_2D = 0x1
-	HGUIWF_NoMove = 0x2
+	HGUIWF_NoPointerMove = 0x2
 	HGUIWF_HideTitle = 0x4
 
 	# Frame datas (updated on each frame)
@@ -1145,6 +1145,7 @@ class HarfangUI:
 	ui_state = 0
 
 	camera = None
+	focal_distance = 1
 	camera3D_matrix = None
 	camera2D_matrix = None
 	mouse_pointer3D_world_matrix = None
@@ -1462,9 +1463,11 @@ class HarfangUI:
 
 		if camera is not None:
 			cls.camera3D_matrix = camera.GetTransform().GetWorld()
+			cls.focal_distance = hg.FovToZoomFactor(camera.GetCamera().GetFov())
 			MousePointer3D.update(camera, mouse, width, height)
 			cls.mouse_pointer3D_world_matrix = MousePointer3D.pointer_world_matrix
 		else:
+			cls.focal_distance = 1
 			cls.camera3D_matrix = None
 			cls.mouse_pointer3D_world_matrix = None
 		
@@ -1638,13 +1641,15 @@ class HarfangUI:
 	def begin_window(cls, widget_id, position:hg.Vec3 , rotation:hg.Vec3, size:hg.Vec3, scale:float = 1, window_flags:int = 0):
 		
 		flag_2D = False if (window_flags & cls.HGUIWF_2D) == 0 else True
-		flag_move = True if (window_flags & cls.HGUIWF_NoMove) == 0 else False
+		flag_move = True if (window_flags & cls.HGUIWF_NoPointerMove) == 0 else False
 		flag_hide_title = False if (window_flags & cls.HGUIWF_HideTitle) == 0 else True
 
 		# If first parent window is 3D, Y is space relative, Y-increment is upside. Else, Y-increment is downside
 		if not flag_2D:
 			if HarfangGUISceneGraph.get_current_container_child_depth() == 0:
 				position.y *= -1
+				rotation.x *= -1
+				rotation.z *= -1
 				HarfangGUISceneGraph.widgets_containers_stack.append(cls.main_widgets_container_3D)
 			else:
 				parent = HarfangGUISceneGraph.get_current_container()
@@ -1670,9 +1675,6 @@ class HarfangUI:
 			widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x, rotation.y, rotation.z
 			widget["scale"].x =  widget["scale"].y = widget["scale"].z = scale
 			
-			#s = widget["components"]["window_background"]["size"]
-			#s.x, s.y, s.z = size.x, size.y, size.z
-			
 			s = widget["size"]
 			s.x, s.y, s.z = size.x, size.y, size.z
 			
@@ -1682,6 +1684,9 @@ class HarfangUI:
 			widget["components"]["window_title"]["label"] = cls.get_label_from_id(widget["widget_id"])
 		
 		else:
+			if not flag_move:
+				widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y, position.z
+				widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x, rotation.y, rotation.z
 
 			if not widget["flag_hide_title"]:
 				widget["default_cursor_start_line"].y = 5 + widget["components"]["window_title"]["size"].y
@@ -1699,9 +1704,9 @@ class HarfangUI:
 							rotmat = hg.GetRotationMatrix(cls.camera3D_matrix)
 							ax = hg.GetX(rotmat)
 							ay = hg.GetY(rotmat)
-							mdt = (mouse_dt) * hg.Len(widget["pointer_world_position"] - hg.GetT(cls.camera3D_matrix)) * 2
+							mdt = (mouse_dt) * (hg.Len(widget["pointer_world_position"] - hg.GetT(cls.camera3D_matrix)) / cls.focal_distance ) * 2 / cls.height
 
-							v =  (ax * mdt.x / cls.width ) - (ay * mdt.y / cls.width )
+							v =  (ax * mdt.x) - (ay * mdt.y)
 							v.y *= -1
 		
 							widget["position"] += v
@@ -1775,8 +1780,6 @@ class HarfangUI:
 				if not widget["flag_scrollbar_h"]:
 					spx = widget["scroll_position"].x - mn.x
 					flag_reset_bar_h = True
-				if widget["widget_id"] == "my_window_3":
-						print(str(widget["scroll_position"].x))
 				widget["flag_scrollbar_h"] = True
 			else:
 				widget["flag_scrollbar_h"] = False
@@ -2569,7 +2572,6 @@ class HarfangUI:
 			widget["scrollbar_position"] = widget["scrollbar_position_dest"]
 		else:
 			widget["scrollbar_position"] += (widget["scrollbar_position_dest"] - widget["scrollbar_position"]) * widget["bar_inertia"]
-		print(str(widget["scrollbar_position"]))
 		return widget["scrollbar_position"]
 
 

@@ -85,7 +85,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 			if hgui.button_image("image_1", "textures/logo.png", hg.Vec2(221, 190) / 4):
 				print("click image button")
 			
-			if hgui.begin_window_2D("my_window_2", hg.Vec2(650, 100), hg.Vec2(400, 400), 1, hgui.HGUIWF_NoMove ):
+			if hgui.begin_window_2D("my_window_2", hg.Vec2(650, 100), hg.Vec2(400, 400), 1, hgui.HGUIWF_NoPointerMove ):
 				if hgui.button("Hello button 3"):
 					print("Click btn 3")
 				if hgui.begin_window_2D("my_window_2.1", hg.Vec2(50, 100), hg.Vec2(200, 100), 1 ):
