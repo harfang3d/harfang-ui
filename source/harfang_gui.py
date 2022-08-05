@@ -1,6 +1,7 @@
 import harfang as hg
 from math import sin, cos, inf
 from mouse_pointer_3d import MousePointer3D
+import json
 
 
 def on_key_press(text: str):
@@ -55,7 +56,7 @@ class HarfangGUIRenderer:
 
 		# text uniforms and render state
 		cls.text_uniform_values = [hg.MakeUniformSetValue('u_color', hg.Vec4(1, 1, 0))]
-		cls.text_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_Disabled, hg.FC_Disabled, False)
+		cls.text_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_Disabled, hg.FC_Disabled, False, True, True, True, False)
 
 	@classmethod
 	def get_texture(cls, texture_path):
@@ -143,7 +144,6 @@ class HarfangGUIRenderer:
 	def draw_text(cls, vid, matrix:hg.Mat4, text, font_id, color):
 		cls.text_uniform_values = [hg.MakeUniformSetValue('u_color', hg.Vec4(color.r, color.g, color.b, color.a))]
 		hg.DrawText(vid, cls.fonts[font_id], text, cls.font_prg, 'u_tex', 0, matrix, hg.Vec3(0, 0, 0), hg.DTHA_Center, hg.DTVA_Center, cls.text_uniform_values, [], cls.text_render_state)
-
 
 	@classmethod
 	def render_widget_container(cls, view_id, container):
@@ -332,563 +332,19 @@ class HarfangUISkin:
 
 		cls.keyboard_cursor_color = hg.Color(1, 1, 1, 0.75)
 
-		cls.properties ={
-					"scrollbar_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  hg.Color(0.4, 0.4, 0.4, 1), "delay": idle_t},
-													"mouse_hover": {"value":  hg.Color(0.6, 0.6, 0.6, 1), "delay": hover_t}
-													}
-												},
-												{
-												"operator": "add",
-												"default_state": "mouse_idle",
-												"states":{
-													"mouse_idle": {"value":  hg.Color(0, 0, 0, 0), "delay": idle_t},
-													"mouse_move": {"value":  hg.Color(0.2, 0.2, 0.2, 0), "delay": hover_t}
-													}
-												}
-											]
-					},
-					"scrollbar_background_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  hg.Color(0.2, 0.2, 0.2, 1), "delay": idle_t},
-													"mouse_hover": {"value":  hg.Color(0.2, 0.2, 0.2, 1), "delay": hover_t}
-													}
-												}
-											]
-					},
-					"scrollbar_thickness": {
-											"type": "float",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  8, "delay": idle_t},
-													"mouse_hover": {"value":  8, "delay": hover_t}
-													}
-												}
-											]
-										},
-					"window_box_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  hg.Color(0.2, 0.2, 0.2, 1), "delay": idle_t},
-													"mouse_hover": {"value":  hg.Color(0.2, 0.2, 0.2, 0), "delay": hover_t} #,"MLB_down": {"value":  hg.Color(0.5, 0.2, 0.2, 1), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"window_box_border_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "no_focus",
-												"states":{
-													"no_focus": {"value":  hg.Color(0.4, 0.4, 0.4, 1), "delay": idle_t},
-													"focus": {"value":  hg.Color(0.5, 0.5, 0.5, 1), "delay": idle_t}
-													}
-												},
-												{
-												"operator": "add",
-												"default_state": "mouse_idle",
-												"states":{
-													"mouse_idle": {"value":  hg.Color(0, 0, 0, 0), "delay": idle_t},
-													"mouse_move": {"value":  hg.Color(0, 0, 0.2, 0), "delay": hover_t}
-													}
-												}
-											]
-										},
-					"window_box_border_thickness": {
-											"type": "float",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "no_focus",
-												"states":{
-													"no_focus": {"value":  1, "delay": idle_t},
-													"focus": {"value":  3, "delay": hover_t}
-													}
-												}
-											]
-										},
-					
-					"window_title_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(5, 5, 0), "delay": idle_t}
-													}
-												}
-											]
-										},
+		cls.properties = cls.load_properties("properties.json")
 
-					"window_title_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color(0.8, 0.8, 0.9, 1), "delay": idle_t}
-													}
-												}
-											]
-										},
-
-					"widget_border_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  hg.Color(0.7, 0.7, 0.7, 1), "delay": idle_t},
-													"mouse_hover": {"value":  hg.Color(0.9, 0.9, 0.9, 1), "delay": idle_t}
-													}
-												}
-											]
-										},
-					"widget_border_thickness": {
-											"type": "float",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  1, "delay": idle_t}
-													}
-												}
-											]
-										},
-
-					
-					"widget_opacity": {
-											"type": "float",
-											"linked_value" : {"name": "opacity", "factor":1, "operator":"set", "parent": "widget"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  0.85, "delay": idle_t},
-													"mouse_hover": {"value":  0.9, "delay": hover_t}
-													}
-												}
-											]
-										},
-					"button_text_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(10, 10, 0), "delay": idle_t}
-													}
-												}
-											]
-										},
-					"text_size": {
-											"type": "float",
-											"linked_value" : {"name": "text_size", "operator":"set"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": 1, "delay": idle_t},
-													"mouse_hover": {"value": 1, "delay": hover_t},
-													"MLB_down": {"value": 1, "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"label_text_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(15, 15, 0), "delay": idle_t}
-													}
-												}
-											]
-										},
-					"check_size": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "operator":"set"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(15, 15, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(15, 15, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(15, 15, 0), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"checkbox_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(15 , 15, 0), "delay": idle_t}
-													}
-												}
-											]
-										},
-					
-					"info_text_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(15, 15, 0), "delay": 0},
-													}
-												}
-											]
-										},
-					"button_image_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(5, 5, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(7.5, 7.5, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(5, 5, 0), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"info_image_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(5, 5, 0), "delay": idle_t}
-													}
-												}
-											]
-										},
-					"button_offset": {
-											"type": "vec3",
-											"linked_value" : {"name": "offset", "operator":"set"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(0, 0, 0), "delay": idle_t}
-													}
-												}
-											]
-										},
-					"info_image_offset": {
-											"type": "vec3",
-											"linked_value" : {"name": "offset", "operator":"set"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(0, 0, 0), "delay": idle_t}
-													}
-												}
-											]
-										},
-					"texture_box_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color.White, "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.White, "delay": hover_t},
-													"MLB_down": {"value": hg.Color.White, "delay": mb_down_t}
-													}
-												}
-											]
-										},
-		
-					"button_box_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color.Grey, "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.Grey * 1.25, "delay": hover_t},
-													"MLB_down": {"value": hg.Color.Grey * 1.5, "delay": mb_down_t}
-													}
-												}
-											]
-										},
-
-					"label_box_color":  {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color(0.125, 0.125, 0.125, 1), "delay": idle_t},
-													"mouse_hover": {"value": hg.Color(0.25, 0.25, 0.25, 1), "delay": hover_t},
-													"MLB_down": {"value": hg.Color.Grey, "delay": mb_down_t}
-													}
-												}
-											]
-										},
-	
-					"button_text_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color.White, "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.White, "delay": hover_t},
-													"MLB_down": {"value": hg.Color.White, "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"label_text_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color(0.8, 0.8, 0.8, 1), "delay": idle_t},
-													"mouse_hover": {"value": hg.Color(1, 1, 1, 1), "delay": hover_t},
-													"MLB_down": {"value": hg.Color(1, 1, 1, 1), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					
-					"info_text_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color(0.7, 0.7, 0.7, 1), "delay": idle_t}
-													}
-												}
-											]
-										},
-
-					"check_color":	{
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color(1, 1, 1, 1), "delay": idle_t},
-													"mouse_hover": {"value": hg.Color(0, 1, 1, 1), "delay": hover_t},
-													"MLB_down": {"value": hg.Color(1, 1, 1, 1), "delay": mb_down_t}
-													}
-												},
-												{
-												"operator": "multiply",
-												"default_state": "checked",
-												"states":{
-													"checked": {"value": hg.Color(1, 1, 1, 1), "delay": check_t},
-													"unchecked": {"value": hg.Color(1, 1, 1, 0), "delay": check_t}
-													}	
-												}
-											]
-										},
-					"input_box_color":  {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color.Grey * 0.5, "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.Grey * 0.75, "delay": hover_t},
-													"MLB_down": {"value": hg.Color.Grey, "delay": mb_down_t}
-													}
-												},
-												{
-												"operator": "multiply",
-												"default_state": "no_edit",
-												"states":{
-													"no_edit": {"value": hg.Color(1, 1, 1, 1), "delay": edit_t},
-													"edit": {"value": hg.Color(0.1, 0.2, 0.2, 1), "delay": edit_t}
-													}	
-												}
-											]
-										},
-					"input_text_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color.White, "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.White, "delay": hover_t},
-													"MLB_down": {"value": hg.Color.White, "delay": mb_down_t}
-													}
-												},
-												{
-												"operator": "multiply",
-												"default_state": "no_edit",
-												"states":{
-													"no_edit": {"value": hg.Color(1, 1, 1, 1), "delay": edit_t},
-													"edit": {"value": hg.Color(0.5, 1, 1, 1), "delay": edit_t}
-													}	
-												}
-											]
-										},
-					"radio_button_box_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color(0.2, 0.2, 0.2, 1), "delay": idle_t},
-													"mouse_hover": {"value": hg.Color(0.2, 0.2, 0.2, 1), "delay": hover_t}
-													}
-												},
-												{
-												"operator": "add",
-												"default_state": "unselected",
-												"states":{
-													"unselected": {"value": hg.Color(0, 0, 0, 0), "delay": hover_t},
-													"selected": {"value": hg.Color(0.2, 0.2, 0.2, 0), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-
-					"radio_image_offset": {
-											"type": "vec3",
-											"linked_value" : {"name": "offset", "operator":"set"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "unselected",
-												"states":{
-													"unselected": {"value": hg.Vec3(0, 0, 0), "delay": idle_t},
-													"selected": {"value": hg.Vec3(0, -10, 0), "delay": hover_t}
-													}
-												}
-											]
-										},
-
-					"radio_button_image_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(5, 5, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(5, 5, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(5, 5, 0), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-
-					"radio_image_border_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  hg.Color(0.2, 0.2, 0.2, 1), "delay": idle_t},
-													"mouse_hover": {"value":  hg.Color(0.5, 0.5, 0.5, 1), "delay": idle_t}
-													}
-												},
-												{
-												"operator": "add",
-												"default_state": "unselected",
-												"states":{
-													"unselected": {"value":  hg.Color(0,0,0,0), "delay": idle_t},
-													"selected": {"value":  hg.Color(0.3, 0.3, 0.3, 0), "delay": idle_t}
-													}
-												}
-											]
-										},
-
-					"radio_image_border_thickness": {
-											"type": "float",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  1, "delay": idle_t},
-													"mouse_hover": {"value":  1, "delay": hover_t}
-													}
-												}
-											]
-										}
-
-		}
-
-		
 		cls.components = {
 			"window_background": {
 				"cursor_auto": False,
-				"size_factor": hg.Vec3(1, 1, 1),
+				"size_factor": [1, 1, 1],
 				"properties": ["window_box_color", "window_box_border_thickness", "window_box_border_color"] #"widget_opacity"
 				},
 			"window_title": {
 				"display_text": "label",
 				"text_size": 1,
 				"cursor_auto": False,
-				"size_factor": hg.Vec3(1, -1, -1),
+				"size_factor": [1, -1, -1],
 				"properties": ["window_box_border_color", "window_title_margins", "window_title_color"]
 			},
 			"scrollbar": {
@@ -952,6 +408,25 @@ class HarfangUISkin:
 		t = max(0, min(1, t))
 		v = v_start * (1-t) + v_end * t
 		return v
+	
+	@classmethod
+	def load_properties(cls, file_name):
+		file = open(file_name, "r")
+		json_script = file.read()
+		file.close()
+		if json_script != "":
+			return json.loads(json_script)
+		else:
+			print("HGUISkin - ERROR - Can't open properties json file !")
+		return None
+
+	@classmethod
+	def save_properties(cls, output_file_name):
+
+		json_script = json.dumps(cls.properties, indent=4)
+		file = open(output_file_name, "w")
+		file.write(json_script)
+		file.close()
 
 
 class HarfangGUISceneGraph:
@@ -1328,7 +803,7 @@ class HarfangUI:
 			for key, value in component_model.items():
 				if key != "properties":
 					if key in vec3_types:
-						component[key] = hg.Vec3(value)
+						component[key] = hg.Vec3(value[0], value[1], value[2])
 					else:
 						component[key] = value
 			if "display_text" in component:
@@ -1345,8 +820,22 @@ class HarfangUI:
 					component_layers = []
 					for layer_id in range(len(class_property["layers"])):
 						class_layer = class_property["layers"][layer_id]
+						
+						component_layer_states = {}
+						for class_state_name, class_state in class_layer["states"].items():
+							component_layer_states[class_state_name] = dict(class_state)
+							v = class_state["value"]
+							if class_property["type"] == "float":
+								component_layer_states[class_state_name]["value"] = v
+							elif class_property["type"] == "vec2":
+								component_layer_states[class_state_name]["value"] = hg.Vec2(v[0], v[1])
+							elif class_property["type"] == "vec3":
+								component_layer_states[class_state_name]["value"] = hg.Vec3(v[0], v[1], v[2])
+							elif class_property["type"] == "color":
+								component_layer_states[class_state_name]["value"] = hg.Color(v[0], v[1], v[2], v[3])
+						
 						default_state_name = class_layer["default_state"]
-						default_value = class_layer["states"][default_state_name]["value"]
+						default_value = component_layer_states[default_state_name]["value"]
 						if layer_id == 0:
 							default_final_value = default_value
 						else:
@@ -1356,19 +845,10 @@ class HarfangUI:
 								default_final_value += default_value
 							elif class_layer["operator"] == "multiply":
 								default_final_value *= default_value
-						component_layer_states = {}
-						for class_state_name, class_state in class_layer["states"].items():
-							component_layer_states[class_state_name] = dict(class_state)
-							if class_property["type"] == "float":
-								component_layer_states[class_state_name]["value"] = class_state["value"]
-							elif class_property["type"] == "vec2":
-								component_layer_states[class_state_name]["value"] = hg.Vec2(class_state["value"])
-							elif class_property["type"] == "vec3":
-								component_layer_states[class_state_name]["value"] = hg.Vec3(class_state["value"])
-							elif class_property["type"] == "color":
-								component_layer_states[class_state_name]["value"] = hg.Color(class_state["value"])
+
 						component_layer = {"current_state":default_state_name, "current_state_t0":0, "value":default_value, "value_start":default_value, "value_end":default_value, "states":component_layer_states}
 						component_layers.append(component_layer)
+					
 					component["properties"][property_name] = {"layers":component_layers, "value":default_final_value}
 			return component
 		return None
@@ -1645,11 +1125,12 @@ class HarfangUI:
 		flag_hide_title = False if (window_flags & cls.HGUIWF_HideTitle) == 0 else True
 
 		# If first parent window is 3D, Y is space relative, Y-increment is upside. Else, Y-increment is downside
+		pyf, rxf, rzf = 1, 1, 1
 		if not flag_2D:
 			if HarfangGUISceneGraph.get_current_container_child_depth() == 0:
-				position.y *= -1
-				rotation.x *= -1
-				rotation.z *= -1
+				pyf = -1
+				rxf *= -1
+				rzf *= -1
 				HarfangGUISceneGraph.widgets_containers_stack.append(cls.main_widgets_container_3D)
 			else:
 				parent = HarfangGUISceneGraph.get_current_container()
@@ -1671,8 +1152,8 @@ class HarfangUI:
 		sp.x, sp.y, sp.z = nsp.x, nsp.y, nsp.z
 		
 		if widget["flag_new"]:
-			widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y, position.z
-			widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x, rotation.y, rotation.z
+			widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y * pyf, position.z
+			widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x * rxf, rotation.y, rotation.z * rzf
 			widget["scale"].x =  widget["scale"].y = widget["scale"].z = scale
 			
 			s = widget["size"]
@@ -1685,8 +1166,8 @@ class HarfangUI:
 		
 		else:
 			if not flag_move:
-				widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y, position.z
-				widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x, rotation.y, rotation.z
+				widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y * pyf, position.z
+				widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x * rxf, rotation.y, rotation.z * rzf
 
 			if not widget["flag_hide_title"]:
 				widget["default_cursor_start_line"].y = 5 + widget["components"]["window_title"]["size"].y
