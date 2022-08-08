@@ -601,6 +601,7 @@ class HarfangUI:
 	HGUIWF_NoPointerMove = 0x2
 	HGUIWF_HideTitle = 0x4
 	HGUIWF_Invisible = 0x8
+	HGUIWF_HideScrollbars = 0x10
 
 	# Frame datas (updated on each frame)
 
@@ -790,6 +791,7 @@ class HarfangUI:
 			"new_scroll_position": hg.Vec3(0, 0, 0), #Next frame scroll position
 			"flag_scrollbar_v": False,
 			"flag_scrollbar_h": False,
+			"flag_hide_scrollbars": False,
 			"color_texture": None,
 			"depth_texture": None,
 			"frame_buffer": None,	#Widgets rendering frame buffer
@@ -1128,6 +1130,7 @@ class HarfangUI:
 		flag_move = True if (window_flags & cls.HGUIWF_NoPointerMove) == 0 else False
 		flag_hide_title = False if (window_flags & cls.HGUIWF_HideTitle) == 0 else True
 		flag_invisible = False if (window_flags & cls.HGUIWF_Invisible) == 0 else True
+		flag_hide_scrollbars = False if (window_flags & cls.HGUIWF_HideScrollbars) == 0 else True
 
 		# If first parent window is 3D, Y is space relative, Y-increment is upside. Else, Y-increment is downside
 		pyf, rxf, rzf = 1, 1, 1
@@ -1152,6 +1155,7 @@ class HarfangUI:
 		widget["flag_move"] = flag_move
 		widget["flag_hide_title"] = flag_hide_title
 		widget["flag_invisible"] = flag_invisible
+		widget["flag_hide_scrollbars"] = flag_hide_scrollbars
 		
 		nsp = widget["new_scroll_position"]
 		sp = widget["scroll_position"]
@@ -1249,27 +1253,31 @@ class HarfangUI:
 			spx = spy = None
 			flag_reset_bar_v = flag_reset_bar_h = False
 
-			# Vertical
-			if ws_size.y > w_size.y:
-				mx.y += scrollbar_size * 2
-				ws_size.y += scrollbar_size * 2
-				if not widget["flag_scrollbar_v"]:
-					spy = widget["scroll_position"].y - mn.y
-					flag_reset_bar_v = True
-				widget["flag_scrollbar_v"] = True
-			else:
+			if widget["flag_hide_scrollbars"]:
 				widget["flag_scrollbar_v"] = False
-			
-			# Horizontal
-			if ws_size.x > w_size.x:
-				mx.x += scrollbar_size * 2
-				ws_size.x += scrollbar_size * 2
-				if not widget["flag_scrollbar_h"]:
-					spx = widget["scroll_position"].x - mn.x
-					flag_reset_bar_h = True
-				widget["flag_scrollbar_h"] = True
-			else:
 				widget["flag_scrollbar_h"] = False
+			else:
+				# Vertical
+				if ws_size.y > w_size.y:
+					mx.y += scrollbar_size * 2
+					ws_size.y += scrollbar_size * 2
+					if not widget["flag_scrollbar_v"]:
+						spy = widget["scroll_position"].y - mn.y
+						flag_reset_bar_v = True
+					widget["flag_scrollbar_v"] = True
+				else:
+					widget["flag_scrollbar_v"] = False
+				
+				# Horizontal
+				if ws_size.x > w_size.x:
+					mx.x += scrollbar_size * 2
+					ws_size.x += scrollbar_size * 2
+					if not widget["flag_scrollbar_h"]:
+						spx = widget["scroll_position"].x - mn.x
+						flag_reset_bar_h = True
+					widget["flag_scrollbar_h"] = True
+				else:
+					widget["flag_scrollbar_h"] = False
 
 			# clamp scroll position
 
