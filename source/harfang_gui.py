@@ -603,7 +603,9 @@ class HarfangUI:
 
 	# Frame datas (updated on each frame)
 
-	flag_same_line = True
+	flag_same_line = False
+	line_max_y_size = 0 #Used for auto-positionning with same_line(): the biggest widget Ysize in the line
+	line_space_size = 3 # Space between lines in pixels
 	current_font_id = 0
 	mouse = None
 	keyboard = None
@@ -1310,11 +1312,16 @@ class HarfangUI:
 
 	@classmethod
 	def same_line(cls):
+		cls.flag_same_line= True
 		cursor = HarfangGUISceneGraph.get_current_container()["cursor"]
 		cursor.x = cls.last_widget["position"].x + cls.last_widget["size"].x + cls.last_widget["offset"].x
 		cursor.y = cls.last_widget["position"].y + cls.last_widget["offset"].y
 		cursor.z = cls.last_widget["position"].z + cls.last_widget["offset"].z
 	
+	@classmethod
+	def set_line_space_size(cls,line_space_size:float):
+		cls.line_space_size = line_space_size
+
 	@classmethod
 	def get_cursor_position(cls):
 		current_container = HarfangGUISceneGraph.get_current_container()
@@ -1336,7 +1343,12 @@ class HarfangUI:
 		cursor = w_container["cursor"]
 		csl = w_container["cursor_start_line"]
 		cursor.x = csl.x
-		cursor.y = widget["position"].y + widget["size"].y + widget["offset"].y
+		if not cls.flag_same_line:
+			cls.line_max_y_size = 0
+		else:
+			cls.flag_same_line = False
+		cls.line_max_y_size = max(cls.line_max_y_size, widget["size"].y + widget["offset"].y)
+		cursor.y = widget["position"].y + cls.line_max_y_size + cls.line_space_size
 		cursor.z = csl.z
 
 		wpos_s = widget["position"] + widget["offset"]
