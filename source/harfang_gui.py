@@ -600,6 +600,7 @@ class HarfangUI:
 	HGUIWF_2D = 0x1
 	HGUIWF_NoPointerMove = 0x2
 	HGUIWF_HideTitle = 0x4
+	HGUIWF_Invisible = 0x8
 
 	# Frame datas (updated on each frame)
 
@@ -771,6 +772,7 @@ class HarfangUI:
 		container["classe"] = "widgets_container"
 		container.update({
 			"flag_2D": False,
+			"flag_invisible": False,
 			"children_order": [],
 			"pointer_world_position": None,
 			"pointer_local_position": None,
@@ -1125,6 +1127,7 @@ class HarfangUI:
 		flag_2D = False if (window_flags & cls.HGUIWF_2D) == 0 else True
 		flag_move = True if (window_flags & cls.HGUIWF_NoPointerMove) == 0 else False
 		flag_hide_title = False if (window_flags & cls.HGUIWF_HideTitle) == 0 else True
+		flag_invisible = False if (window_flags & cls.HGUIWF_Invisible) == 0 else True
 
 		# If first parent window is 3D, Y is space relative, Y-increment is upside. Else, Y-increment is downside
 		pyf, rxf, rzf = 1, 1, 1
@@ -1148,6 +1151,7 @@ class HarfangUI:
 		widget["flag_2D"] = flag_2D
 		widget["flag_move"] = flag_move
 		widget["flag_hide_title"] = flag_hide_title
+		widget["flag_invisible"] = flag_invisible
 		
 		nsp = widget["new_scroll_position"]
 		sp = widget["scroll_position"]
@@ -1161,7 +1165,7 @@ class HarfangUI:
 			s = widget["size"]
 			s.x, s.y, s.z = size.x, size.y, size.z
 			
-			thickness = cls.get_property_states_value(widget["components"]["window_background"], "window_box_border_thickness",["focus"] )
+			thickness = 0 if flag_invisible else cls.get_property_states_value(widget["components"]["window_background"], "window_box_border_thickness",["focus"] )
 			widget["default_cursor_start_line"].x = 5 + thickness
 			widget["default_cursor_start_line"].y = 5 + thickness
 			widget["components"]["window_title"]["label"] = cls.get_label_from_id(widget["widget_id"])
@@ -1171,7 +1175,7 @@ class HarfangUI:
 				widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y * pyf, position.z
 				widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x * rxf, rotation.y, rotation.z * rzf
 
-			if not widget["flag_hide_title"]:
+			if not (flag_hide_title or flag_invisible):
 				widget["default_cursor_start_line"].y = 5 + widget["components"]["window_title"]["size"].y
 
 			if "mouse_move" in widget["states"]:
@@ -1274,14 +1278,14 @@ class HarfangUI:
 			spos.y = min(mx.y - w_size.y, max(spos.y, mn.y))
 			spos.z = min(mx.z - w_size.z, max(spos.z, mn.z))
 
-			bt = cls.get_property_value(widget["components"]["window_background"],"window_box_border_thickness")
+			bt = 0 if widget["flag_invisible"] else cls.get_property_value(widget["components"]["window_background"],"window_box_border_thickness")
 			
 			# Add scroll bars if necessary
 
 			px, py = widget["scroll_position"].x - mn.x, widget["scroll_position"].y - mn.y
 
 			if widget["flag_scrollbar_v"]:
-				title_height = bt if widget["flag_hide_title"] else widget["components"]["window_title"]["size"].y
+				title_height = bt if (widget["flag_hide_title"] or widget["flag_invisible"])  else widget["components"]["window_title"]["size"].y
 				cursor = hg.Vec3(spos)
 				cursor.x += w_size.x - scrollbar_size - bt
 				cursor.y += title_height
@@ -1548,7 +1552,8 @@ class HarfangUI:
 			HarfangGUISceneGraph.set_container_display_list(widgets_container["widget_id"])
 			if len(widgets_container["containers_2D_children_align_order"]) > 0:
 				cls.build_widgets_container_2Dcontainers(widgets_container, widgets_container["containers_2D_children_align_order"])
-			cls.build_widgets_container_overlays(widgets_container, hg.Mat4.Identity)
+			if not widgets_container["flag_invisible"]:
+				cls.build_widgets_container_overlays(widgets_container, hg.Mat4.Identity)
 
 		fb_size = widgets_container["frame_buffer_size"]
 
@@ -1615,7 +1620,8 @@ class HarfangUI:
 			cpos = component["position"] + component["offset"] + scroll_pos
 			
 			if  component["type"]=="window_background":
-				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"window_box_color") * opacity)
+				if not widget["flag_invisible"]:
+					HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"window_box_color") * opacity)
 			
 			elif component["type"]=="button_box":
 				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity)

@@ -70,7 +70,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 
         
 
-        if hgui.begin_window("my_window", hg.Vec3(-5, 5.65, 10), hg.Vec3(0, 0, 0), hg.Vec3(1280, 720, 0), 10/1280 ):
+        if hgui.begin_window("my_window", hg.Vec3(-5, 5.65, 10), hg.Vec3(0, 0, 0), hg.Vec3(1280, 720, 0), 10/1280, hgui.HGUIWF_Invisible ):
             
             hgui.set_line_space_size(10)
 
