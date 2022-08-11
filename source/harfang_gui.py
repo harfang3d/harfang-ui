@@ -896,6 +896,7 @@ class HarfangUI:
 			return widget
 		return None	
 
+
 	@classmethod
 	def get_widget(cls, widget_type, widget_id):
 		if not widget_id in cls.widgets:
@@ -1736,7 +1737,13 @@ class HarfangUI:
 		if focussed_container is not None:
 			pointer_position = hg.Vec2(focussed_container["pointer_local_position"])
 			
-			title_height = cls.get_property_value(focussed_container["components"]["window_background"],"window_box_border_thickness") if focussed_container["flag_hide_title"] else focussed_container["components"]["window_title"]["size"].y
+			if focussed_container["flag_invisible"]:
+				title_height = 0
+			elif focussed_container["flag_hide_title"]:
+				title_height = cls.get_property_value(focussed_container["components"]["window_background"],"window_box_border_thickness")
+			else:
+				title_height = focussed_container["components"]["window_title"]["size"].y
+
 			if pointer_position.y < title_height:
 				flag_hover_container = True # flag_hover_container: True if only container is hoverd, and no container's child
 			else:
@@ -1959,6 +1966,84 @@ class HarfangUI:
 						cls.ascii_code = None
 
 		return False #String unchanged
+
+	# ------------ Widgets model editor api
+
+	@classmethod
+	def duplicate_property_model(cls, property_model_id, new_model_id):
+		if new_model_id in cls.properties:
+			print("ERROR - Property model id already used !! - " + new_model_id)
+			return None 
+		if property_model_id in cls.properties:
+			property_model = cls.properties[property_model_id]
+			model_copy = {}
+			for key, value in propertyt_model.items():
+				if key == "properties":
+					properties_copy = []
+					for property_model_id in value:
+						new_id = property_model_id + new_model_id
+						new_model = cls.duplicate_property_model(property_model_id, new_id)
+						if new_model is not None:
+							properties_copy.append(new_id)
+					model_copy["properties"] = properties_copy
+				else:
+					if type(value).__name__ == "list":
+						model_copy[key] == list(value)
+					else:
+						model_copy[key] = value
+			cls.components[new_model_id] = model_copy
+			return model_copy
+
+	@classmethod
+	def duplicate_component_model(cls, component_model_id, new_model_id):
+		if new_model_id in cls.components:
+			print("ERROR - Component model id already used !! - " + new_model_id)
+			return None 
+		if component_model_id in cls.components:
+			component_model = cls.components[component_model_id]
+			model_copy = {}
+			for key, value in component_model.items():
+				if key == "properties":
+					properties_copy = []
+					for property_model_id in value:
+						new_id = property_model_id + new_model_id
+						new_model = cls.duplicate_property_model(property_model_id, new_id)
+						if new_model is not None:
+							properties_copy.append(new_id)
+					model_copy["properties"] = properties_copy
+				else:
+					if type(value).__name__ == "list":
+						model_copy[key] == list(value)
+					else:
+						model_copy[key] = value
+			cls.components[new_model_id] = model_copy
+			return model_copy
+
+
+	@classmethod
+	def duplicate_widget_model(cls, widget_model_id, new_model_id):
+		if new_model_id in cls.widgets_models:
+			print("ERROR - Widget model id already used !! - " + new_model_id)
+			return None
+		if widget_model_id in cls.widgets_models:
+			widget_model = cls.widgets_models[widget_model_id]
+			model_copy = {}
+			for key, value in widget_model.items():
+				if key == "components":
+					components_copy = []
+					for component_model_id in value:
+						new_id = component_model_id + new_model_id
+						new_model = cls.duplicate_component_model(component_model_id, new_id)
+						if new_model is not None:
+							components_copy.append(new_id)
+					model_copy["components"] = components_copy
+				else:
+					if type(value).__name__ == "list":
+						model_copy[key] == list(value)
+					else:
+						model_copy[key] = value
+			cls.widgets_models[new_model_id] = model_copy
+			return model_copy
 
 	# ------------ Widgets ui
 
