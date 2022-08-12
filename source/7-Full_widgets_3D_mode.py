@@ -44,7 +44,7 @@ my_text3 = "Hello !"
 
 current_rib = 0
 
-while not hg.ReadKeyboard().Key(hg.K_Escape): 
+while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window): 
 	
     _, width, height = hg.RenderResetToWindow(window, width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 

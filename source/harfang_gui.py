@@ -695,7 +695,8 @@ class HarfangUI:
 			if "MLB_pressed" not in cls.new_signals and "MLB_down" not in cls.new_signals:
 				return True
 		
-		if cls.ui_state == cls.UI_STATE_WIDGET_MOUSE_FOCUS:
+		# Mouse click detected but not stil updated in widgets:
+		if cls.ui_state == cls.UI_STATE_WIDGET_MOUSE_FOCUS or "MLB_pressed" in cls.new_signals:
 			return True
 		return False
 	@classmethod
