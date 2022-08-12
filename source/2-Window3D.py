@@ -37,12 +37,14 @@ flag_check_box0 = False
 
 while not hg.ReadKeyboard().Key(hg.K_Escape):
     
+    _, width, height = hg.RenderResetToWindow(window, width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
+
     dt = hg.TickClock()
     keyboard.Update()
     mouse.Update()
     
     # Fps
-    hgui_state = hgui.is_mouse_used() | hgui.is_keyboard_used()
+    hgui_state = hgui.want_capture_mouse() | hgui.want_capture_keyboard()
     if not hgui_state:
         hg.FpsController(keyboard, mouse, cam_pos, cam_rot, 20 if keyboard.Down(hg.K_LShift) else 8, dt)
         camera.GetTransform().SetPos(cam_pos)

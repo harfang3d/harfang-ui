@@ -2,6 +2,7 @@ import harfang as hg
 from math import sin, cos, inf
 from mouse_pointer_3d import MousePointer3D
 import json
+import copy
 
 
 def on_key_press(text: str):
@@ -427,7 +428,7 @@ class HarfangUISkin:
 		file = open(output_file_name, "w")
 		file.write(json_script)
 		file.close()
-
+		
 
 class HarfangGUISceneGraph:
 
@@ -685,12 +686,20 @@ class HarfangUI:
 		cls.ui_state = state_id
 
 	@classmethod
-	def is_mouse_used(cls):
+	def want_capture_mouse(cls):
+		if cls.mouse is None:
+			return False
+		
+		# Capture new mouse click:
+		if cls.mouse.Down(hg.MB_0):
+			if "MLB_pressed" not in cls.new_signals and "MLB_down" not in cls.new_signals:
+				return True
+		
 		if cls.ui_state == cls.UI_STATE_WIDGET_MOUSE_FOCUS:
 			return True
 		return False
 	@classmethod
-	def is_keyboard_used(cls):
+	def want_capture_keyboard(cls):
 		if cls.ui_state == cls.UI_STATE_WIDGET_KEYBOARD_FOCUS:
 			return True
 		return False
@@ -1058,18 +1067,18 @@ class HarfangUI:
 	@classmethod
 	def send_signal(cls, signal_id, widget_id = None):
 		#New signal will be dispatched at next frame
-			if signal_id not in cls.new_signals:
-				cls.new_signals[signal_id] = []
+		if signal_id not in cls.new_signals:
+			cls.new_signals[signal_id] = []
+		if signal_id == "MLB_down":
+			if "MLB_down" not in cls.current_signals and "MLB_pressed" not in cls.new_signals:
+				cls.new_signals["MLB_pressed"] = []
+		
+		if widget_id is not None:
+			if widget_id not in cls.new_signals[signal_id]:
+				cls.new_signals[signal_id].append(widget_id)
 			if signal_id == "MLB_down":
-				if "MLB_down" not in cls.current_signals and "MLB_pressed" not in cls.new_signals:
-					cls.new_signals["MLB_pressed"] = []
-			
-			if widget_id is not None:
-				if widget_id not in cls.new_signals[signal_id]:
-					cls.new_signals[signal_id].append(widget_id)
-				if signal_id == "MLB_down":
-					if "MLB_pressed" in cls.new_signals and widget_id not in cls.new_signals["MLB_pressed"]:
-						cls.new_signals["MLB_pressed"].append(widget_id)
+				if "MLB_pressed" in cls.new_signals and widget_id not in cls.new_signals["MLB_pressed"]:
+					cls.new_signals["MLB_pressed"].append(widget_id)
 		
 	@classmethod
 	def update_signals(cls):
@@ -1967,83 +1976,6 @@ class HarfangUI:
 
 		return False #String unchanged
 
-	# ------------ Widgets model editor api
-
-	@classmethod
-	def duplicate_property_model(cls, property_model_id, new_model_id):
-		if new_model_id in cls.properties:
-			print("ERROR - Property model id already used !! - " + new_model_id)
-			return None 
-		if property_model_id in cls.properties:
-			property_model = cls.properties[property_model_id]
-			model_copy = {}
-			for key, value in propertyt_model.items():
-				if key == "properties":
-					properties_copy = []
-					for property_model_id in value:
-						new_id = property_model_id + new_model_id
-						new_model = cls.duplicate_property_model(property_model_id, new_id)
-						if new_model is not None:
-							properties_copy.append(new_id)
-					model_copy["properties"] = properties_copy
-				else:
-					if type(value).__name__ == "list":
-						model_copy[key] == list(value)
-					else:
-						model_copy[key] = value
-			cls.components[new_model_id] = model_copy
-			return model_copy
-
-	@classmethod
-	def duplicate_component_model(cls, component_model_id, new_model_id):
-		if new_model_id in cls.components:
-			print("ERROR - Component model id already used !! - " + new_model_id)
-			return None 
-		if component_model_id in cls.components:
-			component_model = cls.components[component_model_id]
-			model_copy = {}
-			for key, value in component_model.items():
-				if key == "properties":
-					properties_copy = []
-					for property_model_id in value:
-						new_id = property_model_id + new_model_id
-						new_model = cls.duplicate_property_model(property_model_id, new_id)
-						if new_model is not None:
-							properties_copy.append(new_id)
-					model_copy["properties"] = properties_copy
-				else:
-					if type(value).__name__ == "list":
-						model_copy[key] == list(value)
-					else:
-						model_copy[key] = value
-			cls.components[new_model_id] = model_copy
-			return model_copy
-
-
-	@classmethod
-	def duplicate_widget_model(cls, widget_model_id, new_model_id):
-		if new_model_id in cls.widgets_models:
-			print("ERROR - Widget model id already used !! - " + new_model_id)
-			return None
-		if widget_model_id in cls.widgets_models:
-			widget_model = cls.widgets_models[widget_model_id]
-			model_copy = {}
-			for key, value in widget_model.items():
-				if key == "components":
-					components_copy = []
-					for component_model_id in value:
-						new_id = component_model_id + new_model_id
-						new_model = cls.duplicate_component_model(component_model_id, new_id)
-						if new_model is not None:
-							components_copy.append(new_id)
-					model_copy["components"] = components_copy
-				else:
-					if type(value).__name__ == "list":
-						model_copy[key] == list(value)
-					else:
-						model_copy[key] = value
-			cls.widgets_models[new_model_id] = model_copy
-			return model_copy
 
 	# ------------ Widgets ui
 
