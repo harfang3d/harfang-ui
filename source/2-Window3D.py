@@ -70,7 +70,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape)  and hg.IsWindowOpen(window):
         hgui.end_frame(view_id)
 
     hg.Frame()
-    hg.UpdateWindow(win)
+    hg.UpdateWindow(window)
 
 hg.RenderShutdown()
-hg.DestroyWindow(win)
+hg.DestroyWindow(window)
