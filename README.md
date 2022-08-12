@@ -37,4 +37,24 @@ The current version of the Harfang GUI API provides the following widgets:
 
 ## How to use Harfang GUI?
 
->Please check the code samples to see how to use the library._
+>Please check the code samples to see how to use the library.
+
+## How to run the samples?
+
+### Run the samples from the release file _(the easy way)_: :v:
+1. Download the latest release (`harfang-gui-demos-hg3.X.X.zip`)
+2. Unzip it
+3. Run `1-compile_content.bat`
+4. Run `2-start-window2d.bat`
+5. and so on!
+### Run the samples from the sources _(the way of the warrior)_: :metal:
+
+1. Download or clone this repository to your computer _(eg. in `C:/harfang-gui`)_.
+2. Download _assetc_ for your platform from [here](https://harfang3d.com/releases) and unzip it in `bin/assetc`.
+3. To compile the resources, drag and drop the resources folder on the assetc executable **-OR-** execute assetc passing it the path to the resources folder _(eg. `assetc C:/source/assets`)_.
+
+   ![assetc drag & drop](https://github.com/harfang3d/image-storage/raw/main/tutorials/assetc.gif)
+
+   After the compilation process finishes, you will see a `assets_compiled` folder next to resources ( `assets` ) folder.
+
+4. You can now execute the samples from the folder `source`.
