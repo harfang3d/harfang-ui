@@ -10,7 +10,7 @@ assetc.exe
 glfw3.dll
 harfang.dll
 lua.exe
-lua5x.dll
+lua53.dll
 ```
 
 **On Linux**
@@ -19,5 +19,5 @@ lua5x.dll
 toolchains\
 assetc
 libglfw3.so
-liblua5x.so
+liblua53.so
 ```
