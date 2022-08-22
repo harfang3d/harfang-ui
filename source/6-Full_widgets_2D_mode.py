@@ -7,7 +7,7 @@ hg.InputInit()
 hg.WindowSystemInit()
 
 width, height = 1280, 720 
-window = hg.RenderInit('Harfang - GUI', width, height, hg.RF_VSync | hg.RF_MSAA4X)
+window = hg.RenderInit('Harfang - GUI', width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
 hg.AddAssetsFolder("assets_compiled")
 
@@ -34,7 +34,9 @@ my_text2 = "Go"
 my_text31 = "Hello"
 current_rib = 0
 
-while not hg.ReadKeyboard().Key(hg.K_Escape): 
+while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window): 
+	
+	_, width, height = hg.RenderResetToWindow(window, width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 	
 	dt = hg.TickClock()
 	dt_f = hg.time_to_sec_f(dt)
@@ -45,7 +47,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 
 	if hgui.begin_frame(dt, mouse, keyboard, width, height):
 
-		if hgui.begin_window_2D("my_window",  hg.Vec2(50, 50), hg.Vec2(1124, 600), 1):
+		if hgui.begin_window_2D("My window",  hg.Vec2(50, 50), hg.Vec2(1124, 600), 1):
 
 			if hgui.button("Hello button 0"):
 				print("Click btn 0")
@@ -53,7 +55,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 			if f:
 				flag_check_box0 = d
 
-			hgui.info_text("Information text")
+			hgui.info_text("info1", "Information text")
 
 			hgui.same_line()
 
@@ -85,7 +87,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 			if hgui.button_image("image_1", "textures/logo.png", hg.Vec2(221, 190) / 4):
 				print("click image button")
 			
-			if hgui.begin_window_2D("my_window_2", hg.Vec2(650, 100), hg.Vec2(400, 400), 1, hgui.HGUIWF_NoMove ):
+			if hgui.begin_window_2D("my_window_2", hg.Vec2(650, 100), hg.Vec2(400, 400), 1, hgui.HGUIWF_NoPointerMove ):
 				if hgui.button("Hello button 3"):
 					print("Click btn 3")
 				if hgui.begin_window_2D("my_window_2.1", hg.Vec2(50, 100), hg.Vec2(200, 100), 1 ):

@@ -1,0 +1,1181 @@
+{
+    "scrollbar_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.4,
+                            0.4,
+                            0.4,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            0.6,
+                            0.6,
+                            0.6,
+                            1
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            },
+            {
+                "operator": "add",
+                "default_state": "mouse_idle",
+                "states": {
+                    "mouse_idle": {
+                        "value": [
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_move": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            0
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "scrollbar_background_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            1
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "scrollbar_thickness": {
+        "type": "float",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 8,
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": 8,
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "window_box_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            1
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "window_box_border_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "no_focus",
+                "states": {
+                    "no_focus": {
+                        "value": [
+                            0.4,
+                            0.4,
+                            0.4,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "focus": {
+                        "value": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            },
+            {
+                "operator": "add",
+                "default_state": "mouse_idle",
+                "states": {
+                    "mouse_idle": {
+                        "value": [
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_move": {
+                        "value": [
+                            0,
+                            0,
+                            0.2,
+                            0
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "window_box_border_thickness": {
+        "type": "float",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "no_focus",
+                "states": {
+                    "no_focus": {
+                        "value": 1,
+                        "delay": 0.2
+                    },
+                    "focus": {
+                        "value": 3,
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "window_title_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "size",
+            "factor": 2,
+            "operator": "add"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "window_title_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.9,
+                            0.9,
+                            1,
+                            1
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "widget_border_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.7,
+                            0.7,
+                            0.7,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            0.9,
+                            0.9,
+                            0.9,
+                            1
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "widget_border_thickness": {
+        "type": "float",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 1,
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "widget_opacity": {
+        "type": "float",
+        "linked_value": {
+            "name": "opacity",
+            "factor": 1,
+            "operator": "set",
+            "parent": "widget"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 0.85,
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": 0.9,
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "button_text_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "size",
+            "factor": 2,
+            "operator": "add"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            10,
+                            10,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "text_size": {
+        "type": "float",
+        "linked_value": {
+            "name": "text_size",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 1,
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": 1,
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": 1,
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+    "label_text_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "size",
+            "factor": 2,
+            "operator": "add"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            15,
+                            15,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "check_size": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "size",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            15,
+                            15,
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            15,
+                            15,
+                            0
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            15,
+                            15,
+                            0
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+    "checkbox_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "size",
+            "factor": 2,
+            "operator": "add"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            15,
+                            15,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "info_text_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "size",
+            "factor": 2,
+            "operator": "add"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            15,
+                            15,
+                            0
+                        ],
+                        "delay": 0
+                    }
+                }
+            }
+        ]
+    },
+    "button_image_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "size",
+            "factor": 2,
+            "operator": "add"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            7.5,
+                            7.5,
+                            0
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+    "info_image_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "size",
+            "factor": 2,
+            "operator": "add"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "button_offset": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "offset",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "info_image_offset": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "offset",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "texture_box_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+    "button_box_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            0.75,
+                            0.75,
+                            0.75,
+                            1
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            0.9,
+                            0.9,
+                            0.9,
+                            1
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+    "label_box_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.125,
+                            0.125,
+                            0.125,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            0.25,
+                            0.25,
+                            0.25,
+                            1
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+    "button_text_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+    "label_text_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.8,
+                            0.8,
+                            0.8,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+    "info_text_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.7,
+                            0.7,
+                            0.7,
+                            1
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "check_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            0,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            },
+            {
+                "operator": "multiply",
+                "default_state": "checked",
+                "states": {
+                    "checked": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "unchecked": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "input_box_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.25,
+                            0.25,
+                            0.25,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            0.375,
+                            0.375,
+                            0.375,
+                            1
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            },
+            {
+                "operator": "multiply",
+                "default_state": "no_edit",
+                "states": {
+                    "no_edit": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.1
+                    },
+                    "edit": {
+                        "value": [
+                            0.1,
+                            0.2,
+                            0.2,
+                            1
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            }
+        ]
+    },
+    "input_text_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            },
+            {
+                "operator": "multiply",
+                "default_state": "no_edit",
+                "states": {
+                    "no_edit": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.1
+                    },
+                    "edit": {
+                        "value": [
+                            0.5,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            }
+        ]
+    },
+    "radio_button_box_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            1
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            },
+            {
+                "operator": "add",
+                "default_state": "unselected",
+                "states": {
+                    "unselected": {
+                        "value": [
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "delay": 0.15
+                    },
+                    "selected": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            0
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+    "radio_image_offset": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "offset",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "unselected",
+                "states": {
+                    "unselected": {
+                        "value": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "selected": {
+                        "value": [
+                            0,
+                            -10,
+                            0
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "radio_button_image_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "size",
+            "factor": 2,
+            "operator": "add"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+    "radio_image_border_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            },
+            {
+                "operator": "add",
+                "default_state": "unselected",
+                "states": {
+                    "unselected": {
+                        "value": [
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "selected": {
+                        "value": [
+                            0.3,
+                            0.3,
+                            0.3,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "radio_image_border_thickness": {
+        "type": "float",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 1,
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": 1,
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    }
+}

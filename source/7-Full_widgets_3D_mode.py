@@ -7,7 +7,7 @@ hg.InputInit()
 hg.WindowSystemInit()
 
 width, height = 1280, 720
-window = hg.RenderInit('Harfang - GUI', width, height, hg.RF_VSync | hg.RF_MSAA4X)
+window = hg.RenderInit('Harfang - GUI', width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
 hg.AddAssetsFolder("assets_compiled")
 
@@ -44,8 +44,10 @@ my_text3 = "Hello !"
 
 current_rib = 0
 
-while not hg.ReadKeyboard().Key(hg.K_Escape): 
+while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window): 
 	
+    _, width, height = hg.RenderResetToWindow(window, width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
+
     dt = hg.TickClock()
     dt_f = hg.time_to_sec_f(dt)
     keyboard.Update()
@@ -53,7 +55,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
     view_id = 0
 
     # Fps
-    hgui_state = hgui.is_mouse_used() | hgui.is_keyboard_used()
+    hgui_state = hgui.want_capture_mouse() | hgui.want_capture_keyboard()
     if not hgui_state:
         hg.FpsController(keyboard, mouse, cam_pos, cam_rot, 20 if keyboard.Down(hg.K_LShift) else 8, dt)
         camera.GetTransform().SetPos(cam_pos)
@@ -68,7 +70,11 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 	
     if hgui.begin_frame(dt, mouse, keyboard, width, height, camera):
 
-        if hgui.begin_window("my_window", hg.Vec3(-5, 5.65, 10), hg.Vec3(0, 0, 0), hg.Vec3(1280, 720, 0), 20/1280 ):
+        
+
+        if hgui.begin_window("my_window", hg.Vec3(-5, 5.65, 10), hg.Vec3(0, 0, 0), hg.Vec3(1280, 720, 0), 10/1280, hgui.HGUIWF_Invisible ):
+            
+            hgui.set_line_space_size(10)
 
             if hgui.button("Hello button 0"):
                 print("Click btn 0")
@@ -76,7 +82,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
             if f:
                 flag_check_box0 = d
 
-            hgui.info_text("Information text")
+            hgui.info_text("info1", "Information text")
 
             hgui.same_line()
 
@@ -132,6 +138,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
             hgui.end_window()
             
         if hgui.begin_window_2D("my_window_2D_1", hg.Vec2(10, 10), hg.Vec2(200, 300), 1 ):
+            hgui.set_line_space_size(20)
             f, d = hgui.check_box("Check box 3", flag_check_box3)
             if f:
                 flag_check_box3 = d

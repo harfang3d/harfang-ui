@@ -1,10 +1,8 @@
-
-from queue import Empty
-from threading import local
-from tkinter import DOTBOX, N
 import harfang as hg
-from math import sin, cos, pi, inf, floor, ceil, isinf
+from math import sin, cos, inf
 from mouse_pointer_3d import MousePointer3D
+import json
+import copy
 
 
 def on_key_press(text: str):
@@ -59,7 +57,7 @@ class HarfangGUIRenderer:
 
 		# text uniforms and render state
 		cls.text_uniform_values = [hg.MakeUniformSetValue('u_color', hg.Vec4(1, 1, 0))]
-		cls.text_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_Disabled, hg.FC_Disabled, False)
+		cls.text_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_Disabled, hg.FC_Disabled, False, True, True, True, False)
 
 	@classmethod
 	def get_texture(cls, texture_path):
@@ -148,7 +146,6 @@ class HarfangGUIRenderer:
 		cls.text_uniform_values = [hg.MakeUniformSetValue('u_color', hg.Vec4(color.r, color.g, color.b, color.a))]
 		hg.DrawText(vid, cls.fonts[font_id], text, cls.font_prg, 'u_tex', 0, matrix, hg.Vec3(0, 0, 0), hg.DTHA_Center, hg.DTVA_Center, cls.text_uniform_values, [], cls.text_render_state)
 
-
 	@classmethod
 	def render_widget_container(cls, view_id, container):
 		draw_list = HarfangGUISceneGraph.widgets_containers_displays_lists[container["widget_id"]]
@@ -160,7 +157,7 @@ class HarfangGUIRenderer:
 		
 		hg.SetViewOrthographic(view_id, 0, 0, w, h, hg.TransformationMat4(hg.Vec3(w / 2 + container["scroll_position"].x, h / 2 + container["scroll_position"].y, 0), hg.Vec3(0, 0, 0), hg.Vec3(1, -1, 1)), 0, 101, h)
 		flag_clear_z = hg.CF_Depth | hg.CF_Color
-		hg.SetViewClear(view_id, flag_clear_z, hg.Color.Black, 1, 0)
+		hg.SetViewClear(view_id, flag_clear_z, hg.Color(0, 0, 0, 0), 1, 0)
 
 		for draw_element in draw_list:
 			if draw_element["type"] == "box":
@@ -336,573 +333,19 @@ class HarfangUISkin:
 
 		cls.keyboard_cursor_color = hg.Color(1, 1, 1, 0.75)
 
-		cls.properties ={
-					"scrollbar_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  hg.Color(0.4, 0.4, 0.4, 1), "delay": idle_t},
-													"mouse_hover": {"value":  hg.Color(0.6, 0.6, 0.6, 1), "delay": hover_t}
-													}
-												},
-												{
-												"operator": "add",
-												"default_state": "mouse_idle",
-												"states":{
-													"mouse_idle": {"value":  hg.Color(0, 0, 0, 0), "delay": idle_t},
-													"mouse_move": {"value":  hg.Color(0.2, 0.2, 0.2, 0), "delay": hover_t}
-													}
-												}
-											]
-					},
-					"scrollbar_background_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  hg.Color(0.2, 0.2, 0.2, 1), "delay": idle_t},
-													"mouse_hover": {"value":  hg.Color(0.2, 0.2, 0.2, 1), "delay": hover_t}
-													}
-												}
-											]
-					},
-					"scrollbar_thickness": {
-											"type": "float",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  8, "delay": idle_t},
-													"mouse_hover": {"value":  8, "delay": hover_t}
-													}
-												}
-											]
-										},
-					"window_box_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  hg.Color(0.2, 0.2, 0.2, 1), "delay": idle_t},
-													"mouse_hover": {"value":  hg.Color(0.2, 0.2, 0.2, 1), "delay": hover_t} #,"MLB_down": {"value":  hg.Color(0.5, 0.2, 0.2, 1), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"window_box_border_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "no_focus",
-												"states":{
-													"no_focus": {"value":  hg.Color(0.4, 0.4, 0.4, 1), "delay": idle_t},
-													"focus": {"value":  hg.Color(0.5, 0.5, 0.5, 1), "delay": idle_t}
-													}
-												},
-												{
-												"operator": "add",
-												"default_state": "mouse_idle",
-												"states":{
-													"mouse_idle": {"value":  hg.Color(0, 0, 0, 0), "delay": idle_t},
-													"mouse_move": {"value":  hg.Color(0, 0, 0.2, 0), "delay": hover_t}
-													}
-												}
-											]
-										},
-					"window_box_border_thickness": {
-											"type": "float",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "no_focus",
-												"states":{
-													"no_focus": {"value":  1, "delay": idle_t},
-													"focus": {"value":  3, "delay": hover_t}
-													}
-												}
-											]
-										},
-					
-					"window_title_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(5, 5, 0), "delay": idle_t}
-													}
-												}
-											]
-										},
+		cls.properties = cls.load_properties("properties.json")
 
-					"window_title_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color(0.8, 0.8, 0.9, 1), "delay": idle_t}
-													}
-												}
-											]
-										},
-
-					"widget_border_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  hg.Color(0.7, 0.7, 0.7, 1), "delay": idle_t},
-													"mouse_hover": {"value":  hg.Color(0.9, 0.9, 0.9, 1), "delay": idle_t}
-													}
-												}
-											]
-										},
-					"widget_border_thickness": {
-											"type": "float",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  1, "delay": idle_t}
-													}
-												}
-											]
-										},
-
-					
-					"widget_opacity": {
-											"type": "float",
-											"linked_value" : {"name": "opacity", "factor":1, "operator":"set", "parent": "widget"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  0.85, "delay": idle_t},
-													"mouse_hover": {"value":  0.9, "delay": hover_t}
-													}
-												}
-											]
-										},
-					"button_text_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(10, 10, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(15, 15, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(15, 15, 0), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"text_size": {
-											"type": "float",
-											"linked_value" : {"name": "text_size", "operator":"set"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": 1, "delay": idle_t},
-													"mouse_hover": {"value": 1, "delay": hover_t},
-													"MLB_down": {"value": 1, "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"label_text_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(15, 15, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(20, 20, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(25,25, 0), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"check_size": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "operator":"set"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(15, 15, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(15, 15, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(15, 15, 0), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"checkbox_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(15 , 15, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(20, 20, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(25, 25, 0), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					
-					"info_text_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(20, 20, 0), "delay": 0},
-													}
-												}
-											]
-										},
-					"button_image_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(5, 5, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(7.5, 7.5, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(5, 5, 0), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"info_image_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(5, 5, 0), "delay": idle_t}
-													}
-												}
-											]
-										},
-					"button_offset": {
-											"type": "vec3",
-											"linked_value" : {"name": "offset", "operator":"set"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(0, 0, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(2.5, 2.5, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(0, 0, 0), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"info_image_offset": {
-											"type": "vec3",
-											"linked_value" : {"name": "offset", "operator":"set"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(0, 0, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(0, 10, 0), "delay": hover_t},
-													}
-												}
-											]
-										},
-					"texture_box_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color.White, "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.White, "delay": hover_t},
-													"MLB_down": {"value": hg.Color.White, "delay": mb_down_t}
-													}
-												}
-											]
-										},
-		
-					"button_box_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color.Grey, "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.Grey * 1.25, "delay": hover_t},
-													"MLB_down": {"value": hg.Color.Grey * 1.5, "delay": mb_down_t}
-													}
-												}
-											]
-										},
-
-					"label_box_color":  {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color.Grey * 0.25, "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.Grey * 0.5, "delay": hover_t},
-													"MLB_down": {"value": hg.Color.Grey, "delay": mb_down_t}
-													}
-												}
-											]
-										},
-	
-					"button_text_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color.White, "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.White, "delay": hover_t},
-													"MLB_down": {"value": hg.Color.White, "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					"label_text_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color(0.8, 0.8, 0.8, 1), "delay": idle_t},
-													"mouse_hover": {"value": hg.Color(1, 1, 1, 1), "delay": hover_t},
-													"MLB_down": {"value": hg.Color(1, 1, 1, 1), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-					
-					"info_text_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color(0.7, 0.7, 0.7, 1), "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.White, "delay": hover_t}
-													}
-												}
-											]
-										},
-
-					"check_color":	{
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color(1, 1, 1, 1), "delay": idle_t},
-													"mouse_hover": {"value": hg.Color(0, 1, 1, 1), "delay": hover_t},
-													"MLB_down": {"value": hg.Color(1, 1, 1, 1), "delay": mb_down_t}
-													}
-												},
-												{
-												"operator": "multiply",
-												"default_state": "checked",
-												"states":{
-													"checked": {"value": hg.Color(1, 1, 1, 1), "delay": check_t},
-													"unchecked": {"value": hg.Color(1, 1, 1, 0), "delay": check_t}
-													}	
-												}
-											]
-										},
-					"input_box_color":  {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color.Grey * 0.5, "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.Grey * 0.75, "delay": hover_t},
-													"MLB_down": {"value": hg.Color.Grey, "delay": mb_down_t}
-													}
-												},
-												{
-												"operator": "multiply",
-												"default_state": "no_edit",
-												"states":{
-													"no_edit": {"value": hg.Color(1, 1, 1, 1), "delay": edit_t},
-													"edit": {"value": hg.Color(0.1, 0.2, 0.2, 1), "delay": edit_t}
-													}	
-												}
-											]
-										},
-					"input_text_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color.White, "delay": idle_t},
-													"mouse_hover": {"value": hg.Color.White, "delay": hover_t},
-													"MLB_down": {"value": hg.Color.White, "delay": mb_down_t}
-													}
-												},
-												{
-												"operator": "multiply",
-												"default_state": "no_edit",
-												"states":{
-													"no_edit": {"value": hg.Color(1, 1, 1, 1), "delay": edit_t},
-													"edit": {"value": hg.Color(0.5, 1, 1, 1), "delay": edit_t}
-													}	
-												}
-											]
-										},
-					"radio_button_box_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Color(0.2, 0.2, 0.2, 1), "delay": idle_t},
-													"mouse_hover": {"value": hg.Color(0.2, 0.2, 0.2, 1), "delay": hover_t}
-													}
-												},
-												{
-												"operator": "add",
-												"default_state": "unselected",
-												"states":{
-													"unselected": {"value": hg.Color(0, 0, 0, 0), "delay": hover_t},
-													"selected": {"value": hg.Color(0.2, 0.2, 0.2, 0), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-
-					"radio_image_offset": {
-											"type": "vec3",
-											"linked_value" : {"name": "offset", "operator":"set"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "unselected",
-												"states":{
-													"unselected": {"value": hg.Vec3(0, 0, 0), "delay": idle_t},
-													"selected": {"value": hg.Vec3(0, -10, 0), "delay": hover_t}
-													}
-												}
-											]
-										},
-
-					"radio_button_image_margins": {
-											"type": "vec3",
-											"linked_value" : {"name": "size", "factor":2, "operator":"add"},
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value": hg.Vec3(5, 5, 0), "delay": idle_t},
-													"mouse_hover": {"value": hg.Vec3(5, 5, 0), "delay": hover_t},
-													"MLB_down": {"value": hg.Vec3(5, 5, 0), "delay": mb_down_t}
-													}
-												}
-											]
-										},
-
-					"radio_image_border_color": {
-											"type": "color",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  hg.Color(0.2, 0.2, 0.2, 1), "delay": idle_t},
-													"mouse_hover": {"value":  hg.Color(0.5, 0.5, 0.5, 1), "delay": idle_t}
-													}
-												},
-												{
-												"operator": "add",
-												"default_state": "unselected",
-												"states":{
-													"unselected": {"value":  hg.Color(0,0,0,0), "delay": idle_t},
-													"selected": {"value":  hg.Color(0.3, 0.3, 0.3, 0), "delay": idle_t}
-													}
-												}
-											]
-										},
-
-					"radio_image_border_thickness": {
-											"type": "float",
-											"layers": [
-												{
-												"operator": "set",
-												"default_state": "idle",
-												"states":{
-													"idle": {"value":  1, "delay": idle_t},
-													"mouse_hover": {"value":  1, "delay": hover_t}
-													}
-												}
-											]
-										}
-
-		}
-
-		
 		cls.components = {
 			"window_background": {
 				"cursor_auto": False,
-				"size_factor": hg.Vec3(1, 1, 1),
+				"size_factor": [1, 1, 1],
 				"properties": ["window_box_color", "window_box_border_thickness", "window_box_border_color"] #"widget_opacity"
 				},
 			"window_title": {
 				"display_text": "label",
 				"text_size": 1,
 				"cursor_auto": False,
-				"size_factor": hg.Vec3(1, -1, -1),
+				"size_factor": [1, -1, -1],
 				"properties": ["window_box_border_color", "window_title_margins", "window_title_color"]
 			},
 			"scrollbar": {
@@ -966,7 +409,26 @@ class HarfangUISkin:
 		t = max(0, min(1, t))
 		v = v_start * (1-t) + v_end * t
 		return v
+	
+	@classmethod
+	def load_properties(cls, file_name):
+		file = open(file_name, "r")
+		json_script = file.read()
+		file.close()
+		if json_script != "":
+			return json.loads(json_script)
+		else:
+			print("HGUISkin - ERROR - Can't open properties json file !")
+		return None
 
+	@classmethod
+	def save_properties(cls, output_file_name):
+
+		json_script = json.dumps(cls.properties, indent=4)
+		file = open(output_file_name, "w")
+		file.write(json_script)
+		file.close()
+		
 
 class HarfangGUISceneGraph:
 
@@ -1137,12 +599,16 @@ class HarfangUI:
 
 	# Windows flags:
 	HGUIWF_2D = 0x1
-	HGUIWF_NoMove = 0x2
+	HGUIWF_NoPointerMove = 0x2
 	HGUIWF_HideTitle = 0x4
+	HGUIWF_Invisible = 0x8
+	HGUIWF_HideScrollbars = 0x10
 
 	# Frame datas (updated on each frame)
 
-	flag_same_line = True
+	flag_same_line = False
+	line_max_y_size = 0 #Used for auto-positionning with same_line(): the biggest widget Ysize in the line
+	line_space_size = 3 # Space between lines in pixels
 	current_font_id = 0
 	mouse = None
 	keyboard = None
@@ -1159,6 +625,7 @@ class HarfangUI:
 	ui_state = 0
 
 	camera = None
+	focal_distance = 1
 	camera3D_matrix = None
 	camera2D_matrix = None
 	mouse_pointer3D_world_matrix = None
@@ -1219,12 +686,21 @@ class HarfangUI:
 		cls.ui_state = state_id
 
 	@classmethod
-	def is_mouse_used(cls):
-		if cls.ui_state == cls.UI_STATE_WIDGET_MOUSE_FOCUS:
+	def want_capture_mouse(cls):
+		if cls.mouse is None:
+			return False
+		
+		# Capture new mouse click:
+		if cls.mouse.Down(hg.MB_0):
+			if "MLB_pressed" not in cls.new_signals and "MLB_down" not in cls.new_signals:
+				return True
+		
+		# Mouse click detected but not stil updated in widgets:
+		if cls.ui_state == cls.UI_STATE_WIDGET_MOUSE_FOCUS or "MLB_pressed" in cls.new_signals:
 			return True
 		return False
 	@classmethod
-	def is_keyboard_used(cls):
+	def want_capture_keyboard(cls):
 		if cls.ui_state == cls.UI_STATE_WIDGET_KEYBOARD_FOCUS:
 			return True
 		return False
@@ -1307,6 +783,7 @@ class HarfangUI:
 		container["classe"] = "widgets_container"
 		container.update({
 			"flag_2D": False,
+			"flag_invisible": False,
 			"children_order": [],
 			"pointer_world_position": None,
 			"pointer_local_position": None,
@@ -1324,6 +801,7 @@ class HarfangUI:
 			"new_scroll_position": hg.Vec3(0, 0, 0), #Next frame scroll position
 			"flag_scrollbar_v": False,
 			"flag_scrollbar_h": False,
+			"flag_hide_scrollbars": False,
 			"color_texture": None,
 			"depth_texture": None,
 			"frame_buffer": None,	#Widgets rendering frame buffer
@@ -1341,7 +819,7 @@ class HarfangUI:
 			for key, value in component_model.items():
 				if key != "properties":
 					if key in vec3_types:
-						component[key] = hg.Vec3(value)
+						component[key] = hg.Vec3(value[0], value[1], value[2])
 					else:
 						component[key] = value
 			if "display_text" in component:
@@ -1358,8 +836,22 @@ class HarfangUI:
 					component_layers = []
 					for layer_id in range(len(class_property["layers"])):
 						class_layer = class_property["layers"][layer_id]
+						
+						component_layer_states = {}
+						for class_state_name, class_state in class_layer["states"].items():
+							component_layer_states[class_state_name] = dict(class_state)
+							v = class_state["value"]
+							if class_property["type"] == "float":
+								component_layer_states[class_state_name]["value"] = v
+							elif class_property["type"] == "vec2":
+								component_layer_states[class_state_name]["value"] = hg.Vec2(v[0], v[1])
+							elif class_property["type"] == "vec3":
+								component_layer_states[class_state_name]["value"] = hg.Vec3(v[0], v[1], v[2])
+							elif class_property["type"] == "color":
+								component_layer_states[class_state_name]["value"] = hg.Color(v[0], v[1], v[2], v[3])
+						
 						default_state_name = class_layer["default_state"]
-						default_value = class_layer["states"][default_state_name]["value"]
+						default_value = component_layer_states[default_state_name]["value"]
 						if layer_id == 0:
 							default_final_value = default_value
 						else:
@@ -1369,19 +861,10 @@ class HarfangUI:
 								default_final_value += default_value
 							elif class_layer["operator"] == "multiply":
 								default_final_value *= default_value
-						component_layer_states = {}
-						for class_state_name, class_state in class_layer["states"].items():
-							component_layer_states[class_state_name] = dict(class_state)
-							if class_property["type"] == "float":
-								component_layer_states[class_state_name]["value"] = class_state["value"]
-							elif class_property["type"] == "vec2":
-								component_layer_states[class_state_name]["value"] = hg.Vec2(class_state["value"])
-							elif class_property["type"] == "vec3":
-								component_layer_states[class_state_name]["value"] = hg.Vec3(class_state["value"])
-							elif class_property["type"] == "color":
-								component_layer_states[class_state_name]["value"] = hg.Color(class_state["value"])
+
 						component_layer = {"current_state":default_state_name, "current_state_t0":0, "value":default_value, "value_start":default_value, "value_end":default_value, "states":component_layer_states}
 						component_layers.append(component_layer)
+					
 					component["properties"][property_name] = {"layers":component_layers, "value":default_final_value}
 			return component
 		return None
@@ -1422,6 +905,7 @@ class HarfangUI:
 					widget[key] = value # !!! If Value is a Harfang Object, add a deepcopy
 			return widget
 		return None	
+
 
 	@classmethod
 	def get_widget(cls, widget_type, widget_id):
@@ -1476,9 +960,11 @@ class HarfangUI:
 
 		if camera is not None:
 			cls.camera3D_matrix = camera.GetTransform().GetWorld()
+			cls.focal_distance = hg.FovToZoomFactor(camera.GetCamera().GetFov())
 			MousePointer3D.update(camera, mouse, width, height)
 			cls.mouse_pointer3D_world_matrix = MousePointer3D.pointer_world_matrix
 		else:
+			cls.focal_distance = 1
 			cls.camera3D_matrix = None
 			cls.mouse_pointer3D_world_matrix = None
 		
@@ -1582,18 +1068,18 @@ class HarfangUI:
 	@classmethod
 	def send_signal(cls, signal_id, widget_id = None):
 		#New signal will be dispatched at next frame
-			if signal_id not in cls.new_signals:
-				cls.new_signals[signal_id] = []
+		if signal_id not in cls.new_signals:
+			cls.new_signals[signal_id] = []
+		if signal_id == "MLB_down":
+			if "MLB_down" not in cls.current_signals and "MLB_pressed" not in cls.new_signals:
+				cls.new_signals["MLB_pressed"] = []
+		
+		if widget_id is not None:
+			if widget_id not in cls.new_signals[signal_id]:
+				cls.new_signals[signal_id].append(widget_id)
 			if signal_id == "MLB_down":
-				if "MLB_down" not in cls.current_signals and "MLB_pressed" not in cls.new_signals:
-					cls.new_signals["MLB_pressed"] = []
-			
-			if widget_id is not None:
-				if widget_id not in cls.new_signals[signal_id]:
-					cls.new_signals[signal_id].append(widget_id)
-				if signal_id == "MLB_down":
-					if "MLB_pressed" in cls.new_signals and widget_id not in cls.new_signals["MLB_pressed"]:
-						cls.new_signals["MLB_pressed"].append(widget_id)
+				if "MLB_pressed" in cls.new_signals and widget_id not in cls.new_signals["MLB_pressed"]:
+					cls.new_signals["MLB_pressed"].append(widget_id)
 		
 	@classmethod
 	def update_signals(cls):
@@ -1652,13 +1138,18 @@ class HarfangUI:
 	def begin_window(cls, widget_id, position:hg.Vec3 , rotation:hg.Vec3, size:hg.Vec3, scale:float = 1, window_flags:int = 0):
 		
 		flag_2D = False if (window_flags & cls.HGUIWF_2D) == 0 else True
-		flag_move = True if (window_flags & cls.HGUIWF_NoMove) == 0 else False
+		flag_move = True if (window_flags & cls.HGUIWF_NoPointerMove) == 0 else False
 		flag_hide_title = False if (window_flags & cls.HGUIWF_HideTitle) == 0 else True
+		flag_invisible = False if (window_flags & cls.HGUIWF_Invisible) == 0 else True
+		flag_hide_scrollbars = False if (window_flags & cls.HGUIWF_HideScrollbars) == 0 else True
 
 		# If first parent window is 3D, Y is space relative, Y-increment is upside. Else, Y-increment is downside
+		pyf, rxf, rzf = 1, 1, 1
 		if not flag_2D:
 			if HarfangGUISceneGraph.get_current_container_child_depth() == 0:
-				position.y *= -1
+				pyf = -1
+				rxf *= -1
+				rzf *= -1
 				HarfangGUISceneGraph.widgets_containers_stack.append(cls.main_widgets_container_3D)
 			else:
 				parent = HarfangGUISceneGraph.get_current_container()
@@ -1674,30 +1165,32 @@ class HarfangUI:
 		widget["flag_2D"] = flag_2D
 		widget["flag_move"] = flag_move
 		widget["flag_hide_title"] = flag_hide_title
+		widget["flag_invisible"] = flag_invisible
+		widget["flag_hide_scrollbars"] = flag_hide_scrollbars
 		
 		nsp = widget["new_scroll_position"]
 		sp = widget["scroll_position"]
 		sp.x, sp.y, sp.z = nsp.x, nsp.y, nsp.z
 		
 		if widget["flag_new"]:
-			widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y, position.z
-			widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x, rotation.y, rotation.z
+			widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y * pyf, position.z
+			widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x * rxf, rotation.y, rotation.z * rzf
 			widget["scale"].x =  widget["scale"].y = widget["scale"].z = scale
-			
-			#s = widget["components"]["window_background"]["size"]
-			#s.x, s.y, s.z = size.x, size.y, size.z
 			
 			s = widget["size"]
 			s.x, s.y, s.z = size.x, size.y, size.z
 			
-			thickness = cls.get_property_states_value(widget["components"]["window_background"], "window_box_border_thickness",["focus"] )
+			thickness = 0 if flag_invisible else cls.get_property_states_value(widget["components"]["window_background"], "window_box_border_thickness",["focus"] )
 			widget["default_cursor_start_line"].x = 5 + thickness
 			widget["default_cursor_start_line"].y = 5 + thickness
 			widget["components"]["window_title"]["label"] = cls.get_label_from_id(widget["widget_id"])
 		
 		else:
+			if not flag_move:
+				widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y * pyf, position.z
+				widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x * rxf, rotation.y, rotation.z * rzf
 
-			if not widget["flag_hide_title"]:
+			if not (flag_hide_title or flag_invisible):
 				widget["default_cursor_start_line"].y = 5 + widget["components"]["window_title"]["size"].y
 
 			if "mouse_move" in widget["states"]:
@@ -1713,9 +1206,9 @@ class HarfangUI:
 							rotmat = hg.GetRotationMatrix(cls.camera3D_matrix)
 							ax = hg.GetX(rotmat)
 							ay = hg.GetY(rotmat)
-							mdt = (mouse_dt) * hg.Len(widget["pointer_world_position"] - hg.GetT(cls.camera3D_matrix)) 
+							mdt = (mouse_dt) * (hg.Len(widget["pointer_world_position"] - hg.GetT(cls.camera3D_matrix)) / cls.focal_distance ) * 2 / cls.height
 
-							v =  (ax * mdt.x / cls.width ) - (ay * mdt.y / cls.width )
+							v =  (ax * mdt.x) - (ay * mdt.y)
 							v.y *= -1
 		
 							widget["position"] += v
@@ -1771,29 +1264,31 @@ class HarfangUI:
 			spx = spy = None
 			flag_reset_bar_v = flag_reset_bar_h = False
 
-			# Vertical
-			if ws_size.y > w_size.y:
-				mx.y += scrollbar_size * 2
-				ws_size.y += scrollbar_size * 2
-				if not widget["flag_scrollbar_v"]:
-					spy = widget["scroll_position"].y - mn.y
-					flag_reset_bar_v = True
-				widget["flag_scrollbar_v"] = True
-			else:
+			if widget["flag_hide_scrollbars"]:
 				widget["flag_scrollbar_v"] = False
-			
-			# Horizontal
-			if ws_size.x > w_size.x:
-				mx.x += scrollbar_size * 2
-				ws_size.x += scrollbar_size * 2
-				if not widget["flag_scrollbar_h"]:
-					spx = widget["scroll_position"].x - mn.x
-					flag_reset_bar_h = True
-				if widget["widget_id"] == "my_window_3":
-						print(str(widget["scroll_position"].x))
-				widget["flag_scrollbar_h"] = True
-			else:
 				widget["flag_scrollbar_h"] = False
+			else:
+				# Vertical
+				if ws_size.y > w_size.y:
+					mx.y += scrollbar_size * 2
+					ws_size.y += scrollbar_size * 2
+					if not widget["flag_scrollbar_v"]:
+						spy = widget["scroll_position"].y - mn.y
+						flag_reset_bar_v = True
+					widget["flag_scrollbar_v"] = True
+				else:
+					widget["flag_scrollbar_v"] = False
+				
+				# Horizontal
+				if ws_size.x > w_size.x:
+					mx.x += scrollbar_size * 2
+					ws_size.x += scrollbar_size * 2
+					if not widget["flag_scrollbar_h"]:
+						spx = widget["scroll_position"].x - mn.x
+						flag_reset_bar_h = True
+					widget["flag_scrollbar_h"] = True
+				else:
+					widget["flag_scrollbar_h"] = False
 
 			# clamp scroll position
 
@@ -1802,14 +1297,14 @@ class HarfangUI:
 			spos.y = min(mx.y - w_size.y, max(spos.y, mn.y))
 			spos.z = min(mx.z - w_size.z, max(spos.z, mn.z))
 
-			bt = cls.get_property_value(widget["components"]["window_background"],"window_box_border_thickness")
+			bt = 0 if widget["flag_invisible"] else cls.get_property_value(widget["components"]["window_background"],"window_box_border_thickness")
 			
 			# Add scroll bars if necessary
 
 			px, py = widget["scroll_position"].x - mn.x, widget["scroll_position"].y - mn.y
 
 			if widget["flag_scrollbar_v"]:
-				title_height = bt if widget["flag_hide_title"] else widget["components"]["window_title"]["size"].y
+				title_height = bt if (widget["flag_hide_title"] or widget["flag_invisible"])  else widget["components"]["window_title"]["size"].y
 				cursor = hg.Vec3(spos)
 				cursor.x += w_size.x - scrollbar_size - bt
 				cursor.y += title_height
@@ -1840,11 +1335,16 @@ class HarfangUI:
 
 	@classmethod
 	def same_line(cls):
+		cls.flag_same_line= True
 		cursor = HarfangGUISceneGraph.get_current_container()["cursor"]
 		cursor.x = cls.last_widget["position"].x + cls.last_widget["size"].x + cls.last_widget["offset"].x
 		cursor.y = cls.last_widget["position"].y + cls.last_widget["offset"].y
 		cursor.z = cls.last_widget["position"].z + cls.last_widget["offset"].z
 	
+	@classmethod
+	def set_line_space_size(cls,line_space_size:float):
+		cls.line_space_size = line_space_size
+
 	@classmethod
 	def get_cursor_position(cls):
 		current_container = HarfangGUISceneGraph.get_current_container()
@@ -1866,7 +1366,12 @@ class HarfangUI:
 		cursor = w_container["cursor"]
 		csl = w_container["cursor_start_line"]
 		cursor.x = csl.x
-		cursor.y = widget["position"].y + widget["size"].y + widget["offset"].y
+		if not cls.flag_same_line:
+			cls.line_max_y_size = 0
+		else:
+			cls.flag_same_line = False
+		cls.line_max_y_size = max(cls.line_max_y_size, widget["size"].y + widget["offset"].y)
+		cursor.y = widget["position"].y + cls.line_max_y_size + cls.line_space_size
 		cursor.z = csl.z
 
 		wpos_s = widget["position"] + widget["offset"]
@@ -2066,7 +1571,8 @@ class HarfangUI:
 			HarfangGUISceneGraph.set_container_display_list(widgets_container["widget_id"])
 			if len(widgets_container["containers_2D_children_align_order"]) > 0:
 				cls.build_widgets_container_2Dcontainers(widgets_container, widgets_container["containers_2D_children_align_order"])
-			cls.build_widgets_container_overlays(widgets_container, hg.Mat4.Identity)
+			if not widgets_container["flag_invisible"]:
+				cls.build_widgets_container_overlays(widgets_container, hg.Mat4.Identity)
 
 		fb_size = widgets_container["frame_buffer_size"]
 
@@ -2133,7 +1639,8 @@ class HarfangUI:
 			cpos = component["position"] + component["offset"] + scroll_pos
 			
 			if  component["type"]=="window_background":
-				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"window_box_color") * opacity)
+				if not widget["flag_invisible"]:
+					HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"window_box_color") * opacity)
 			
 			elif component["type"]=="button_box":
 				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity)
@@ -2240,7 +1747,13 @@ class HarfangUI:
 		if focussed_container is not None:
 			pointer_position = hg.Vec2(focussed_container["pointer_local_position"])
 			
-			title_height = cls.get_property_value(focussed_container["components"]["window_background"],"window_box_border_thickness") if focussed_container["flag_hide_title"] else focussed_container["components"]["window_title"]["size"].y
+			if focussed_container["flag_invisible"]:
+				title_height = 0
+			elif focussed_container["flag_hide_title"]:
+				title_height = cls.get_property_value(focussed_container["components"]["window_background"],"window_box_border_thickness")
+			else:
+				title_height = focussed_container["components"]["window_title"]["size"].y
+
 			if pointer_position.y < title_height:
 				flag_hover_container = True # flag_hover_container: True if only container is hoverd, and no container's child
 			else:
@@ -2464,13 +1977,14 @@ class HarfangUI:
 
 		return False #String unchanged
 
+
 	# ------------ Widgets ui
 
 
 	@classmethod
-	def info_text(cls, text):
-		widget = cls.get_widget("info_text", text)
-		widget["components"]["info_text"]["text"] = cls.get_label_from_id(text)
+	def info_text(cls, label, text):
+		widget = cls.get_widget("info_text", label)
+		widget["components"]["info_text"]["text"] = text
 		widget["position"] = cls.get_cursor_position()
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
@@ -2552,6 +2066,9 @@ class HarfangUI:
 	def scrollbar(cls, widget_id, width, height, part_size, total_size, scroll_position = None, flag_reset = False, flag_horizontal = False):
 		widget = cls.get_widget("scrollbar_h" if flag_horizontal else "scrollbar_v", widget_id)
 		
+		widget["components"]["scrollbar"]["size"].x = width if flag_horizontal else max(cls.get_property_value(widget["components"]["scrollbar"], "scrollbar_thickness"), width)
+		widget["components"]["scrollbar"]["size"].y = max(cls.get_property_value(widget["components"]["scrollbar"], "scrollbar_thickness"), height) if flag_horizontal else height
+
 		if scroll_position is None:
 					scroll_position = widget["scrollbar_position_dest"]
 
@@ -2561,14 +2078,14 @@ class HarfangUI:
 				cls.set_ui_state(cls.UI_STATE_MAIN)
 			elif cls.ui_state == cls.UI_STATE_WIDGET_MOUSE_FOCUS:
 				mouse_dt = HarfangGUISceneGraph.get_current_container()["pointer_local_dt"]
-				scroll_position += mouse_dt.x if flag_horizontal else mouse_dt.y
+				s = total_size / (widget["components"]["scrollbar"]["size"].x if flag_horizontal else widget["components"]["scrollbar"]["size"].y)
+				scroll_step = mouse_dt.x if flag_horizontal else mouse_dt.y
+				scroll_position += scroll_step * s
 		else:
 			if "MLB_pressed" in cls.current_signals and widget["widget_id"] in cls.current_signals["MLB_pressed"]:
 				cls.set_widget_state(widget, "mouse_move")
 				cls.set_ui_state(cls.UI_STATE_WIDGET_MOUSE_FOCUS)
 		
-		widget["components"]["scrollbar"]["size"].x = width if flag_horizontal else max(cls.get_property_value(widget["components"]["scrollbar"], "scrollbar_thickness"), width)
-		widget["components"]["scrollbar"]["size"].y = max(cls.get_property_value(widget["components"]["scrollbar"], "scrollbar_thickness"), height) if flag_horizontal else height
 		widget["part_size"] = part_size
 		widget["total_size"] = total_size
 		widget["scrollbar_position_dest"] = max(0, min(total_size - part_size, scroll_position))

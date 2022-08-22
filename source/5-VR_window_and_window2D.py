@@ -7,7 +7,7 @@ hg.InputInit()
 hg.WindowSystemInit()
 
 width, height = 1280, 720
-window = hg.RenderInit('Harfang GUI - 2D & 3D windows', width, height, hg.RF_VSync | hg.RF_MSAA4X)
+window = hg.RenderInit('Harfang GUI - 2D & 3D windows', width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
 hg.AddAssetsFolder("assets_compiled")
 
@@ -47,8 +47,10 @@ mouse = hg.Mouse()
 
 # Main loop
 
-while not hg.ReadKeyboard().Key(hg.K_Escape): 
+while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window): 
 	
+    _, width, height = hg.RenderResetToWindow(window, width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
+
     dt = hg.TickClock()
     dt_f = hg.time_to_sec_f(dt)
     keyboard.Update()
@@ -56,7 +58,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
     view_id = 0
 
     # Fps
-    hgui_state = hgui.is_mouse_used() | hgui.is_keyboard_used()
+    hgui_state = hgui.want_capture_mouse() | hgui.want_capture_keyboard()
     if not hgui_state:
         hg.FpsController(keyboard, mouse, cam_pos, cam_rot, 20 if keyboard.Down(hg.K_LShift) else 8, dt)
         camera.GetTransform().SetPos(cam_pos)
@@ -85,14 +87,14 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 
     if hgui.begin_frame_vr(dt, mouse, keyboard, scene.GetCurrentCamera(), width, height, vr_state, vr_left_fb, vr_right_fb):
     
-        if hgui.begin_window("my_window", hg.Vec3(-2, 2.65, 5), hg.Vec3(0, 0, 0), hg.Vec3(500, 300, 0), 10/1280 ):
+        if hgui.begin_window("My window 3D", hg.Vec3(-2, 2.65, 5), hg.Vec3(0, 0, 0), hg.Vec3(500, 300, 0), 10/1280 ):
 
-            hgui.info_text("Simple Window3D")
+            hgui.info_text("info1", "Simple Window3D")
             if pointer_vr:
                 pointer_vr_msg = "Pointer VR activated"
             else:
                 pointer_vr_msg = "Pointer VR deactivated"
-            hgui.info_text(pointer_vr_msg)
+            hgui.info_text("info2", pointer_vr_msg)
             
             if hgui.button("Deactivate VR pointer"):
                 hgui.activate_pointer_VR(False)
@@ -100,8 +102,8 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 
             hgui.end_window()
         
-        if hgui.begin_window_2D("my_window_2", hg.Vec2(300, 10), hg.Vec2(500, 200), 1 ):
-            hgui.info_text("You can switch between VR pointer and 2D screen pointer")
+        if hgui.begin_window_2D("My window 2D", hg.Vec2(300, 10), hg.Vec2(500, 200), 1 ):
+            hgui.info_text("info3", "You can switch between VR pointer and 2D screen pointer")
             if hgui.button("Activate VR pointer"):
                 hgui.activate_pointer_VR(True)
                 pointer_vr = True

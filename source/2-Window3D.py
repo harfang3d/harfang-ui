@@ -7,7 +7,7 @@ hg.InputInit()
 hg.WindowSystemInit()
 
 width, height = 1280, 720
-win = hg.RenderInit('Harfang GUI - 3D window', width, height, hg.RF_VSync | hg.RF_MSAA4X)
+window = hg.RenderInit('Harfang GUI - 3D window', width, height, hg.RF_VSync | hg.RF_MSAA4X)
 
 #
 pipeline = hg.CreateForwardPipeline()
@@ -35,14 +35,16 @@ mouse = hg.Mouse()
 
 flag_check_box0 = False
 
-while not hg.ReadKeyboard().Key(hg.K_Escape):
+while not hg.ReadKeyboard().Key(hg.K_Escape)  and hg.IsWindowOpen(window):
     
+    _, width, height = hg.RenderResetToWindow(window, width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
+
     dt = hg.TickClock()
     keyboard.Update()
     mouse.Update()
     
     # Fps
-    hgui_state = hgui.is_mouse_used() | hgui.is_keyboard_used()
+    hgui_state = hgui.want_capture_mouse() | hgui.want_capture_keyboard()
     if not hgui_state:
         hg.FpsController(keyboard, mouse, cam_pos, cam_rot, 20 if keyboard.Down(hg.K_LShift) else 8, dt)
         camera.GetTransform().SetPos(cam_pos)
@@ -54,9 +56,9 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 
     if hgui.begin_frame(dt, mouse, keyboard, width, height, camera):
             
-        if hgui.begin_window("my_window", hg.Vec3(-2, 2.65, 5), hg.Vec3(0, 0, 0), hg.Vec3(500, 300, 0), 10/1280 ):
+        if hgui.begin_window("My window", hg.Vec3(-2, 2.65, 5), hg.Vec3(0, 0, 0), hg.Vec3(500, 300, 0), 10/1280 ):
 
-            hgui.info_text("Simple Window3D")
+            hgui.info_text("info1", "Simple Window3D")
             
             if hgui.button("Button 0"):
                 print("Click btn 0")
@@ -68,7 +70,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
         hgui.end_frame(view_id)
 
     hg.Frame()
-    hg.UpdateWindow(win)
+    hg.UpdateWindow(window)
 
 hg.RenderShutdown()
-hg.DestroyWindow(win)
+hg.DestroyWindow(window)

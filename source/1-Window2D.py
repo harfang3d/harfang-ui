@@ -7,7 +7,7 @@ hg.InputInit()
 hg.WindowSystemInit()
 
 width, height = 1280, 720 
-window = hg.RenderInit('Harfang GUI - 2D window', width, height, hg.RF_VSync | hg.RF_MSAA4X)
+window = hg.RenderInit('Harfang GUI - 2D window', width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
 hg.AddAssetsFolder("assets_compiled")
 
@@ -24,8 +24,10 @@ flag_check_box0 = False
 
 # Main loop
 
-while not hg.ReadKeyboard().Key(hg.K_Escape): 
+while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window): 
 	
+    _, width, height = hg.RenderResetToWindow(window, width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
+
     dt = hg.TickClock()
     keyboard.Update()
     mouse.Update()
@@ -33,9 +35,9 @@ while not hg.ReadKeyboard().Key(hg.K_Escape):
 	
     if hgui.begin_frame(dt, mouse, keyboard, width, height):
         
-        if hgui.begin_window_2D("my_window",  hg.Vec2(50, 50), hg.Vec2(500, 300), 1 ):
+        if hgui.begin_window_2D("My window",  hg.Vec2(50, 50), hg.Vec2(500, 300), 1):
 
-            hgui.info_text("Simple Window2D")
+            hgui.info_text("info1", "Simple Window2D")
             
             if hgui.button("Button 0"):
                 print("Click btn 0")
