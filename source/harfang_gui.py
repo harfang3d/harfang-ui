@@ -493,7 +493,7 @@ class HarfangGUISceneGraph:
 
 	@classmethod
 	#Sort for rendering
-	def sort_widgets_containers(cls, camera3D_world_matrix: hg.Mat4, camera2D_world_matrix:hg.Mat4):
+	def sort_widgets_containers(cls):
 		
 		if len(cls.widgets_containers3D_user_order) > 0:
 			#align_order = sorted(cls.widgets_containers3D_user_order, key = lambda wc: wc["align_position"])
@@ -590,12 +590,6 @@ class HarfangUI:
 	main_widgets_container_3D = None
 	main_widgets_container_2D = None
 
-	widgets_containers3D_pointer_in = []	#Widgets containers hovered by mouse pointer. Used to evacuate unhoverred containers before inputs update.
-	widgets_containers2D_pointer_in = []
-
-	widgets_containers3D_focus_order = []
-	widgets_containers2D_focus_order = []
-
 	output_framebuffer_2D = None
 
 	# Windows flags:
@@ -629,10 +623,8 @@ class HarfangUI:
 	focal_distance = 1
 	camera3D_matrix = None
 	camera2D_matrix = None
-	mouse_pointer3D_world_matrix = None
-	mouse_pointer2D_world_matrix = None
-	mouse_pos = None
-	mouse_world_intersection = None
+	
+	controllers = {}
 
 	kb_cursor_pos = 0 # Used to edit input texts
 
@@ -653,6 +645,11 @@ class HarfangUI:
 		cls.ui_state = HarfangUI.UI_STATE_MAIN
 
 		cls.radio_image_button_size = hg.Vec2(64, 64)
+
+		# Setup mouse controller:
+		cls.controllers["mouse"] = cls.new_controller("mouse")
+
+		# Setup main containers:
 
 		pos, rot,scale = hg.Vec3(0, 0, 0), hg.Deg3(0, 0, 0), hg.Vec3(1, -1, 1)
 		cls.main_widgets_container_3D = cls.new_widgets_container("Main_container")
@@ -711,6 +708,16 @@ class HarfangUI:
 		if cls.ui_state == cls.UI_STATE_WIDGET_KEYBOARD_FOCUS:
 			return True
 		return False
+
+	@classmethod
+	def new_controller(cls, id):
+		return {
+			"id": id,
+			"ray_p0": None, #Vec3, position
+			"ray_p1": None, #vec3, direction
+			"world_intersection": None, #Vec3
+			"focused_container": None #widgets_container
+		}
 
 	@classmethod
 	def new_gui_object(cls, type):
@@ -790,7 +797,8 @@ class HarfangUI:
 			"type": type,
 			"pointer_world_position": None,
 			"pointer_local_position": None,
-			"pointer_local_dt": None
+			"pointer_local_dt": None,
+			"enabled": True
 		}
 
 	@classmethod
@@ -943,7 +951,6 @@ class HarfangUI:
 	def update_camera2D(cls):
 		sp = cls.main_widgets_container_2D["scroll_position"]
 		cls.camera2D_matrix = hg.TranslationMat4( sp * hg.Vec3(1, -1, 1))
-		cls.mouse_pointer2D_world_matrix = hg.TranslationMat4(hg.Vec3(cls.mouse.X() + sp.x, cls.mouse.Y() + sp.y, 0))
 
 	@classmethod
 	def reset_main_containers(cls):
@@ -964,6 +971,30 @@ class HarfangUI:
 			plp.x, plp.y = cls.mouse.X(), cls.mouse.Y()
 
 	@classmethod
+	def update_controllers(cls):
+		# Mouse:
+		cls.controllers["mouse"]["world_intersection"] = None
+		cls.controllers["mouse"]["ray_p0"] = hg.GetT(cls.camera3D_matrix)
+		if cls.flag_vr:
+			if cls.flag_use_pointer_VR:
+				MousePointer3D.update_vr(cls.vr_state, cls.mouse, cls.controllers["mouse"]["world_intersection"])
+			else:
+				MousePointer3D.update(cls.camera, cls.mouse, cls.width, cls.height)
+			cls.controllers["mouse"]["ray_p1"] = hg.GetT(MousePointer3D.pointer_world_matrix)
+		else:
+			if cls.camera is None:
+				cls.controllers["mouse"]["ray_p1"] = None
+			else:
+				MousePointer3D.update(cls.camera, cls.mouse, cls.width, cls.height)
+				cls.controllers["mouse"]["ray_p1"] = hg.GetT(MousePointer3D.pointer_world_matrix)
+		
+		# VR controllers:
+		if cls.flag_vr:
+			VRControllersHandler.update_connected_controller()
+		else:
+			pass
+
+	@classmethod
 	def begin_frame(cls, dt, mouse: hg.Mouse, keyboard: hg.Keyboard, width: int, height: int, camera: hg.Node = None):
 		
 		cls.flag_vr = False
@@ -972,21 +1003,20 @@ class HarfangUI:
 		cls.width = width
 		cls.height = height
 
-		if camera is not None:
-			cls.camera3D_matrix = camera.GetTransform().GetWorld()
-			cls.focal_distance = hg.FovToZoomFactor(camera.GetCamera().GetFov())
-			MousePointer3D.update(camera, mouse, width, height)
-			cls.mouse_pointer3D_world_matrix = MousePointer3D.pointer_world_matrix
-		else:
-			cls.focal_distance = 1
-			cls.camera3D_matrix = None
-			cls.mouse_pointer3D_world_matrix = None
-		
 		cls.mouse = mouse
 		cls.keyboard = keyboard
 		cls.dt = dt
 		cls.timestamp += dt
 		cls.last_widget = None
+
+		if camera is not None:
+			cls.camera3D_matrix = camera.GetTransform().GetWorld()
+			cls.focal_distance = hg.FovToZoomFactor(camera.GetCamera().GetFov())
+		else:
+			cls.focal_distance = 1
+			cls.camera3D_matrix = None
+
+		cls.update_controllers()
 
 		cls.update_camera2D()
 		
@@ -997,8 +1027,7 @@ class HarfangUI:
 			cls.send_signal("MLB_down")
 		cls.reset_main_containers()
 		HarfangGUISceneGraph.clear()
-		cls.mouse_world_intersection = None
-
+		
 		return True
 	
 	@classmethod
@@ -1013,23 +1042,27 @@ class HarfangUI:
 		cls.left_fb = left_fb
 		cls.right_fb = right_fb
 		cls.camera = screenview_camera
-		
-		if cls.flag_use_pointer_VR:
-			cls.camera3D_matrix = vr_state.head
-			MousePointer3D.update_vr(cls.vr_state, mouse, cls.mouse_world_intersection)
-		else:
-			cls.camera3D_matrix = screenview_camera.GetTransform().GetWorld()
-			MousePointer3D.update(screenview_camera, mouse, width, height)
-			
-		cls.mouse_pointer3D_world_matrix = MousePointer3D.pointer_world_matrix
-
-		VRControllersHandler.update_connected_controller()
 
 		cls.mouse = mouse
 		cls.keyboard = keyboard
+
 		cls.dt = dt
 		cls.timestamp += dt
 		cls.last_widget = None
+
+		if cls.camera is not None:
+			cls.focal_distance = hg.FovToZoomFactor(cls.camera.GetCamera().GetFov())
+		else:
+			cls.focal_distance = 1
+		
+		if cls.flag_use_pointer_VR:
+			cls.focal_distance = hg.ExtractZoomFactorFromProjectionMatrix(vr_state.left.projection)
+			cls.camera3D_matrix = vr_state.head
+		else:
+			cls.camera3D_matrix = screenview_camera.GetTransform().GetWorld()
+			
+		cls.update_controllers()
+
 		cls.update_camera2D()
 		
 		cls.update_signals()
@@ -1039,7 +1072,6 @@ class HarfangUI:
 			cls.send_signal("MLB_down")
 		cls.reset_main_containers()
 		HarfangGUISceneGraph.clear()
-		cls.mouse_world_intersection = None
 
 		return True
 
@@ -1071,15 +1103,16 @@ class HarfangUI:
 			outputs_3D.append(HarfangGUIRenderer.create_output(vr_res, left, cls.left_fb))
 			outputs_3D.append(HarfangGUIRenderer.create_output(vr_res, right, cls.right_fb))
 
-		HarfangGUISceneGraph.sort_widgets_containers(cls.camera3D_matrix, cls.camera2D_matrix)
+		HarfangGUISceneGraph.sort_widgets_containers()
 
 		vid, render_views_3D, render_views_2D = HarfangGUIRenderer.render(vid, outputs_2D, outputs_3D)
-		if cls.flag_vr and cls.flag_use_pointer_VR:
-			fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(cls.vr_state.left.projection))
-			ry = cls.vr_state.height
-			view_pos =hg.GetT(cls.vr_state.head)
-			MousePointer3D.draw_pointer(render_views_3D, ry, view_pos, fov, cls.mouse_world_intersection)
+		if cls.flag_vr:
 			VRControllersHandler.update_displays(render_views_3D)
+			if cls.flag_use_pointer_VR:
+				fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(cls.vr_state.left.projection))
+				ry = cls.vr_state.height
+				view_pos =hg.GetT(cls.vr_state.head)
+				MousePointer3D.draw_pointer(render_views_3D, ry, view_pos, fov, cls.controllers["mouse"]["world_intersection"])
 
 		return vid
 	
@@ -1162,7 +1195,14 @@ class HarfangUI:
 				rotmat = hg.GetRotationMatrix(cls.camera3D_matrix)
 				ax = hg.GetX(rotmat)
 				ay = hg.GetY(rotmat)
-				mdt = (pointer_dt) * (hg.Len(wc_pointer["pointer_world_position"] - hg.GetT(cls.camera3D_matrix)) / cls.focal_distance ) * 2 / cls.height
+				
+				height = cls.height
+				
+				if cls.flag_vr:
+					if pointer_id !="mouse" or (pointer_id == "mouse" and cls.flag_use_pointer_VR):
+						height = cls.vr_state.height
+					
+				mdt = (pointer_dt) * (hg.Len(wc_pointer["pointer_world_position"] - hg.GetT(cls.camera3D_matrix)) / cls.focal_distance ) * 2 / height
 
 				v =  (ax * mdt.x) - (ay * mdt.y)
 				v.y *= -1
@@ -1768,7 +1808,7 @@ class HarfangUI:
 	@classmethod
 	def update_widgets_inputs(cls):
 		
-		focussed_container = cls.raycast_pointer_position(cls.mouse_pointer3D_world_matrix)
+		focussed_container = cls.raycast_pointer_position("mouse")
 		
 		if focussed_container is not None:
 			pointer_position = hg.Vec2(focussed_container["pointers"]["mouse"]["pointer_local_position"])
@@ -1829,65 +1869,68 @@ class HarfangUI:
 	# ------------ Pointer position (Mouse or VR Controller)
 	# Raycasts only computed in widgets_containers quads.
 	@classmethod
-	def raycast_pointer_position(cls, pointer_world_matrix):
-		cls.widgets_containers3D_pointer_in = []
+	def raycast_pointer_position(cls, controller_id):
+		widgets_containers3D_pointer_in = []
 		for wc in HarfangGUISceneGraph.widgets_containers3D_user_order:
-			if cls.compute_pointer_position_3D(hg.GetT(cls.camera3D_matrix), hg.GetT(pointer_world_matrix), wc, "mouse"):
-				cls.widgets_containers3D_pointer_in.append(wc)
+			if cls.compute_pointer_position_3D(controller_id, wc):
+				widgets_containers3D_pointer_in.append(wc)
 		
-		cls.widgets_containers2D_pointer_in = []
+		### Voir comment gérer les widgets 2D hors VR
+		widgets_containers2D_pointer_in = []
 		for wc in HarfangGUISceneGraph.widgets_containers2D_user_order:
 			if cls.flag_vr and cls.flag_use_pointer_VR:
 				wc["pointers"]["mouse"]["pointer_world_position"] = None # deactivate mouse pointer in 2D UI ?? Encore utile avec "widgets_containers2D_pointer_in" ??
 			else:
 				cam2Dpos = hg.GetT(cls.camera2D_matrix)
 				if cls.compute_pointer_position_2D(hg.Vec2(cls.mouse.X() + cam2Dpos.x, cls.mouse.Y()-cls.height - cam2Dpos.y), wc, "mouse"):
-					cls.widgets_containers2D_pointer_in.append(wc)
-				
-		wc = cls.sort_widgets_containers_focus()
+					widgets_containers2D_pointer_in.append(wc)
+		###
+
+		wc = cls.sort_widgets_containers_focus(widgets_containers2D_pointer_in, widgets_containers3D_pointer_in)
 		if wc is not None:
-			cls.mouse_world_intersection =  wc["pointers"]["mouse"]["pointer_world_position"]
+			cls.controllers[controller_id]["world_intersection"] =  wc["pointers"][controller_id]["pointer_world_position"]
 		return wc
 
 	@classmethod
-	def sort_widgets_containers_focus(cls):
+	def sort_widgets_containers_focus(cls, widgets_containers2D_pointer_in, widgets_containers3D_pointer_in):
 		
 		wc_focussed = None
-		cls.widgets_containers2D_focus_order = []
-		cls.widgets_containers3D_focus_order = []
+		widgets_containers2D_focus_order = []
+		widgets_containers3D_focus_order = []
 
-		if len(cls.widgets_containers2D_pointer_in) > 0:
-			cls.widgets_containers2D_focus_order = sorted(cls.widgets_containers2D_pointer_in, key = lambda wc: wc["align_position"])
+		if len(widgets_containers2D_pointer_in) > 0:
+			widgets_containers2D_focus_order = sorted(widgets_containers2D_pointer_in, key = lambda wc: wc["align_position"])
 			# = sorted(temp_sort, key = lambda wc: wc["child_depth"], reverse = True)
-			wc_focussed = cls.widgets_containers2D_focus_order[0]
+			wc_focussed = widgets_containers2D_focus_order[0]
 
 		if wc_focussed is None:
-			if len(cls.widgets_containers3D_pointer_in) > 0:
+			if len(widgets_containers3D_pointer_in) > 0:
 				vp = hg.GetT(cls.camera3D_matrix)
-				for wc in cls.widgets_containers3D_pointer_in:
+				for wc in widgets_containers3D_pointer_in:
 					wc["sort_weight"] = round(hg.Len(wc["pointers"]["mouse"]["pointer_world_position"] - vp), 5)
-				temp_sort = sorted(cls.widgets_containers3D_pointer_in, key = lambda wc: wc["align_position"])
+				temp_sort = sorted(widgets_containers3D_pointer_in, key = lambda wc: wc["align_position"])
 				temp_sort = sorted(temp_sort, key = lambda wc: wc["sort_weight"])
-				cls.widgets_containers3D_focus_order = sorted(temp_sort, key = lambda wc: wc["child_depth"], reverse = True)
-				wc_focussed = cls.widgets_containers3D_focus_order[0]
+				widgets_containers3D_focus_order = sorted(temp_sort, key = lambda wc: wc["child_depth"], reverse = True)
+				wc_focussed = widgets_containers3D_focus_order[0]
 		
 		return wc_focussed
 
 	@classmethod
-	def compute_pointer_position_3D(cls, p0, p1, widgets_container, pointer_id):
-		wc_pointer = widgets_container["pointers"][pointer_id]
+	def compute_pointer_position_3D(cls, controller_id, widgets_container):
+		
+		window_inv = hg.InverseFast(widgets_container["world_matrix"])
+
+		wc_pointer = widgets_container["pointers"][controller_id]
 		wc_pointer["pointer_world_position"] = None
 		
 		flag_pointer_in = False
 		impact_2Dpos = None
 		pointer_dt = hg.Vec2(0, 0)
 
-		window_inv = hg.InverseFast(widgets_container["world_matrix"])
-
 		# Window2D have same pointer3D world position as its parent container
 		if widgets_container["flag_2D"]:
 			parent = cls.widgets[widgets_container["parent_id"]]
-			p_pointer = parent["pointers"][pointer_id]
+			p_pointer = parent["pointers"][controller_id]
 			if p_pointer["pointer_world_position"] is not None:
 				impact_2Dpos = window_inv * p_pointer["pointer_world_position"]
 				if 0 < impact_2Dpos.x < widgets_container["size"].x and 0 < impact_2Dpos.y < widgets_container["size"].y:
@@ -1898,19 +1941,19 @@ class HarfangUI:
 			window_pos = hg.GetT(widgets_container["world_matrix"])
 			window_size = widgets_container["size"]
 			
-			ray_distance = hg.Len(window_pos - p0)
-			if ray_distance < max(window_size.x, window_size.y) * widgets_container["scale"].x * 4: # Widget container distance to ray origin limitation
-				p0_local = window_inv * p0
-				p1_local = window_inv * p1
-				p1_local_ray = hg.Normalize(p1_local - p0_local)
-				if p1_local_ray.z <= 1e-5:
-					impact_2Dpos = None
-				else:
-					p1_local_inter = p0_local + p1_local_ray * (abs(p0_local.z) / p1_local_ray.z)
-					if 0 < p1_local_inter.x < widgets_container["size"].x and 0 < p1_local_inter.y < widgets_container["size"].y:
-						wc_pointer["pointer_world_position"] = widgets_container["world_matrix"] * p1_local_inter
-						flag_pointer_in = True
-					impact_2Dpos = hg.Vec2(p1_local_inter.x, p1_local_inter.y)
+			#ray_distance = hg.Len(window_pos - p0)
+			#if ray_distance < max(window_size.x, window_size.y) * widgets_container["scale"].x * 4: # Widget container distance to ray origin limitation
+			p0_local = window_inv * cls.controllers[controller_id]["ray_p0"]
+			p1_local = window_inv * cls.controllers[controller_id]["ray_p1"]
+			p1_local_ray = hg.Normalize(p1_local - p0_local)
+			if p1_local_ray.z <= 1e-5:
+				impact_2Dpos = None
+			else:
+				p1_local_inter = p0_local + p1_local_ray * (abs(p0_local.z) / p1_local_ray.z)
+				if 0 < p1_local_inter.x < widgets_container["size"].x and 0 < p1_local_inter.y < widgets_container["size"].y:
+					wc_pointer["pointer_world_position"] = widgets_container["world_matrix"] * p1_local_inter
+					flag_pointer_in = True
+				impact_2Dpos = hg.Vec2(p1_local_inter.x, p1_local_inter.y)
 		
 		if impact_2Dpos is not None and wc_pointer["pointer_local_position"] is not None:
 			pointer_dt = impact_2Dpos - wc_pointer["pointer_local_position"]
