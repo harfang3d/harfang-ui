@@ -47,7 +47,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 
 	if hgui.begin_frame(dt, mouse, keyboard, width, height):
 
-		if hgui.begin_window_2D("My window",  hg.Vec2(50, 50), hg.Vec2(1124, 600), 1):
+		if hgui.begin_window_2D("My window",  hg.Vec2(50, 50), hg.Vec2(1124, 600), 1,hgui.HGUIWF_Invisible):
 
 			if hgui.button("Hello button 0"):
 				print("Click btn 0")
@@ -74,9 +74,9 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 			if f:
 				flag_check_box = d
 			
-			_, current_rib = hgui.radio_image_button("rib_0","textures/cube_1.png", current_rib, 0, hg.Vec2(64, 64))
+			_, current_rib = hgui.radio_image_button("rib_0","textures/Button_Arrow_L.png", current_rib, 0, hg.Vec2(64, 64))
 			hgui.same_line()
-			_, current_rib = hgui.radio_image_button("rib_1","textures/cube_2.png", current_rib, 1)
+			_, current_rib = hgui.radio_image_button("rib_1","textures/Button_Arrow_R.png", current_rib, 1)
 			hgui.same_line()
 			_, current_rib = hgui.radio_image_button("rib_2","textures/cube_3.png", current_rib, 2)
 			hgui.same_line()

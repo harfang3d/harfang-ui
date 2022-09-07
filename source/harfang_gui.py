@@ -52,13 +52,15 @@ class HarfangGUIRenderer:
 
 		cls.fonts_sizes = fonts_sizes
 		for i in range(len(fonts_files)):
-			cls.fonts.append(hg.LoadFontFromAssets('font/' + fonts_files[i], fonts_sizes[i]))
+			cls.fonts.append(hg.LoadFontFromAssets('font/' + fonts_files[i], fonts_sizes[i], 1024, 1, 
+			"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"))
 		cls.font_prg = hg.LoadProgramFromAssets('core/shader/font')
 		cls.current_font_id = 0
 
 		# text uniforms and render state
 		cls.text_uniform_values = [hg.MakeUniformSetValue('u_color', hg.Vec4(1, 1, 0))]
-		cls.text_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_Disabled, hg.FC_Disabled, False, True, True, True, False)
+		w_z, w_r, w_g, w_b, w_a = False, True, True, True, True
+		cls.text_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_Disabled, hg.FC_Disabled, w_z, w_r, w_g, w_b, w_a)
 
 	@classmethod
 	def get_texture(cls, texture_path):
@@ -157,8 +159,7 @@ class HarfangGUIRenderer:
 		hg.SetViewRect(view_id, 0, 0, w, h)
 		
 		hg.SetViewOrthographic(view_id, 0, 0, w, h, hg.TransformationMat4(hg.Vec3(w / 2 + container["scroll_position"].x, h / 2 + container["scroll_position"].y, 0), hg.Vec3(0, 0, 0), hg.Vec3(1, -1, 1)), 0, 101, h)
-		flag_clear_z = hg.CF_Depth | hg.CF_Color
-		hg.SetViewClear(view_id, flag_clear_z, hg.Color(0, 0, 0, 0), 1, 0)
+		hg.SetViewClear(view_id, hg.CF_Depth | hg.CF_Color, hg.Color(1, 1, 1, 0), 1, 0)
 
 		for draw_element in draw_list:
 			if draw_element["type"] == "box":
@@ -981,8 +982,8 @@ class HarfangUI:
 	def update_controllers(cls):
 		# Mouse:
 		cls.controllers["mouse"]["world_intersection"] = None
-		cls.controllers["mouse"]["ray_p0"] = hg.GetT(cls.camera3D_matrix)
 		if cls.flag_vr:
+			cls.controllers["mouse"]["ray_p0"] = hg.GetT(cls.camera3D_matrix)
 			if cls.flag_use_pointer_VR:
 				MousePointer3D.update_vr(cls.vr_state, cls.mouse, cls.controllers["mouse"]["world_intersection"])
 			else:
@@ -990,8 +991,10 @@ class HarfangUI:
 			cls.controllers["mouse"]["ray_p1"] = hg.GetT(MousePointer3D.pointer_world_matrix)
 		else:
 			if cls.camera is None:
+				cls.controllers["mouse"]["ray_p0"] = None
 				cls.controllers["mouse"]["ray_p1"] = None
 			else:
+				cls.controllers["mouse"]["ray_p0"] = hg.GetT(cls.camera3D_matrix)
 				MousePointer3D.update(cls.camera, cls.mouse, cls.width, cls.height)
 				cls.controllers["mouse"]["ray_p1"] = hg.GetT(MousePointer3D.pointer_world_matrix)
 		
