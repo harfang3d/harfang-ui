@@ -55,7 +55,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
     view_id = 0
 
     # Fps
-    hgui_state = hgui.want_capture_mouse() | hgui.want_capture_keyboard()
+    hgui_state = hgui.want_capture_mouse() | hgui.want_capture_keyboard() | hgui.is_a_window_hovered()
     if not hgui_state:
         hg.FpsController(keyboard, mouse, cam_pos, cam_rot, 20 if keyboard.Down(hg.K_LShift) else 8, dt)
         camera.GetTransform().SetPos(cam_pos)
