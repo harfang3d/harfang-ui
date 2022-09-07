@@ -625,6 +625,7 @@ class HarfangUI:
 	camera2D_matrix = None
 	
 	controllers = {}
+	focussed_containers = []
 
 	kb_cursor_pos = 0 # Used to edit input texts
 
@@ -706,6 +707,12 @@ class HarfangUI:
 	@classmethod
 	def want_capture_keyboard(cls):
 		if cls.ui_state == cls.UI_STATE_WIDGET_KEYBOARD_FOCUS:
+			return True
+		return False
+
+	@classmethod
+	def is_a_window_hovered(cls):
+		if len(cls.focussed_containers) > 0:
 			return True
 		return False
 
@@ -1808,9 +1815,14 @@ class HarfangUI:
 	@classmethod
 	def update_widgets_inputs(cls):
 		
+		cls.focussed_containers = []
+
 		focussed_container = cls.raycast_pointer_position("mouse")
 		
 		if focussed_container is not None:
+			
+			cls.focussed_containers.append(focussed_container)
+
 			pointer_position = hg.Vec2(focussed_container["pointers"]["mouse"]["pointer_local_position"])
 			
 			if focussed_container["flag_invisible"]:
@@ -1853,7 +1865,7 @@ class HarfangUI:
 		w_containers = HarfangGUISceneGraph.widgets_containers2D_user_order + HarfangGUISceneGraph.widgets_containers3D_user_order
 
 		for w_container in w_containers:
-			if w_container != focussed_container:
+			if w_container not in cls.focussed_containers:
 				cls.set_widget_state(w_container, "idle")
 				if "MLB_pressed" in cls.current_signals:
 					cls.set_widget_state(w_container, "no_focus")
