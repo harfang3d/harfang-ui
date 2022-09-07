@@ -1,6 +1,7 @@
 import harfang as hg
 from harfang_gui import HarfangUI as hgui
 
+
 # Init Harfang
 
 hg.InputInit()
@@ -46,6 +47,7 @@ mouse = hg.Mouse()
 # Main loop
 
 flag_check_box0 = False
+
 
 while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window): 
 	

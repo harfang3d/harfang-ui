@@ -12,7 +12,7 @@
 "geometry_scale":"1.000000"
 "import_animations":"1"
 "material_policy":"1"
-"max_smoothing_angle":"70.000000"
+"max_smoothing_angle":"45.000000"
 "output_folder":""
 "profile":"1"
 "recalculate_normals":"0"
