@@ -390,6 +390,13 @@ class HarfangUISkin:
 				"texture": None,
 				"properties": ["radio_image_offset","radio_button_image_margins", "radio_button_box_color", "texture_box_color", "radio_image_border_color", "radio_image_border_thickness"]
 				},
+			"toggle_button_box": {
+				"display_text": "text",
+				"forced_text_width": None,
+				"texts": None,
+				"text_size": 1,
+				"properties": ["button_offset", "button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_border_thickness", "widget_border_color"]
+				},
 			"toggle_image_button": {
 				"textures": None,
 				"properties": ["toggle_image_button_offset","toggle_image_button_margins", "toggle_image_button_box_color", "toggle_image_button_texture_box_color", "toggle_image_button_border_color", "toggle_image_button_border_thickness"]
@@ -407,6 +414,7 @@ class HarfangUISkin:
 			"check_box": {"components": ["check_box", "label_box"]},
 			"input_text": {"components": ["label_box", "input_box"]},
 			"radio_image_button": {"components": ["radio_image_button"], "radio_idx": 0},
+			"toggle_button": {"components": ["toggle_button_box"], "toggle_idx": 0},
 			"toggle_image_button": {"components": ["toggle_image_button"], "toggle_idx": 0}
 		}
 
@@ -1537,6 +1545,8 @@ class HarfangUI:
 			flag_text = True
 		if flag_text:
 			txt_size = HarfangGUIRenderer.compute_text_size(cls.current_font_id, component[text_field])
+			if "forced_text_width" in component and component["forced_text_width"] is not None:
+				txt_size.x = component["forced_text_width"]
 			component["size"] = hg.Vec3(txt_size.x, txt_size.y, 0)
 			if "text_size" in component:
 				component["size"] *= component["text_size"]
@@ -1742,6 +1752,11 @@ class HarfangUI:
 				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"radio_button_box_color") * opacity)
 				HarfangGUISceneGraph.add_texture_box(matrix, cpos + margins, component["size"] - margins * 2, cls.get_property_value(component,"texture_box_color") * opacity, component["texture"])
 				HarfangGUISceneGraph.add_box_border(matrix, cpos, component["size"], cls.get_property_value(component,"radio_image_border_thickness"), cls.get_property_value(component,"radio_image_border_color"))
+			
+			elif component["type"]=="toggle_button_box":
+				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity)
+				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id, cls.get_property_value(component,"button_text_color") * opacity)
+				HarfangGUISceneGraph.add_box_border(matrix, cpos, component["size"], cls.get_property_value(component,"widget_border_thickness"), cls.get_property_value(component,"widget_border_color") )
 			
 			elif component["type"] == "toggle_image_button":
 				margins = cls.get_property_value(component,"toggle_image_button_margins")
@@ -2238,7 +2253,24 @@ class HarfangUI:
 		return mouse_click, current_idx
 
 	@classmethod
-	def toggle_image_button(cls, widget_id, textures_paths, image_size: hg.Vec2):
+	def toggle_button(cls, widget_id, texts: list, forced_text_width = None):
+		widget = cls.get_widget("toggle_button", widget_id)
+		widget["components"]["texts"] = texts
+		widget["components"]["toggle_button_box"]["forced_text_width"] = forced_text_width
+		mouse_click = False
+		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
+			mouse_click = True
+			widget["toggle_idx"] += 1
+			if widget["toggle_idx"] >= len(texts):
+				widget["toggle_idx"] = 0
+		widget["components"]["toggle_button_box"]["text"] = widget["components"]["texts"][widget["toggle_idx"]]
+		widget["position"] = cls.get_cursor_position()
+		cls.update_widget_components(widget)
+		cls.update_cursor(widget)
+		return mouse_click, widget["toggle_idx"]
+
+	@classmethod
+	def toggle_image_button(cls, widget_id, textures_paths: list, image_size: hg.Vec2):
 		widget = cls.get_widget("toggle_image_button", widget_id)
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
