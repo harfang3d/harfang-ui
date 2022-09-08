@@ -48,6 +48,7 @@ class HarfangGUIRenderer:
 		cls.uniforms_textures_list = hg.UniformSetTextureList()
 
 		cls.box_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_LessEqual, hg.FC_Disabled, False)
+		cls.box_overlay_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_Disabled, hg.FC_Disabled, False)
 		cls.box_render_state_opaque = hg.ComputeRenderState(hg.BM_Opaque, hg.DT_LessEqual, hg.FC_Disabled, True)
 
 		cls.fonts_sizes = fonts_sizes
@@ -234,7 +235,6 @@ class HarfangGUIRenderer:
 		
 		cls.uniforms_values_list.clear()
 		shader = cls.shader_texture_opacity
-		rs = cls.box_render_state
 		idx = [0, 1, 2, 0, 2, 3]
 
 		# Render 3D containers
@@ -267,6 +267,11 @@ class HarfangGUIRenderer:
 
 
 				cls.uniforms_textures_list.push_back(hg.MakeUniformSetTexture("u_tex", tex, 0))
+				
+				if container["flag_overlay"]:
+					rs = cls.box_overlay_render_state
+				else:
+					rs = cls.box_render_state
 				
 				for vid in render_views_3D:
 					hg.DrawTriangles(vid, idx, cls.vtx, shader, cls.uniforms_values_list, cls.uniforms_textures_list, rs)
@@ -301,6 +306,11 @@ class HarfangGUIRenderer:
 
 
 					cls.uniforms_textures_list.push_back(hg.MakeUniformSetTexture("u_tex", tex, 0))
+					
+					if container["flag_overlay"]:
+						rs = cls.box_overlay_render_state
+					else:
+						rs = cls.box_render_state
 					
 					for vid in render_views_2D:
 						hg.DrawTriangles(vid, idx, cls.vtx, shader, cls.uniforms_values_list, cls.uniforms_textures_list, rs)
@@ -612,6 +622,7 @@ class HarfangUI:
 	HGUIWF_HideTitle = 0x4
 	HGUIWF_Invisible = 0x8
 	HGUIWF_HideScrollbars = 0x10
+	HGUIWF_Overlay = 0x20
 
 	# Frame datas (updated on each frame)
 
@@ -829,6 +840,10 @@ class HarfangUI:
 		container.update({
 			"flag_2D": False,
 			"flag_invisible": False,
+			"flag_overlay": False,
+			"flag_scrollbar_v": False,
+			"flag_scrollbar_h": False,
+			"flag_hide_scrollbars": False,
 			"children_order": [],
 			"pointers": {"mouse": cls.new_pointer("mouse")},
 			"sort_weight": 0,		# Sort weight = distance to camera-pointer ray for 3D windows. Sort weight = align position for 2D windows
@@ -842,9 +857,6 @@ class HarfangUI:
 			"frame_buffer_size": hg.iVec2(0, 0),
 			"scroll_position": hg.Vec3(0, 0, 0),	#Set with new_scroll_position at frame beginning
 			"new_scroll_position": hg.Vec3(0, 0, 0), #Next frame scroll position
-			"flag_scrollbar_v": False,
-			"flag_scrollbar_h": False,
-			"flag_hide_scrollbars": False,
 			"color_texture": None,
 			"depth_texture": None,
 			"frame_buffer": None,	#Widgets rendering frame buffer
@@ -1251,6 +1263,7 @@ class HarfangUI:
 		flag_hide_title = False if (window_flags & cls.HGUIWF_HideTitle) == 0 else True
 		flag_invisible = False if (window_flags & cls.HGUIWF_Invisible) == 0 else True
 		flag_hide_scrollbars = False if (window_flags & cls.HGUIWF_HideScrollbars) == 0 else True
+		flag_overlay = False if (window_flags & cls.HGUIWF_Overlay) == 0 else True
 
 		# If first parent window is 3D, Y is space relative, Y-increment is upside. Else, Y-increment is downside
 		pyf, rxf, rzf = 1, 1, 1
@@ -1276,6 +1289,7 @@ class HarfangUI:
 		widget["flag_hide_title"] = flag_hide_title
 		widget["flag_invisible"] = flag_invisible
 		widget["flag_hide_scrollbars"] = flag_hide_scrollbars
+		widget["flag_overlay"] = flag_overlay
 		
 		nsp = widget["new_scroll_position"]
 		sp = widget["scroll_position"]
