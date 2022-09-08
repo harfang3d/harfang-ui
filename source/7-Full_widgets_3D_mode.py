@@ -43,6 +43,8 @@ my_text2 = "Go"
 my_text3 = "Hello !"
 
 current_rib = 0
+toggle_btn_idx = 0
+toggle_image_idx = 0
 
 while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window): 
 	
@@ -107,13 +109,15 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             hgui.same_line()
             _, current_rib = hgui.radio_image_button("rib_3","textures/cube_4.png", current_rib, 3)
     
-            f, idx = hgui.toggle_button("Texts_toggle", ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], 100)
+            lbl_list = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            f, toggle_btn_idx = hgui.toggle_button("Texts_toggle", lbl_list, toggle_btn_idx, 100)
             if f:
-                print(str(idx))
+                print(str(toggle_btn_idx))
 
-            f, idx = hgui.toggle_image_button("arrows", ["textures/Button_Arrow_L.png", "textures/Button_Arrow_R.png"], hg.Vec2(50, 50))
+            tex_list = ["textures/Button_Arrow_L.png", "textures/Button_Arrow_R.png"]
+            f, toggle_image_idx = hgui.toggle_image_button("arrows", tex_list, toggle_image_idx, hg.Vec2(50, 50))
             if f:
-                print(str(idx))
+                print(str(toggle_image_idx))
 
             hgui.set_cursor_pos(hg.Vec3(500,200,0))
             

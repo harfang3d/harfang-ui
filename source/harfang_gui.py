@@ -1026,6 +1026,11 @@ class HarfangUI:
 		# VR controllers:
 		if cls.flag_vr:
 			VRControllersHandler.update_connected_controller()
+			for n in VRControllersHandler.controllers:
+				if n not in cls.controllers:
+					cls.controllers[n] = cls.new_controller(n)
+				cls.controllers[n]["enable"] = True if n in VRControllersHandler.connected_controllers else False
+		#Other controllers ?
 		else:
 			pass
 
@@ -2267,35 +2272,33 @@ class HarfangUI:
 		return mouse_click, current_idx
 
 	@classmethod
-	def toggle_button(cls, widget_id, texts: list, forced_text_width = None):
+	def toggle_button(cls, widget_id, texts: list, current_idx, forced_text_width = None):
 		widget = cls.get_widget("toggle_button", widget_id)
 		widget["components"]["texts"] = texts
 		widget["components"]["toggle_button_box"]["forced_text_width"] = forced_text_width
+		widget["toggle_idx"] = min(len(texts)-1, current_idx)
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
-			widget["toggle_idx"] += 1
-			if widget["toggle_idx"] >= len(texts):
-				widget["toggle_idx"] = 0
+			current_idx = (current_idx + 1) % len(texts)
 		widget["components"]["toggle_button_box"]["text"] = widget["components"]["texts"][widget["toggle_idx"]]
 		widget["position"] = cls.get_cursor_position()
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
-		return mouse_click, widget["toggle_idx"]
+		return mouse_click, current_idx
 
 	@classmethod
-	def toggle_image_button(cls, widget_id, textures_paths: list, image_size: hg.Vec2):
+	def toggle_image_button(cls, widget_id, textures_paths: list, current_idx, image_size: hg.Vec2):
 		widget = cls.get_widget("toggle_image_button", widget_id)
 		mouse_click = False
+		widget["toggle_idx"] = min(len(textures_paths)-1, current_idx)
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
-			widget["toggle_idx"] += 1
-			if widget["toggle_idx"] >= len(textures_paths):
-				widget["toggle_idx"] = 0
+			current_idx = (current_idx + 1) % len(textures_paths)
 		widget["position"] = cls.get_cursor_position()
 		widget["components"]["toggle_image_button"]["size"].x = image_size.x
 		widget["components"]["toggle_image_button"]["size"].y = image_size.y
 		widget["components"]["toggle_image_button"]["textures"] = textures_paths
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
-		return mouse_click, widget["toggle_idx"]
+		return mouse_click, current_idx
