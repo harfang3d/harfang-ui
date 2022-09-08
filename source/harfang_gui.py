@@ -54,7 +54,7 @@ class HarfangGUIRenderer:
 		for i in range(len(fonts_files)):
 			cls.fonts.append(hg.LoadFontFromAssets('font/' + fonts_files[i], fonts_sizes[i], 1024, 1, 
 			"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"))
-		cls.font_prg = hg.LoadProgramFromAssets('core/shader/font')
+		cls.font_prg = hg.LoadProgramFromAssets('hgui_shaders/hgui_font')
 		cls.current_font_id = 0
 
 		# text uniforms and render state
