@@ -1177,5 +1177,242 @@
                 }
             }
         ]
+    },
+
+    "toggle_image_button_box_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            0.5
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            },
+            {
+                "operator": "add",
+                "default_state": "unselected",
+                "states": {
+                    "unselected": {
+                        "value": [
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "delay": 0.15
+                    },
+                    "selected": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            0
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+    "toggle_image_button_offset": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "offset",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "unselected",
+                "states": {
+                    "unselected": {
+                        "value": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "selected": {
+                        "value": [
+                            0,
+                            -10,
+                            0
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "toggle_image_button_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "size",
+            "factor": 2,
+            "operator": "add"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+    "toggle_image_button_border_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            0.2,
+                            0.2,
+                            0.2,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            },
+            {
+                "operator": "add",
+                "default_state": "unselected",
+                "states": {
+                    "unselected": {
+                        "value": [
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "selected": {
+                        "value": [
+                            0.3,
+                            0.3,
+                            0.3,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    
+    "toggle_image_button_border_thickness": {
+        "type": "float",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 1,
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": 1,
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+
+    "toggle_image_button_texture_box_color": {
+        "type": "color",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
     }
 }
