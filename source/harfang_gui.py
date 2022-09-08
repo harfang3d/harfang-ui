@@ -389,6 +389,10 @@ class HarfangUISkin:
 			"radio_image_button": {
 				"texture": None,
 				"properties": ["radio_image_offset","radio_button_image_margins", "radio_button_box_color", "texture_box_color", "radio_image_border_color", "radio_image_border_thickness"]
+				},
+			"toggle_image_button": {
+				"textures": None,
+				"properties": ["toggle_image_button_offset","toggle_image_button_margins", "toggle_image_button_box_color", "toggle_image_button_texture_box_color", "toggle_image_button_border_color", "toggle_image_button_border_thickness"]
 				}
 		}
 
@@ -402,7 +406,8 @@ class HarfangUISkin:
 			"image_button": {"components": ["image_button"]},
 			"check_box": {"components": ["check_box", "label_box"]},
 			"input_text": {"components": ["label_box", "input_box"]},
-			"radio_image_button": {"components": ["radio_image_button"], "radio_idx": 0}
+			"radio_image_button": {"components": ["radio_image_button"], "radio_idx": 0},
+			"toggle_image_button": {"components": ["toggle_image_button"], "toggle_idx": 0}
 		}
 
 
@@ -1738,6 +1743,13 @@ class HarfangUI:
 				HarfangGUISceneGraph.add_texture_box(matrix, cpos + margins, component["size"] - margins * 2, cls.get_property_value(component,"texture_box_color") * opacity, component["texture"])
 				HarfangGUISceneGraph.add_box_border(matrix, cpos, component["size"], cls.get_property_value(component,"radio_image_border_thickness"), cls.get_property_value(component,"radio_image_border_color"))
 			
+			elif component["type"] == "toggle_image_button":
+				margins = cls.get_property_value(component,"toggle_image_button_margins")
+				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"toggle_image_button_box_color") * opacity)
+				HarfangGUISceneGraph.add_texture_box(matrix, cpos + margins, component["size"] - margins * 2, cls.get_property_value(component,"toggle_image_button_texture_box_color") * opacity, component["textures"][widget["toggle_idx"]])
+				HarfangGUISceneGraph.add_box_border(matrix, cpos, component["size"], cls.get_property_value(component,"toggle_image_button_border_thickness"), cls.get_property_value(component,"toggle_image_button_border_color") )
+
+
 			elif component["type"] == "info_image":
 				margins = cls.get_property_value(component,"info_image_margins")
 				HarfangGUISceneGraph.add_texture_box(matrix, cpos + margins, component["size"] - margins * 2, cls.get_property_value(component,"texture_box_color") * opacity, component["texture"])
@@ -2224,3 +2236,20 @@ class HarfangUI:
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
 		return mouse_click, current_idx
+
+	@classmethod
+	def toggle_image_button(cls, widget_id, textures_paths, image_size: hg.Vec2):
+		widget = cls.get_widget("toggle_image_button", widget_id)
+		mouse_click = False
+		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
+			mouse_click = True
+			widget["toggle_idx"] += 1
+			if widget["toggle_idx"] >= len(textures_paths):
+				widget["toggle_idx"] = 0
+		widget["position"] = cls.get_cursor_position()
+		widget["components"]["toggle_image_button"]["size"].x = image_size.x
+		widget["components"]["toggle_image_button"]["size"].y = image_size.y
+		widget["components"]["toggle_image_button"]["textures"] = textures_paths
+		cls.update_widget_components(widget)
+		cls.update_cursor(widget)
+		return mouse_click, widget["toggle_idx"]
