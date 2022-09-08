@@ -2280,11 +2280,12 @@ class HarfangUI:
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
+			current_idx = (current_idx + 1) % len(texts)
 		widget["components"]["toggle_button_box"]["text"] = widget["components"]["texts"][widget["toggle_idx"]]
 		widget["position"] = cls.get_cursor_position()
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
-		return mouse_click, (current_idx + 1 if mouse_click else 0) % len(texts)
+		return mouse_click, current_idx
 
 	@classmethod
 	def toggle_image_button(cls, widget_id, textures_paths: list, current_idx, image_size: hg.Vec2):
@@ -2293,10 +2294,11 @@ class HarfangUI:
 		widget["toggle_idx"] = min(len(textures_paths)-1, current_idx)
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
+			current_idx = (current_idx + 1) % len(textures_paths)
 		widget["position"] = cls.get_cursor_position()
 		widget["components"]["toggle_image_button"]["size"].x = image_size.x
 		widget["components"]["toggle_image_button"]["size"].y = image_size.y
 		widget["components"]["toggle_image_button"]["textures"] = textures_paths
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
-		return mouse_click, (current_idx + 1 if mouse_click else 0) % len(textures_paths)
+		return mouse_click, current_idx
