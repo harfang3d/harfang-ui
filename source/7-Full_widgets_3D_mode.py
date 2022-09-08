@@ -70,7 +70,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 	
     if hgui.begin_frame(dt, mouse, keyboard, width, height, camera):
 
-        if hgui.begin_window("my_window", hg.Vec3(-5, 5.65, 10), hg.Vec3(0, 0, 0), hg.Vec3(1280, 720, 0), 10/1280, hgui.HGUIWF_Invisible ):
+        if hgui.begin_window("my_window", hg.Vec3(-5, 5.65, 10), hg.Vec3(0, 0, 0), hg.Vec3(1280, 720, 0), 10/1280 ):
             
             hgui.set_line_space_size(10)
 
@@ -120,7 +120,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             if hgui.button_image("image_1", "textures/logo.png", hg.Vec2(221, 190) / 4):
                 print("click image button")
             
-            if hgui.begin_window("my_window_2", hg.Vec3(700, 100, -100), hg.Deg3(0, 0, 0), hg.Vec3(400, 600, 0), 1 ):
+            if hgui.begin_window("my_window_2", hg.Vec3(700, 100, -100), hg.Deg3(0, 0, 0), hg.Vec3(400, 600, 0), 1, hgui.HGUIWF_Overlay):
                 if hgui.button("Hello button 3"):
                     print("Click btn 3")
                 if hgui.begin_window_2D("my_window_2.1", hg.Vec2(50, 100), hg.Vec2(200, 100), 1 ):
