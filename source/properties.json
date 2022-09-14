@@ -516,6 +516,46 @@
             }
         ]
     },
+    "button_image_texture_scale": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "content_scale",
+            "factor": 1,
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            1,
+                            1,
+                            1
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            1.5,
+                            1.5,
+                            1
+                        ],
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            2,
+                            2,
+                            1
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
     "info_image_margins": {
         "type": "vec3",
         "linked_value": {
