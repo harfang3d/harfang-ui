@@ -384,7 +384,8 @@ class HarfangUISkin:
 				},
 			"image_button": {
 				"texture": None,
-				"properties": ["button_offset", "button_image_margins", "button_box_color", "texture_box_color", "widget_border_thickness", "widget_border_color"]
+				"texture_size": hg.Vec2(1, 1),
+				"properties": ["button_image_texture_scale","button_offset", "button_image_margins", "button_box_color", "texture_box_color", "widget_border_thickness", "widget_border_color"]
 				},
 			"check_box":{
 				"texture": "hgui_textures/check.png",
@@ -745,6 +746,7 @@ class HarfangUI:
 	def new_controller(cls, id):
 		return {
 			"id": id,
+			"enabled": True,
 			"ray_p0": None, #Vec3, position
 			"ray_p1": None, #vec3, direction
 			"world_intersection": None, #Vec3
@@ -762,7 +764,7 @@ class HarfangUI:
 			"world_matrix": None,
 			"position": hg.Vec3(0, 0, 0),
 			"rotation": hg.Vec3(0, 0, 0),
-			"scale": hg.Vec3(1, 1, 1),
+			"scale": hg.Vec3(1, 1, 1),	#Global scale, used to compute final render matrix
 			"offset": hg.Vec3(0, 0, 0),
 			"size": hg.Vec3(0, 0, 0),
 			"states": []
@@ -776,6 +778,7 @@ class HarfangUI:
 			{
 				"properties" : {},
 				"cursor_auto": True,	#False if cursor is not incremented in widget rendering
+				"content_scale": hg.Vec3(1, 1, 1), # Generaly used for scaling content but margins and offset.
 				"size_factor": hg.Vec3(-1, -1, -1) # Size linked to container size. factor <= 0 : no proportional size correction. factor > 0 : size = max(component_size * factor, container_size) 
 			}
 		)
@@ -1557,8 +1560,13 @@ class HarfangUI:
 
 	@classmethod
 	def update_component_properties(cls, widget, component):
+		
+		# Compute content size
 		flag_text = False
 		text_field = ""
+		if "texture_size" in component:
+			component["size"].x = component["texture_size"].x
+			component["size"].y = component["texture_size"].y
 		if "display_text" in component:
 			text_field = component["display_text"]
 			flag_text = True
@@ -1571,6 +1579,10 @@ class HarfangUI:
 				component["size"] *= component["text_size"]
 			component["display_text_size"].x, component["display_text_size"].y = component["size"].x, component["size"].y #Keep the string size for special displays (keyboard cursor for inputs widgets...)
 		
+		# Applies content scale, before properties modifies size:
+		component["size"] *= component["content_scale"]
+
+		# Applies properties
 		for property_name, component_property in component["properties"].items():
 			if property_name in HarfangUISkin.properties:
 				class_property = HarfangUISkin.properties[property_name]
@@ -2141,8 +2153,8 @@ class HarfangUI:
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
 		widget["position"] = cls.get_cursor_position()
-		widget["components"]["image_button"]["size"].x = image_size.x
-		widget["components"]["image_button"]["size"].y = image_size.y
+		widget["components"]["image_button"]["texture_size"].x = image_size.x
+		widget["components"]["image_button"]["texture_size"].y = image_size.y
 		widget["components"]["image_button"]["texture"] = texture_path
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
