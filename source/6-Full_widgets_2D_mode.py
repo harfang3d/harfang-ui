@@ -18,6 +18,8 @@ render_data = hg.SceneForwardPipelineRenderData()
 # Setup HarfangGUI
 
 hgui.init(["default.ttf"], [20], width, height)
+hgui.set_line_space_size(5)
+hgui.set_inner_line_space_size(5)
 
 # Setup inputs
 
@@ -33,6 +35,7 @@ flag_check_box31 = True
 my_text2 = "Go"
 my_text31 = "Hello"
 current_rib = 0
+toggle_idx = 0
 
 while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window): 
 	
@@ -44,7 +47,6 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 	mouse.Update()
 	view_id = 0
 	
-
 	if hgui.begin_frame(dt, mouse, keyboard, width, height):
 
 		if hgui.begin_window_2D("My window",  hg.Vec2(50, 50), hg.Vec2(1124, 600), 1):
@@ -63,8 +65,24 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 
 			f, my_text = hgui.input_text("Input text")
 
-			if hgui.button("Hello button 1"):
+			align = hgui.HGUIAF_CENTER
+			if hgui.button("Hello button 1", align):
 				print("Click btn 1")
+			hgui.same_line()
+			if hgui.button("Hello button 2", align):
+				print("Click btn 2")
+			hgui.same_line()
+			if hgui.button("Hello button 22", align):
+				print("Click btn 22")
+
+			if hgui.button("Hello button 3", align):
+				print("Click btn 3")
+			hgui.same_line()
+			if hgui.button("Hello button 4", align):
+				print("Click btn 4")
+			hgui.same_line()
+			if hgui.button("Hello button 23", align):
+				print("Click btn 23")
 			
 			
 			_, current_rib = hgui.radio_image_button("rib_0","textures/cube_1.png", current_rib, 0, hg.Vec2(64, 64))
@@ -75,31 +93,31 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 			hgui.same_line()
 			_, current_rib = hgui.radio_image_button("rib_3","textures/cube_4.png", current_rib, 3)
 			
-			f, idx = hgui.toggle_image_button("arrows", ["textures/Button_Arrow_L.png", "textures/Button_Arrow_R.png"], hg.Vec2(50, 50))
+			f, toggle_idx = hgui.toggle_image_button("arrows", ["textures/Button_Arrow_L.png", "textures/Button_Arrow_R.png"], toggle_idx, hg.Vec2(50, 50))
 			if f:
-				print(str(idx))
+				print(str(toggle_idx))
 
 
 			hgui.set_cursor_pos(hg.Vec3(500,200,0))
 			
-			if hgui.button_image("image_1", "textures/logo.png", hg.Vec2(221, 190) / 4):
+			if hgui.button_image("image_1", "textures/logo.png", hg.Vec2(221, 190) / 4, align):
 				print("click image button")
 			
 			if hgui.begin_window_2D("my_window_2", hg.Vec2(650, 100), hg.Vec2(400, 400), 1, hgui.HGUIWF_NoPointerMove ):
-				if hgui.button("Hello button 3"):
-					print("Click btn 3")
+				if hgui.button("Hello button 5"):
+					print("Click btn 5")
 				if hgui.begin_window_2D("my_window_2.1", hg.Vec2(50, 100), hg.Vec2(200, 100), 1 ):
 					f, d = hgui.check_box("Check box 2", flag_check_box2)
 					if f:
 						flag_check_box2 = d
 					f, my_text2 = hgui.input_text("Input text 2", my_text2)
-					if hgui.button("My button 4"):
-						print("click btn 4")
+					if hgui.button("My button 6"):
+						print("click btn 6")
 					hgui.end_window()
 
 				if hgui.begin_window_2D("my_window_2.2", hg.Vec2(70, 130), hg.Vec2(200, 100), 1, hgui.HGUIWF_HideTitle ):
-					if hgui.button("My button 5"):
-						print("click btn 5")
+					if hgui.button("My button 7"):
+						print("click btn 7")
 					hgui.end_window()
 
 				hgui.end_window()
