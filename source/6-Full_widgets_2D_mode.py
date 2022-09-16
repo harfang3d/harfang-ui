@@ -98,9 +98,9 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 				print(str(toggle_idx))
 
 
-			hgui.set_cursor_pos(hg.Vec3(500,200,0))
+			hgui.set_cursor_pos(hg.Vec3(400,200,0))
 			
-			if hgui.button_image("image_1", "textures/logo.png", hg.Vec2(221, 190) / 4, align):
+			if hgui.button_image("image_1", "textures/logo.png", hg.Vec2(221, 190) / 6, hgui.HGUI_LABEL_HIDE, align):
 				print("click image button")
 			
 			if hgui.begin_window_2D("my_window_2", hg.Vec2(650, 100), hg.Vec2(400, 400), 1, hgui.HGUIWF_NoPointerMove ):

@@ -421,7 +421,7 @@ class HarfangUISkin:
 			"info_text" : {"components": ["info_text"]},
 			"info_image" : {"components": ["info_image"]},
 			"button": {"components": ["button_box"]},
-			"image_button": {"components": ["image_button"]},
+			"image_button": {"components": ["image_button", "label_box"]},
 			"check_box": {"components": ["check_box", "label_box"]},
 			"input_text": {"components": ["label_box", "input_box"]},
 			"radio_image_button": {"components": ["radio_image_button"], "radio_idx": 0},
@@ -621,12 +621,13 @@ class HarfangUI:
 	HGUIAF_CENTER = 0
 	HGUIAF_TOP = 1
 	HGUIAF_BOTTOM = 2
-	HGUIAF_LEFT = 4
-	HGUIAF_RIGHT = 8
-	HGUIAF_TOPLEFT = 9
-	HGUIAF_TOPRIGHT = 10
-	HGUIAF_BOTTOMLEFT = 11
-	HGUIAF_BOTTOMRIGHT = 12
+	HGUIAF_LEFT = 3
+	HGUIAF_RIGHT = 4
+	HGUIAF_TOPLEFT = 5
+	HGUIAF_TOPRIGHT = 6
+	HGUIAF_BOTTOMLEFT = 7
+	HGUIAF_BOTTOMRIGHT = 8
+	
 
 	# Windows flags:
 	HGUIWF_2D = 0x1
@@ -790,6 +791,7 @@ class HarfangUI:
 			{
 				"properties" : {},
 				"cursor_auto": True,	#False if cursor is not incremented in widget rendering
+				"align": cls.HGUIAF_CENTER, #Only usefull when widget is composed of more than 1 component
 				"content_scale": hg.Vec3(1, 1, 1), # Generaly used for scaling content but margins and offset.
 				"size_factor": hg.Vec3(-1, -1, -1) # Size linked to container size. factor <= 0 : no proportional size correction. factor > 0 : size = max(component_size * factor, container_size) 
 			}
@@ -1665,9 +1667,15 @@ class HarfangUI:
 			cursor_pos = widget["cursor_start_line"]
 		widget["cursor"].x, widget["cursor"].y, widget["cursor"].z = cursor_pos.x, cursor_pos.y, cursor_pos.z
 		for component in widget["components_render_order"]:
-			if component["cursor_auto"]:
-				component["position"] = hg.Vec3(widget["cursor"])
 			cls.update_component_properties(widget, component)
+
+			if component["cursor_auto"]:
+				#ALIGN_TOP
+				component["position"] = hg.Vec3(widget["cursor"])
+				if component["align"] == cls.HGUIAF_CENTER:
+					component["position"].y = (widget["size"].y - component["size"].y) / 2
+				elif component["align"] == cls.HGUIAF_BOTTOM:
+					component["position"].y = widget["size"].y - component["size"].y
 			
 			#update widget size:
 			cmnx = component["position"].x if component["offset"].x > 0 else component["position"].x + component["offset"].x
@@ -2200,7 +2208,7 @@ class HarfangUI:
 		return mouse_click	
 
 	@classmethod
-	def button_image(cls, widget_id, texture_path, image_size: hg.Vec2, align:int = HGUIAF_CENTER ):
+	def button_image(cls, widget_id, texture_path, image_size: hg.Vec2, label_align:int = HGUI_CAF_RIGHT, align:int = HGUIAF_CENTER ):
 		widget = cls.get_widget("image_button", widget_id, align)
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
@@ -2209,6 +2217,8 @@ class HarfangUI:
 		widget["components"]["image_button"]["texture_size"].x = image_size.x
 		widget["components"]["image_button"]["texture_size"].y = image_size.y
 		widget["components"]["image_button"]["texture"] = texture_path
+		widget["components"]["label_box"]["label"] = cls.get_label_from_id(widget_id)
+		widget["components"]["label_box"]["align"] = label_align
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
 		return mouse_click
@@ -2224,7 +2234,7 @@ class HarfangUI:
 		cls.update_cursor(widget)
 
 	@classmethod
-	def check_box(cls, widget_id, checked: bool, align:int = HGUIAF_CENTER):
+	def check_box(cls, widget_id, checked: bool, label_align:int = HGUI_CAF_RIGHT, align:int = HGUIAF_CENTER):
 		widget = cls.get_widget("check_box", widget_id, align)
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
@@ -2237,6 +2247,7 @@ class HarfangUI:
 			cls.set_widget_state(widget,"unchecked")
 		
 		widget["components"]["label_box"]["label"] = cls.get_label_from_id(widget_id)
+		widget["components"]["label_box"]["align"] = label_align
 		widget["position"] = cls.get_cursor_position()
 		
 		cls.update_widget_components(widget)
