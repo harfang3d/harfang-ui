@@ -498,24 +498,24 @@
                 "states": {
                     "idle": {
                         "value": [
-                            5,
-                            5,
+                            2,
+                            2,
                             0
                         ],
                         "delay": 0.2
                     },
                     "mouse_hover": {
                         "value": [
-                            7.5,
-                            7.5,
+                            2,
+                            2,
                             0
                         ],
                         "delay": 0.15
                     },
                     "MLB_down": {
                         "value": [
-                            5,
-                            5,
+                            2,
+                            2,
                             0
                         ],
                         "delay": 0.05
@@ -546,16 +546,16 @@
                     },
                     "mouse_hover": {
                         "value": [
-                            1.5,
-                            1.5,
+                            1.1,
+                            1.1,
                             1
                         ],
                         "delay": 0.15
                     },
                     "MLB_down": {
                         "value": [
-                            2,
-                            2,
+                            1.2,
+                            1.2,
                             1
                         ],
                         "delay": 0.05

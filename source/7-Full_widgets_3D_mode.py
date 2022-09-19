@@ -88,7 +88,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 
             hgui.image("img1", "textures/logo.png", hg.Vec2(221, 190))
 
-            f, my_text = hgui.input_text("Input text")
+            f, my_text = hgui.input_text("Input text",stacking = hgui.HGUI_STACK_VERTICAL, align = hgui.HGUIAF_LEFT, components_order = hgui.HGUI_ORDER_DEFAULT)
 
             if hgui.button("Hello button 1"):
                 print("Click btn 1")
@@ -121,7 +121,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 
             hgui.set_cursor_pos(hg.Vec3(500,200,0))
             
-            if hgui.button_image("image_1", "textures/logo.png", hg.Vec2(221, 190) / 4):
+            if hgui.button_image("image_1", "textures/logo.png", hg.Vec2(221, 190) / 4, stacking = hgui.HGUI_STACK_HORIZONTAL, align = hgui.HGUIAF_CENTER, components_order = hgui.HGUI_ORDER_REVERSE):
                 print("click image button")
             
             if hgui.begin_window("my_window_2", hg.Vec3(700, 100, -100), hg.Deg3(0, 0, 0), hg.Vec3(400, 600, 0), 1, hgui.HGUIWF_Overlay):
@@ -148,7 +148,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             
         if hgui.begin_window_2D("my_window_2D_1", hg.Vec2(10, 10), hg.Vec2(200, 300), 1 ):
             hgui.set_line_space_size(20)
-            f, d = hgui.check_box("Check box 3", flag_check_box3)
+            f, d = hgui.check_box("Check box 3", flag_check_box3, stacking = hgui.HGUI_STACK_HORIZONTAL, align = hgui.HGUIAF_CENTER)
             if f:
                 flag_check_box3 = d
             f, my_text3 = hgui.input_text("Input text 3", my_text3)
