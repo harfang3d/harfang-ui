@@ -664,6 +664,7 @@ class HarfangUI:
 	UI_STATE_MAIN = 0 # Widgets mouse hovering / mouse click / keyboard shortcuts
 	UI_STATE_WIDGET_KEYBOARD_FOCUS = 1 # The content of a widget is being edited (Text input)
 	UI_STATE_WIDGET_MOUSE_FOCUS = 2 # A widget is using mouse (Scrollbar...)
+	UI_STATE_MOUSE_DOWN_OUT = 3 # Mouse down out of hgui windows, another api can keep the mouse control even if pointer hover any hgui window
 	
 	ui_state = 0
 
@@ -752,6 +753,7 @@ class HarfangUI:
 		if cls.ui_state == cls.UI_STATE_WIDGET_MOUSE_FOCUS or "MLB_pressed" in cls.new_signals:
 			return True
 		return False
+
 	@classmethod
 	def want_capture_keyboard(cls):
 		if cls.ui_state == cls.UI_STATE_WIDGET_KEYBOARD_FOCUS:
@@ -1100,6 +1102,8 @@ class HarfangUI:
 		# - Permet de déterminer le state en fonction de la localisation du pointeur (DOWN sur un widget != DOWN hors widget)
 		if cls.mouse.Down(hg.MB_0):
 			cls.send_signal("MLB_down")
+		elif cls.ui_state == cls.UI_STATE_MOUSE_DOWN_OUT:
+			cls.set_ui_state(cls.UI_STATE_MAIN)
 		cls.reset_main_containers()
 		HarfangGUISceneGraph.clear()
 		
@@ -1145,6 +1149,8 @@ class HarfangUI:
 		# - Permet de déterminer le state en fonction de la localisation du pointeur (DOWN sur un widget != DOWN hors widget)
 		if cls.mouse.Down(hg.MB_0):
 			cls.send_signal("MLB_down")
+		elif cls.ui_state == cls.UI_STATE_MOUSE_DOWN_OUT:
+			cls.set_ui_state(cls.UI_STATE_MAIN)
 		cls.reset_main_containers()
 		HarfangGUISceneGraph.clear()
 
@@ -1159,6 +1165,7 @@ class HarfangUI:
 		cls.update_align_positions(cls.main_widgets_container_2D, 0)
 		cls.update_align_positions(cls.main_widgets_container_3D, 0)
 		cls.update_widgets_inputs()
+		print(cls.ui_state)
 
 		#2D display
 		p = hg.GetT(cls.camera2D_matrix) + hg.Vec3(cls.width / 2, -cls.height / 2, 0)
@@ -1990,6 +1997,8 @@ class HarfangUI:
 	def update_widgets_inputs(cls):
 		
 		cls.focussed_containers = []
+		if cls.ui_state == cls.UI_STATE_MOUSE_DOWN_OUT:
+			return
 
 		focussed_container = cls.raycast_pointer_position("mouse")
 		
@@ -2034,7 +2043,10 @@ class HarfangUI:
 			if "MLB_pressed" in cls.current_signals:
 				cls.set_widget_state(focussed_container, "focus")
 				cls.set_container_align_front(focussed_container)
-				
+		
+
+		elif "MLB_pressed" in cls.new_signals:
+			cls.set_ui_state(cls.UI_STATE_MOUSE_DOWN_OUT)
 		# Unfocus containers
 		w_containers = HarfangGUISceneGraph.widgets_containers2D_user_order + HarfangGUISceneGraph.widgets_containers3D_user_order
 
