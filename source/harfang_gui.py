@@ -1004,7 +1004,8 @@ class HarfangUI:
 			widget["flag_new"] = False
 		if args is not None:
 			for k, v in args.items():
-				widget[k] = v
+				if k in widget:
+					widget[k] = v
 		cls.add_widget_to_render_list(widget)
 		return widget
 
@@ -1701,6 +1702,8 @@ class HarfangUI:
 
 		for component_idx in range(idx_s, idx_e, stp):
 			component = widget["components_render_order"][component_idx]
+			if component["hidden"]:
+				continue
 			cls.update_component_properties(widget, component)
 			if component["cursor_auto"]:
 				#Component positionning:
@@ -1864,6 +1867,9 @@ class HarfangUI:
 			scroll_pos = hg.Vec3.Zero
 
 		for component in widget["components_render_order"]:
+			
+			if component["hidden"]:
+				continue
 
 			cpos = component["position"] + component["offset"] + scroll_pos
 			
@@ -2265,6 +2271,10 @@ class HarfangUI:
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
 		widget["position"] = cls.get_cursor_position()
+		if "show_label" in args:
+			widget["components"]["label_box"]["hidden"] = not args["show_label"]
+		else:
+			widget["components"]["label_box"]["hidden"] = True
 		widget["components"]["image_button"]["texture_size"].x = image_size.x
 		widget["components"]["image_button"]["texture_size"].y = image_size.y
 		widget["components"]["image_button"]["texture"] = texture_path
@@ -2296,6 +2306,11 @@ class HarfangUI:
 		else:
 			cls.set_widget_state(widget,"unchecked")
 		
+		if "show_label" in args:
+			widget["components"]["label_box"]["hidden"] = not args["show_label"]
+		else:
+			widget["components"]["label_box"]["hidden"] = False
+
 		widget["components"]["label_box"]["label"] = cls.get_label_from_id(widget_id)
 		widget["position"] = cls.get_cursor_position()
 		
@@ -2311,6 +2326,11 @@ class HarfangUI:
 			widget["components"]["input_box"]["text"] = text
 		
 		flag_changed = cls.update_edit_string(widget, "input_box")
+
+		if "show_label" in args:
+			widget["components"]["label_box"]["hidden"] = not args["show_label"]
+		else:
+			widget["components"]["label_box"]["hidden"] = False
 
 		widget["position"] = cls.get_cursor_position()
 		widget["components"]["label_box"]["label"] = cls.get_label_from_id(widget_id)
