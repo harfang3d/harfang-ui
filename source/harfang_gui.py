@@ -617,6 +617,15 @@ class HarfangUI:
 
 	output_framebuffer_2D = None
 
+	# Cursor stacking:
+
+	HGUI_STACK_HORIZONTAL = 0
+	HGUI_STACK_VERTICAL = 1
+
+	# Components order
+	HGUI_ORDER_DEFAULT = 0
+	HGUI_ORDER_REVERSE = 1
+
 	# Widgets alignments flags
 	HGUIAF_CENTER = 0
 	HGUIAF_TOP = 1
@@ -791,7 +800,6 @@ class HarfangUI:
 			{
 				"properties" : {},
 				"cursor_auto": True,	#False if cursor is not incremented in widget rendering
-				"align": cls.HGUIAF_CENTER, #Only usefull when widget is composed of more than 1 component
 				"content_scale": hg.Vec3(1, 1, 1), # Generaly used for scaling content but margins and offset.
 				"size_factor": hg.Vec3(-1, -1, -1) # Size linked to container size. factor <= 0 : no proportional size correction. factor > 0 : size = max(component_size * factor, container_size) 
 			}
@@ -831,6 +839,7 @@ class HarfangUI:
 			"flag_update_rest_size": True, #True if widget rest size must be updated (e.g.: input strings)
 			"rest_size": hg.Vec3(0, 0, 0), #widget reference size used for positionning (center)
 			"align": cls.HGUIAF_CENTER,
+			"stacking": cls.HGUI_STACK_HORIZONTAL,
 			"cursor": hg.Vec3(0, 0, 0),
 			"cursor_start_line": hg.Vec3(0, 0, 0),
 			"default_cursor_start_line": hg.Vec3(0, 0, 0),
@@ -839,6 +848,7 @@ class HarfangUI:
 			"max_size": hg.Vec3(0, 0, 0), # Used for window worksapce computation (scroll bars...)
 			"components": {},
 			"components_render_order": [],
+			"components_order": cls.HGUI_ORDER_DEFAULT,
 			"parent_id": None # Parent container ID
 		})
 		return widget
@@ -858,6 +868,7 @@ class HarfangUI:
 		container = cls.new_single_widget(type)
 		container["classe"] = "widgets_container"
 		container.update({
+			"stacking": cls.HGUI_STACK_VERTICAL,
 			"flag_2D": False,
 			"flag_invisible": False,
 			"flag_overlay": False,
@@ -983,7 +994,7 @@ class HarfangUI:
 
 
 	@classmethod
-	def get_widget(cls, widget_type, widget_id, align:int = HGUIAF_CENTER):
+	def get_widget(cls, widget_type, widget_id, args:dict = None):
 		if not widget_id in cls.widgets:
 			widget = cls.create_widget(widget_type, widget_id)
 			widget["flag_new"] = True
@@ -991,7 +1002,9 @@ class HarfangUI:
 		else:
 			widget = cls.widgets[widget_id]
 			widget["flag_new"] = False
-		widget["align"] = align
+		if args is not None:
+			for k, v in args.items():
+				widget[k] = v
 		cls.add_widget_to_render_list(widget)
 		return widget
 
@@ -1661,22 +1674,55 @@ class HarfangUI:
 	def update_widget_components(cls, widget):
 		mn = hg.Vec3(inf, inf, inf)
 		mx = hg.Vec3(-inf, -inf, -inf)
+		cp = widget["cursor"]
 		if widget["classe"] == "widgets_container":
-			cursor_pos = hg.Vec3.Zero
+			cp.x, cp.y, cp.z = 0, 0, 0
 		else:
-			cursor_pos = widget["cursor_start_line"]
-		widget["cursor"].x, widget["cursor"].y, widget["cursor"].z = cursor_pos.x, cursor_pos.y, cursor_pos.z
-		for component in widget["components_render_order"]:
-			cls.update_component_properties(widget, component)
-
-			if component["cursor_auto"]:
-				#ALIGN_TOP
-				component["position"] = hg.Vec3(widget["cursor"])
-				if component["align"] == cls.HGUIAF_CENTER:
-					component["position"].y = (widget["size"].y - component["size"].y) / 2
-				elif component["align"] == cls.HGUIAF_BOTTOM:
-					component["position"].y = widget["size"].y - component["size"].y
+			if widget["stacking"] == cls.HGUI_STACK_HORIZONTAL:
+				if widget["align"] == cls.HGUIAF_CENTER or widget["align"] == cls.HGUIAF_LEFT or widget["align"] == cls.HGUIAF_RIGHT:
+					cp.x, cp.y, cp.z = 0, widget["size"].y / 2, 0
+				elif widget["align"] == cls.HGUIAF_TOP or widget["align"] == cls.HGUIAF_TOPLEFT or widget["align"] == cls.HGUIAF_TOPRIGHT:
+					cp.x, cp.y, cp.z = 0, 0, 0
+				elif widget["align"] == cls.HGUIAF_BOTTOM or widget["align"] == cls.HGUIAF_BOTTOMLEFT or widget["align"] == cls.HGUIAF_BOTTOMRIGHT:
+					cp.x, cp.y, cp.z = 0, widget["size"].y, 0
 			
+			elif widget["stacking"] == cls.HGUI_STACK_VERTICAL:
+				if widget["align"] == cls.HGUIAF_CENTER or widget["align"] == cls.HGUIAF_TOP or widget["align"] == cls.HGUIAF_BOTTOM:
+					cp.x, cp.y, cp.z = widget["size"].x / 2, 0, 0
+				elif widget["align"] == cls.HGUIAF_LEFT or widget["align"] == cls.HGUIAF_TOPLEFT or widget["align"] == cls.HGUIAF_BOTTOMLEFT:
+					cp.x, cp.y, cp.z = 0, 0, 0
+				elif widget["align"] == cls.HGUIAF_RIGHT or widget["align"] == cls.HGUIAF_TOPRIGHT or widget["align"] == cls.HGUIAF_BOTTOMRIGHT:
+					cp.x, cp.y, cp.z = widget["size"].x, 0, 0
+
+		if widget["components_order"] == cls.HGUI_ORDER_DEFAULT:
+			idx_s, idx_e, stp = 0, len(widget["components_render_order"]), 1
+		elif widget["components_order"] == cls.HGUI_ORDER_REVERSE:
+			idx_s, idx_e, stp = len(widget["components_render_order"])-1, -1, -1
+
+		for component_idx in range(idx_s, idx_e, stp):
+			component = widget["components_render_order"][component_idx]
+			cls.update_component_properties(widget, component)
+			if component["cursor_auto"]:
+				#Component positionning:
+				comp_pos = component["position"]
+				comp_size = component["size"]
+
+				if widget["stacking"] == cls.HGUI_STACK_HORIZONTAL:
+					if widget["align"] == cls.HGUIAF_CENTER or widget["align"] == cls.HGUIAF_LEFT or widget["align"] == cls.HGUIAF_RIGHT:
+						comp_pos.x, comp_pos.y, comp_pos.z = cp.x, cp.y - comp_size.y / 2, cp.z
+					elif widget["align"] == cls.HGUIAF_TOP or widget["align"] == cls.HGUIAF_TOPLEFT or widget["align"] == cls.HGUIAF_TOPRIGHT:
+						comp_pos.x, comp_pos.y, comp_pos.z = cp.x, cp.y, cp.z
+					elif widget["align"] == cls.HGUIAF_BOTTOM or widget["align"] == cls.HGUIAF_BOTTOMLEFT or widget["align"] == cls.HGUIAF_BOTTOMRIGHT:
+						comp_pos.x, comp_pos.y, comp_pos.z = cp.x, cp.y - comp_size.y, cp.z
+				
+				elif widget["stacking"] == cls.HGUI_STACK_VERTICAL:
+					if widget["align"] == cls.HGUIAF_CENTER or widget["align"] == cls.HGUIAF_TOP or widget["align"] == cls.HGUIAF_BOTTOM:
+						comp_pos.x, comp_pos.y, comp_pos.z = cp.x - comp_size.x / 2, cp.y, cp.z
+					elif widget["align"] == cls.HGUIAF_LEFT or widget["align"] == cls.HGUIAF_TOPLEFT or widget["align"] == cls.HGUIAF_BOTTOMLEFT:
+						comp_pos.x, comp_pos.y, comp_pos.z = cp.x, cp.y, cp.z
+					elif widget["align"] == cls.HGUIAF_RIGHT or widget["align"] == cls.HGUIAF_TOPRIGHT or widget["align"] == cls.HGUIAF_BOTTOMRIGHT:
+						comp_pos.x, comp_pos.y, comp_pos.z = cp.x - comp_size.x, cp.y, cp.z
+				
 			#update widget size:
 			cmnx = component["position"].x if component["offset"].x > 0 else component["position"].x + component["offset"].x
 			cmny = component["position"].y if component["offset"].y > 0 else component["position"].y + component["offset"].y
@@ -1689,37 +1735,42 @@ class HarfangUI:
 			mx.y = max(mx.y,cmx.y)
 			mx.z = max(mx.z,cmx.z)
 			
-			#Next component position: # Simple alignment on X, to be developed for more complex widgets.
+			#Cursor stacking:
 			if component["cursor_auto"]:
-				widget["cursor"] += hg.Vec3(component["size"].x, 0, 0) + component["offset"]
+				if widget["stacking"] == cls.HGUI_STACK_HORIZONTAL:
+					cp += hg.Vec3(component["size"].x + component["offset"].x, 0, 0)
+				elif widget["stacking"] == cls.HGUI_STACK_VERTICAL:
+					cp += hg.Vec3(0, component["size"].y + component["offset"].y, 0)
+
 		ws = mx - mn
 		widget["size"] = ws
 		
-		# Alignment
-		if widget["flag_new"] or widget["flag_update_rest_size"]: # Is that condition ok for rest_size setup ?
-			widget["rest_size"].x, widget["rest_size"].y, widget["rest_size"].z = ws.x, ws.y, ws.z
-			widget["flag_update_rest_size"] = False
-		
-		delta = (widget["rest_size"] - widget["size"]) / 2
+		if widget["classe"] != "widgets_container":
+			# Alignment
+			if widget["flag_new"] or widget["flag_update_rest_size"]: # Is that condition ok for rest_size setup ?
+				widget["rest_size"].x, widget["rest_size"].y, widget["rest_size"].z = ws.x, ws.y, ws.z
+				widget["flag_update_rest_size"] = False
+			
+			delta = (widget["rest_size"] - widget["size"]) / 2
 
-		if widget["align"] == cls.HGUIAF_CENTER: 
-			widget["offset"].x, widget["offset"].y  = delta.x, delta.y
-		elif widget["align"] == cls.HGUIAF_TOP: 
-			widget["offset"].x, widget["offset"].y = delta.x, 0
-		elif widget["align"] == cls.HGUIAF_BOTTOM: 
-			widget["offset"].x, widget["offset"].y = delta.x, delta.y * 2
-		elif widget["align"] == cls.HGUIAF_LEFT:
-			widget["offset"].x, widget["offset"].y = 0, delta.y
-		elif widget["align"] == cls.HGUIAF_RIGHT: 
-			widget["offset"].x, widget["offset"].y = delta.x * 2, delta.y
-		elif widget["align"] == cls.HGUIAF_TOPLEFT: 
-			widget["offset"].x, widget["offset"].y = 0, 0
-		elif widget["align"] == cls.HGUIAF_TOPRIGHT: 
-			widget["offset"].x, widget["offset"].y = delta.x * 2, 0
-		elif widget["align"] == cls.HGUIAF_BOTTOMLEFT: 
-			widget["offset"].x, widget["offset"].y = 0, delta.y * 2
-		elif widget["align"] == cls.HGUIAF_BOTTOMRIGHT: 
-			widget["offset"].x, widget["offset"].y = delta.x * 2, delta.y * 2
+			if widget["align"] == cls.HGUIAF_CENTER: 
+				widget["offset"].x, widget["offset"].y  = delta.x, delta.y
+			elif widget["align"] == cls.HGUIAF_TOP: 
+				widget["offset"].x, widget["offset"].y = delta.x, 0
+			elif widget["align"] == cls.HGUIAF_BOTTOM: 
+				widget["offset"].x, widget["offset"].y = delta.x, delta.y * 2
+			elif widget["align"] == cls.HGUIAF_LEFT:
+				widget["offset"].x, widget["offset"].y = 0, delta.y
+			elif widget["align"] == cls.HGUIAF_RIGHT: 
+				widget["offset"].x, widget["offset"].y = delta.x * 2, delta.y
+			elif widget["align"] == cls.HGUIAF_TOPLEFT: 
+				widget["offset"].x, widget["offset"].y = 0, 0
+			elif widget["align"] == cls.HGUIAF_TOPRIGHT: 
+				widget["offset"].x, widget["offset"].y = delta.x * 2, 0
+			elif widget["align"] == cls.HGUIAF_BOTTOMLEFT: 
+				widget["offset"].x, widget["offset"].y = 0, delta.y * 2
+			elif widget["align"] == cls.HGUIAF_BOTTOMRIGHT: 
+				widget["offset"].x, widget["offset"].y = delta.x * 2, delta.y * 2
 		
 		# Max size (used to compute window workspace)
 		wsm = widget["max_size"]
@@ -2187,8 +2238,8 @@ class HarfangUI:
 
 
 	@classmethod
-	def info_text(cls, widget_id, text, align:int = HGUIAF_CENTER):
-		widget = cls.get_widget("info_text", widget_id, align)
+	def info_text(cls, widget_id, text, **args):
+		widget = cls.get_widget("info_text", widget_id, args)
 		widget["components"]["info_text"]["text"] = text
 		widget["position"] = cls.get_cursor_position()
 		cls.update_widget_components(widget)
@@ -2196,8 +2247,8 @@ class HarfangUI:
 
 
 	@classmethod
-	def button(cls, widget_id, align:int = HGUIAF_CENTER):
-		widget = cls.get_widget("button", widget_id, align)
+	def button(cls, widget_id, **args):
+		widget = cls.get_widget("button", widget_id, args)
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
@@ -2208,8 +2259,8 @@ class HarfangUI:
 		return mouse_click	
 
 	@classmethod
-	def button_image(cls, widget_id, texture_path, image_size: hg.Vec2, label_align:int = HGUI_CAF_RIGHT, align:int = HGUIAF_CENTER ):
-		widget = cls.get_widget("image_button", widget_id, align)
+	def button_image(cls, widget_id, texture_path, image_size: hg.Vec2, **args):
+		widget = cls.get_widget("image_button", widget_id, args)
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
@@ -2218,14 +2269,13 @@ class HarfangUI:
 		widget["components"]["image_button"]["texture_size"].y = image_size.y
 		widget["components"]["image_button"]["texture"] = texture_path
 		widget["components"]["label_box"]["label"] = cls.get_label_from_id(widget_id)
-		widget["components"]["label_box"]["align"] = label_align
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
 		return mouse_click
 	
 	@classmethod
-	def image(cls, widget_id, texture_path, image_size: hg.Vec2, align:int = HGUIAF_CENTER):
-		widget = cls.get_widget("info_image", widget_id, align)
+	def image(cls, widget_id, texture_path, image_size: hg.Vec2, **args):
+		widget = cls.get_widget("info_image", widget_id, args)
 		widget["position"] = cls.get_cursor_position()
 		widget["components"]["info_image"]["size"].x = image_size.x
 		widget["components"]["info_image"]["size"].y = image_size.y
@@ -2234,8 +2284,8 @@ class HarfangUI:
 		cls.update_cursor(widget)
 
 	@classmethod
-	def check_box(cls, widget_id, checked: bool, label_align:int = HGUI_CAF_RIGHT, align:int = HGUIAF_CENTER):
-		widget = cls.get_widget("check_box", widget_id, align)
+	def check_box(cls, widget_id, checked: bool, **args):
+		widget = cls.get_widget("check_box", widget_id, args)
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			checked = not checked
@@ -2247,7 +2297,6 @@ class HarfangUI:
 			cls.set_widget_state(widget,"unchecked")
 		
 		widget["components"]["label_box"]["label"] = cls.get_label_from_id(widget_id)
-		widget["components"]["label_box"]["align"] = label_align
 		widget["position"] = cls.get_cursor_position()
 		
 		cls.update_widget_components(widget)
@@ -2256,8 +2305,8 @@ class HarfangUI:
 		return mouse_click, checked
 
 	@classmethod
-	def input_text(cls, widget_id, text = None, align:int = HGUIAF_CENTER):
-		widget = cls.get_widget("input_text", widget_id, align)
+	def input_text(cls, widget_id, text = None, **args):
+		widget = cls.get_widget("input_text", widget_id, args)
 		if text is not None:
 			widget["components"]["input_box"]["text"] = text
 		
@@ -2318,8 +2367,8 @@ class HarfangUI:
 		return cls.scrollbar(widget_id, width, height, part_size, total_size, scroll_position, flag_reset, True)
 		
 	@classmethod
-	def radio_image_button(cls, widget_id, texture_path, current_idx, radio_idx, image_size: hg.Vec2 = None, align:int = HGUIAF_CENTER):
-		widget = cls.get_widget("radio_image_button", widget_id, align)
+	def radio_image_button(cls, widget_id, texture_path, current_idx, radio_idx, image_size: hg.Vec2 = None, **args):
+		widget = cls.get_widget("radio_image_button", widget_id, args)
 		
 		widget["radio_idx"] = radio_idx
 		if image_size is None:
@@ -2348,8 +2397,8 @@ class HarfangUI:
 		return mouse_click, current_idx
 
 	@classmethod
-	def toggle_button(cls, widget_id, texts: list, current_idx, forced_text_width = None, align:int = HGUIAF_CENTER):
-		widget = cls.get_widget("toggle_button", widget_id, align)
+	def toggle_button(cls, widget_id, texts: list, current_idx, forced_text_width = None, **args):
+		widget = cls.get_widget("toggle_button", widget_id, args)
 		widget["components"]["texts"] = texts
 		widget["components"]["toggle_button_box"]["forced_text_width"] = forced_text_width
 		widget["toggle_idx"] = min(len(texts)-1, current_idx)
@@ -2364,8 +2413,8 @@ class HarfangUI:
 		return mouse_click, current_idx
 
 	@classmethod
-	def toggle_image_button(cls, widget_id, textures_paths: list, current_idx, image_size: hg.Vec2, align:int = HGUIAF_CENTER):
-		widget = cls.get_widget("toggle_image_button", widget_id, align)
+	def toggle_image_button(cls, widget_id, textures_paths: list, current_idx, image_size: hg.Vec2, **args):
+		widget = cls.get_widget("toggle_image_button", widget_id, args)
 		mouse_click = False
 		widget["toggle_idx"] = min(len(textures_paths)-1, current_idx)
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
