@@ -459,6 +459,19 @@ class HarfangUISkin:
 						state["value"] = str(hex(vrgba32))
 		
 		cls.save_properties("properties_rgba32.json")
+	
+	@classmethod
+	def convert_properties_RGBA32_to_RGB24_APercent(cls):
+		for property_name, property in cls.properties.items():
+			if property["type"] == "RGBA32":
+				property["type"] = "RGB24_APercent"
+				for layer in property["layers"]:
+					for state_name, state in layer["states"].items():
+						v = hg.ColorFromRGBA32(hg.ARGB32ToRGBA32(int(state["value"].replace("#", "0x"),16)))
+						vrgb24 = (int(v.r * 255) << 16) + (int(v.g * 255) << 8) + int(v.b * 255)
+						state["value"] = [str(hex(vrgb24)).replace("0x", "#"), int(v.a * 100)]
+		
+		cls.save_properties("properties_rgb24_apercent.json")
 
 
 	@classmethod
@@ -952,7 +965,9 @@ class HarfangUI:
 							elif class_property["type"] == "color":
 								component_layer_states[class_state_name]["value"] = hg.Color(v[0], v[1], v[2], v[3])
 							elif class_property["type"] == "RGBA32":
-								component_layer_states[class_state_name]["value"] = hg.ColorFromRGBA32(hg.ARGB32ToRGBA32(int(v,16)))
+								component_layer_states[class_state_name]["value"] = hg.ColorFromRGBA32(hg.ARGB32ToRGBA32(int(v.replace("#", "0x"),16)))
+							elif class_property["type"] == "RGB24_APercent":
+								component_layer_states[class_state_name]["value"] = hg.ColorFromRGBA32(hg.ARGB32ToRGBA32((int(v[0].replace("#", "0x"),16)<<8) + int(v[1]/100 * 255)))
 						
 						default_state_name = class_layer["default_state"]
 						default_value = component_layer_states[default_state_name]["value"]
@@ -2075,9 +2090,11 @@ class HarfangUI:
 						cls.set_widget_state(widget, "idle")
 
 	@classmethod
-	def get_label_from_id(cls, widget_id):
-		return widget_id
-
+	def get_label_from_id(cls, widget_id:str):
+		if "##" in widget_id:
+			return widget_id[:widget_id.find("##")]
+		else:
+			return widget_id
 
 	# ------------ Pointer position (Mouse or VR Controller)
 	# Raycasts only computed in widgets_containers quads.

@@ -26,6 +26,7 @@ cam_rot = hg.Deg3(-7, 0, 0)
 # Setup HarfangGUI
 
 hgui.init(["default.ttf"], [20], width, height)
+#HarfangUISkin.convert_properties_RGBA32_to_RGB24_APercent()
 
 # Setup inputs
 
@@ -69,8 +70,10 @@ while not hg.ReadKeyboard().Key(hg.K_Escape)  and hg.IsWindowOpen(window):
 
             hgui.info_text("info1", "Simple Window3D")
             
-            if hgui.button("Button 0"):
-                print("Click btn 0")
+            if hgui.button("Button 0##1"):
+                print("Click btn 0 ##1")
+            if hgui.button("Button 0##2"):
+                print("Click btn 0 ##2")
             
             _, flag_check_box0 = hgui.check_box("Check box", flag_check_box0)
 

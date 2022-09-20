@@ -1,23 +1,17 @@
 {
     "scrollbar_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#666666",
-                            100
-                        ],
+                        "value": "#666666ff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#999999",
-                            100
-                        ],
+                        "value": "#999999ff",
                         "delay": 0.15
                     }
                 }
@@ -27,17 +21,11 @@
                 "default_state": "mouse_idle",
                 "states": {
                     "mouse_idle": {
-                        "value": [
-                            "#0",
-                            0
-                        ],
+                        "value": "#0",
                         "delay": 0.2
                     },
                     "mouse_move": {
-                        "value": [
-                            "#333333",
-                            0
-                        ],
+                        "value": "#33333300",
                         "delay": 0.15
                     }
                 }
@@ -45,24 +33,18 @@
         ]
     },
     "scrollbar_background_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
+                        "value": "#333333ff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
+                        "value": "#333333ff",
                         "delay": 0.15
                     }
                 }
@@ -89,24 +71,18 @@
         ]
     },
     "window_box_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
+                        "value": "#333333ff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
+                        "value": "#333333ff",
                         "delay": 0.15
                     }
                 }
@@ -114,24 +90,18 @@
         ]
     },
     "window_box_border_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "no_focus",
                 "states": {
                     "no_focus": {
-                        "value": [
-                            "#666666",
-                            100
-                        ],
+                        "value": "#666666ff",
                         "delay": 0.2
                     },
                     "focus": {
-                        "value": [
-                            "#7f7f7f",
-                            100
-                        ],
+                        "value": "#7f7f7fff",
                         "delay": 0.2
                     }
                 }
@@ -141,17 +111,11 @@
                 "default_state": "mouse_idle",
                 "states": {
                     "mouse_idle": {
-                        "value": [
-                            "#0",
-                            0
-                        ],
+                        "value": "#0",
                         "delay": 0.2
                     },
                     "mouse_move": {
-                        "value": [
-                            "#33",
-                            0
-                        ],
+                        "value": "#3300",
                         "delay": 0.15
                     }
                 }
@@ -202,17 +166,14 @@
         ]
     },
     "window_title_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#e5e5ff",
-                            100
-                        ],
+                        "value": "#e5e5ffff",
                         "delay": 0.2
                     }
                 }
@@ -220,24 +181,18 @@
         ]
     },
     "widget_border_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#b2b2b2",
-                            100
-                        ],
+                        "value": "#b2b2b2ff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#e5e5e5",
-                            100
-                        ],
+                        "value": "#e5e5e5ff",
                         "delay": 0.2
                     }
                 }
@@ -605,31 +560,22 @@
         ]
     },
     "texture_box_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.15
                     },
                     "MLB_down": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.05
                     }
                 }
@@ -637,31 +583,22 @@
         ]
     },
     "button_box_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#7f7f7f",
-                            100
-                        ],
+                        "value": "#7f7f7fff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#bfbfbf",
-                            100
-                        ],
+                        "value": "#bfbfbfff",
                         "delay": 0.15
                     },
                     "MLB_down": {
-                        "value": [
-                            "#e5e5e5",
-                            100
-                        ],
+                        "value": "#e5e5e5ff",
                         "delay": 0.05
                     }
                 }
@@ -669,31 +606,22 @@
         ]
     },
     "label_box_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#1f1f1f",
-                            100
-                        ],
+                        "value": "#1f1f1fff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#3f3f3f",
-                            100
-                        ],
+                        "value": "#3f3f3fff",
                         "delay": 0.15
                     },
                     "MLB_down": {
-                        "value": [
-                            "#7f7f7f",
-                            100
-                        ],
+                        "value": "#7f7f7fff",
                         "delay": 0.05
                     }
                 }
@@ -701,31 +629,22 @@
         ]
     },
     "button_text_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.15
                     },
                     "MLB_down": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.05
                     }
                 }
@@ -733,31 +652,22 @@
         ]
     },
     "label_text_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#cccccc",
-                            100
-                        ],
+                        "value": "#ccccccff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.15
                     },
                     "MLB_down": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.05
                     }
                 }
@@ -765,17 +675,14 @@
         ]
     },
     "info_text_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#b2b2b2",
-                            100
-                        ],
+                        "value": "#b2b2b2ff",
                         "delay": 0.2
                     }
                 }
@@ -783,31 +690,22 @@
         ]
     },
     "check_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#ffff",
-                            100
-                        ],
+                        "value": "#ffffff",
                         "delay": 0.15
                     },
                     "MLB_down": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.05
                     }
                 }
@@ -817,17 +715,11 @@
                 "default_state": "checked",
                 "states": {
                     "checked": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.2
                     },
                     "unchecked": {
-                        "value": [
-                            "#ffffff",
-                            0
-                        ],
+                        "value": "#ffffff00",
                         "delay": 0.2
                     }
                 }
@@ -835,31 +727,22 @@
         ]
     },
     "input_box_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#3f3f3f",
-                            100
-                        ],
+                        "value": "#3f3f3fff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#5f5f5f",
-                            100
-                        ],
+                        "value": "#5f5f5fff",
                         "delay": 0.15
                     },
                     "MLB_down": {
-                        "value": [
-                            "#7f7f7f",
-                            100
-                        ],
+                        "value": "#7f7f7fff",
                         "delay": 0.05
                     }
                 }
@@ -869,17 +752,11 @@
                 "default_state": "no_edit",
                 "states": {
                     "no_edit": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.1
                     },
                     "edit": {
-                        "value": [
-                            "#193333",
-                            100
-                        ],
+                        "value": "#193333ff",
                         "delay": 0.1
                     }
                 }
@@ -887,31 +764,22 @@
         ]
     },
     "input_text_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.15
                     },
                     "MLB_down": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.05
                     }
                 }
@@ -921,17 +789,11 @@
                 "default_state": "no_edit",
                 "states": {
                     "no_edit": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.1
                     },
                     "edit": {
-                        "value": [
-                            "#7fffff",
-                            100
-                        ],
+                        "value": "#7fffffff",
                         "delay": 0.1
                     }
                 }
@@ -939,24 +801,18 @@
         ]
     },
     "radio_button_box_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#333333",
-                            0
-                        ],
+                        "value": "#33333300",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#333333",
-                            49
-                        ],
+                        "value": "#3333337f",
                         "delay": 0.15
                     }
                 }
@@ -966,17 +822,11 @@
                 "default_state": "unselected",
                 "states": {
                     "unselected": {
-                        "value": [
-                            "#0",
-                            0
-                        ],
+                        "value": "#0",
                         "delay": 0.15
                     },
                     "selected": {
-                        "value": [
-                            "#333333",
-                            0
-                        ],
+                        "value": "#33333300",
                         "delay": 0.05
                     }
                 }
@@ -1055,24 +905,18 @@
         ]
     },
     "radio_image_border_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
+                        "value": "#333333ff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#7f7f7f",
-                            100
-                        ],
+                        "value": "#7f7f7fff",
                         "delay": 0.2
                     }
                 }
@@ -1082,17 +926,11 @@
                 "default_state": "unselected",
                 "states": {
                     "unselected": {
-                        "value": [
-                            "#0",
-                            0
-                        ],
+                        "value": "#0",
                         "delay": 0.2
                     },
                     "selected": {
-                        "value": [
-                            "#4c4c4c",
-                            0
-                        ],
+                        "value": "#4c4c4c00",
                         "delay": 0.2
                     }
                 }
@@ -1119,24 +957,18 @@
         ]
     },
     "toggle_image_button_box_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#333333",
-                            0
-                        ],
+                        "value": "#33333300",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#333333",
-                            49
-                        ],
+                        "value": "#3333337f",
                         "delay": 0.15
                     }
                 }
@@ -1146,17 +978,11 @@
                 "default_state": "unselected",
                 "states": {
                     "unselected": {
-                        "value": [
-                            "#0",
-                            0
-                        ],
+                        "value": "#0",
                         "delay": 0.15
                     },
                     "selected": {
-                        "value": [
-                            "#333333",
-                            0
-                        ],
+                        "value": "#33333300",
                         "delay": 0.05
                     }
                 }
@@ -1235,24 +1061,18 @@
         ]
     },
     "toggle_image_button_border_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
+                        "value": "#333333ff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#7f7f7f",
-                            100
-                        ],
+                        "value": "#7f7f7fff",
                         "delay": 0.2
                     }
                 }
@@ -1262,17 +1082,11 @@
                 "default_state": "unselected",
                 "states": {
                     "unselected": {
-                        "value": [
-                            "#0",
-                            0
-                        ],
+                        "value": "#0",
                         "delay": 0.2
                     },
                     "selected": {
-                        "value": [
-                            "#4c4c4c",
-                            0
-                        ],
+                        "value": "#4c4c4c00",
                         "delay": 0.2
                     }
                 }
@@ -1299,31 +1113,22 @@
         ]
     },
     "toggle_image_button_texture_box_color": {
-        "type": "RGB24_APercent",
+        "type": "RGBA32",
         "layers": [
             {
                 "operator": "set",
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.15
                     },
                     "MLB_down": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
+                        "value": "#ffffffff",
                         "delay": 0.05
                     }
                 }
