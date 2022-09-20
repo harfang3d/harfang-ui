@@ -58,11 +58,20 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
     view_id = 0
 
     # Fps
-    hgui_state = hgui.want_capture_mouse() | hgui.want_capture_keyboard() | hgui.is_a_window_hovered()
-    if not hgui_state:
-        hg.FpsController(keyboard, mouse, cam_pos, cam_rot, 20 if keyboard.Down(hg.K_LShift) else 8, dt)
-        camera.GetTransform().SetPos(cam_pos)
-        camera.GetTransform().SetRot(cam_rot)
+    
+    if hgui.is_a_window_hovered() | hgui.want_capture_mouse():
+        dx, dy, mbt = 0, 0, False
+    else:
+        dx, dy, mbt = mouse.DtX(), mouse.DtY(), mouse.Down(hg.MB_0)
+    
+    if hgui.want_capture_keyboard():
+        k_up, k_down, k_right, k_left = False, False, False, False
+    else:
+        k_up, k_down, k_right, k_left = keyboard.Down(hg.K_Up) | keyboard.Down(hg.K_W), keyboard.Down(hg.K_Down) | keyboard.Down(hg.K_S), keyboard.Down(hg.K_Right) | keyboard.Down(hg.K_D), keyboard.Down(hg.K_Left) | keyboard.Down(hg.K_A)
+    
+    hg.FpsController(k_up, k_down, k_left, k_right, mbt, dx, dy, cam_pos, cam_rot, 20 if keyboard.Down(hg.K_LShift) else 8, dt)
+    camera.GetTransform().SetPos(cam_pos)
+    camera.GetTransform().SetRot(cam_rot)
 
     scene.Update(dt)
     view_state = scene.ComputeCurrentCameraViewState(hg.ComputeAspectRatioX(width, height))
@@ -129,6 +138,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
                 print("click image button")
             
             if hgui.begin_window("my_window_2", hg.Vec3(700, 100, -100), hg.Deg3(0, 0, 0), hg.Vec3(400, 600, 0), 1, hgui.HGUIWF_Overlay):
+                hgui.info_text("info_win_2", "This window is in OVERLAY mode")
                 if hgui.button("Hello button 3"):
                     print("Click btn 3")
                 if hgui.begin_window_2D("my_window_2.1", hg.Vec2(50, 100), hg.Vec2(200, 100), 1 ):

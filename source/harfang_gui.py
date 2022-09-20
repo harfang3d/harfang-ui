@@ -1165,7 +1165,6 @@ class HarfangUI:
 		cls.update_align_positions(cls.main_widgets_container_2D, 0)
 		cls.update_align_positions(cls.main_widgets_container_3D, 0)
 		cls.update_widgets_inputs()
-		print(cls.ui_state)
 
 		#2D display
 		p = hg.GetT(cls.camera2D_matrix) + hg.Vec3(cls.width / 2, -cls.height / 2, 0)
