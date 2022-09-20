@@ -2,6 +2,7 @@
 
 import harfang as hg
 from harfang_gui import HarfangUI as hgui
+from harfang_gui import HarfangUISkin
 
 hg.InputInit()
 hg.WindowSystemInit()

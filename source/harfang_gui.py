@@ -448,6 +448,20 @@ class HarfangUISkin:
 		return None
 
 	@classmethod
+	def convert_properties_color_to_RGBA32(cls):
+		for property_name, property in cls.properties.items():
+			if property["type"] == "color":
+				property["type"] = "RGBA32"
+				for layer in property["layers"]:
+					for state_name, state in layer["states"].items():
+						v = state["value"]
+						vrgba32 = (int(v[0] * 255) << 24) + (int(v[1] * 255) << 16) + (int(v[2] * 255) << 8) + int(v[3] * 255)
+						state["value"] = str(hex(vrgba32))
+		
+		cls.save_properties("properties_rgba32.json")
+
+
+	@classmethod
 	def save_properties(cls, output_file_name):
 
 		json_script = json.dumps(cls.properties, indent=4)
@@ -937,6 +951,8 @@ class HarfangUI:
 								component_layer_states[class_state_name]["value"] = hg.Vec3(v[0], v[1], v[2])
 							elif class_property["type"] == "color":
 								component_layer_states[class_state_name]["value"] = hg.Color(v[0], v[1], v[2], v[3])
+							elif class_property["type"] == "RGBA32":
+								component_layer_states[class_state_name]["value"] = hg.ColorFromRGBA32(hg.ARGB32ToRGBA32(int(v,16)))
 						
 						default_state_name = class_layer["default_state"]
 						default_value = component_layer_states[default_state_name]["value"]
