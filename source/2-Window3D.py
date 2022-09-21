@@ -70,10 +70,12 @@ while not hg.ReadKeyboard().Key(hg.K_Escape)  and hg.IsWindowOpen(window):
 
             hgui.info_text("info1", "Simple Window3D")
             
-            if hgui.button("Button 0##1"):
-                print("Click btn 0 ##1")
-            if hgui.button("Button 0##2"):
-                print("Click btn 0 ##2")
+            # You can display same widgets names, using "##" prefixe to differenciate widgets ids.
+            
+            if hgui.button("Button##1"):
+                print("Click btn ##1")
+            if hgui.button("Button##2"):
+                print("Click btn ##2")
             
             _, flag_check_box0 = hgui.check_box("Check box", flag_check_box0)
 
