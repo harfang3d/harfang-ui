@@ -1,5 +1,5 @@
 import harfang as hg
-from math import sin, cos, inf
+from math import sin, cos, inf, pi
 from mouse_pointer_3d import MousePointer3D
 import json
 import copy
@@ -24,6 +24,8 @@ class HarfangGUIRenderer:
 	fonts_sizes = []
 
 	box_render_state = None
+
+	frame_buffers_scale = 2 # For AA
 
 	# sprites
 	textures = {}
@@ -69,16 +71,57 @@ class HarfangGUIRenderer:
 			cls.textures[texture_path], cls.textures_info[texture_path] = hg.LoadTextureFromAssets(texture_path, 0)
 		return cls.textures[texture_path]
 
+	
 	@classmethod
-	def draw_box(cls, vid: int, vertices, color: hg.Color, texture_path = None, flag_opaque = False):
+	def draw_convex_polygon(cls, vid:int, vertices:list, color:hg.Color):
+
+		cls.vtx.Clear()
+		cls.uniforms_values_list.clear()
+		cls.uniforms_textures_list.clear()
+		# triangles fan:
+		idx = []
+		n = len(vertices)
+		for v_idx in range(n):
+			if v_idx < n-2:
+				idx += [0, v_idx + 1, v_idx + 2]
+			cls.vtx.Begin(v_idx).SetPos(vertices[v_idx] * cls.frame_buffers_scale).SetColor0(color).SetTexCoord0(hg.Vec2(0, 0)).End()
+		
+		shader = cls.shader_flat
+		rs = cls.box_render_state
+		hg.DrawTriangles(vid, idx, cls.vtx, shader, cls.uniforms_values_list, cls.uniforms_textures_list, rs)
+	
+	@classmethod
+	def draw_rounded_borders(cls, vid:int, vertices_ext:list, vertices_in:list, color:hg.Color):
+
+		cls.vtx.Clear()
+		cls.uniforms_values_list.clear()
+		cls.uniforms_textures_list.clear()
+		# triangles fan:
+		idx = []
+		n = len(vertices_ext)
+		for v_idx in range(n):
+			v1 = (v_idx+1) % n
+			idx += [v_idx, v1, v_idx + n, v_idx + n, v1, v1 + n]
+		
+		vertices = vertices_ext + vertices_in
+		for v_idx in range(n*2):
+			cls.vtx.Begin(v_idx).SetPos(vertices[v_idx] * cls.frame_buffers_scale).SetColor0(color).SetTexCoord0(hg.Vec2(0, 0)).End()
+		
+		shader = cls.shader_flat
+		rs = cls.box_render_state
+		hg.DrawTriangles(vid, idx, cls.vtx, shader, cls.uniforms_values_list, cls.uniforms_textures_list, rs)
+	
+	
+	@classmethod
+	def draw_box(cls, vid:int, vertices:list, color:hg.Color, texture_path = None, flag_opaque = False):
 		cls.vtx.Clear()
 		cls.uniforms_values_list.clear()
 		cls.uniforms_textures_list.clear()
 		idx = [0, 1, 2, 0, 2, 3]
-		cls.vtx.Begin(0).SetPos(vertices[0]).SetColor0(color).SetTexCoord0(hg.Vec2(0, 0)).End()
-		cls.vtx.Begin(1).SetPos(vertices[1]).SetColor0(color).SetTexCoord0(hg.Vec2(0, 1)).End()
-		cls.vtx.Begin(2).SetPos(vertices[2]).SetColor0(color).SetTexCoord0(hg.Vec2(1, 1)).End()
-		cls.vtx.Begin(3).SetPos(vertices[3]).SetColor0(color).SetTexCoord0(hg.Vec2(1, 0)).End()
+		cls.vtx.Begin(0).SetPos(vertices[0]* cls.frame_buffers_scale).SetColor0(color).SetTexCoord0(hg.Vec2(0, 0)).End()
+		cls.vtx.Begin(1).SetPos(vertices[1]* cls.frame_buffers_scale).SetColor0(color).SetTexCoord0(hg.Vec2(0, 1)).End()
+		cls.vtx.Begin(2).SetPos(vertices[2]* cls.frame_buffers_scale).SetColor0(color).SetTexCoord0(hg.Vec2(1, 1)).End()
+		cls.vtx.Begin(3).SetPos(vertices[3]* cls.frame_buffers_scale).SetColor0(color).SetTexCoord0(hg.Vec2(1, 0)).End()
 		if texture_path is not None:
 			cls.uniforms_textures_list.push_back(hg.MakeUniformSetTexture("u_tex", cls.get_texture(texture_path), 0))
 			shader = cls.shader_texture
@@ -96,10 +139,10 @@ class HarfangGUIRenderer:
 		cls.uniforms_values_list.clear()
 		cls.uniforms_textures_list.clear()
 		idx = [0, 1, 2, 0, 2, 3]
-		cls.vtx.Begin(0).SetPos(vertices[0]).SetColor0(color).SetTexCoord0(hg.Vec2(0, 0)).End()
-		cls.vtx.Begin(1).SetPos(vertices[1]).SetColor0(color).SetTexCoord0(hg.Vec2(0, 1)).End()
-		cls.vtx.Begin(2).SetPos(vertices[2]).SetColor0(color).SetTexCoord0(hg.Vec2(1, 1)).End()
-		cls.vtx.Begin(3).SetPos(vertices[3]).SetColor0(color).SetTexCoord0(hg.Vec2(1, 0)).End()
+		cls.vtx.Begin(0).SetPos(vertices[0]* cls.frame_buffers_scale).SetColor0(color).SetTexCoord0(hg.Vec2(0, 0)).End()
+		cls.vtx.Begin(1).SetPos(vertices[1]* cls.frame_buffers_scale).SetColor0(color).SetTexCoord0(hg.Vec2(0, 1)).End()
+		cls.vtx.Begin(2).SetPos(vertices[2]* cls.frame_buffers_scale).SetColor0(color).SetTexCoord0(hg.Vec2(1, 1)).End()
+		cls.vtx.Begin(3).SetPos(vertices[3]* cls.frame_buffers_scale).SetColor0(color).SetTexCoord0(hg.Vec2(1, 0)).End()
 		cls.uniforms_textures_list.push_back(hg.MakeUniformSetTexture("u_tex", texture, 0))
 		hg.DrawTriangles(vid, idx, cls.vtx, cls.shader_texture_opacity, cls.uniforms_values_list, cls.uniforms_textures_list, cls.box_render_state)
 	
@@ -114,7 +157,7 @@ class HarfangGUIRenderer:
 				3, 0, 4, 3, 4, 7]
 		
 		for i in range(8):
-			cls.vtx.Begin(i).SetPos(vertices[i]).SetColor0(color).SetTexCoord0(hg.Vec2(0, 0)).End()
+			cls.vtx.Begin(i).SetPos(vertices[i]* cls.frame_buffers_scale).SetColor0(color).SetTexCoord0(hg.Vec2(0, 0)).End()
 		
 		if flag_opaque:
 			rs = cls.box_render_state_opaque
@@ -147,8 +190,12 @@ class HarfangGUIRenderer:
 
 	@classmethod
 	def draw_text(cls, vid, matrix:hg.Mat4, text, font_id, color):
+		scale = hg.GetScale(matrix) * cls.frame_buffers_scale
+		pos = hg.GetT(matrix) * cls.frame_buffers_scale
+		rot = hg.GetR(matrix)
+		mat = hg.TransformationMat4(pos, rot, scale)
 		cls.text_uniform_values = [hg.MakeUniformSetValue('u_color', hg.Vec4(color.r, color.g, color.b, color.a))]
-		hg.DrawText(vid, cls.fonts[font_id], text, cls.font_prg, 'u_tex', 0, matrix, hg.Vec3(0, 0, 0), hg.DTHA_Center, hg.DTVA_Center, cls.text_uniform_values, [], cls.text_render_state)
+		hg.DrawText(vid, cls.fonts[font_id], text, cls.font_prg, 'u_tex', 0, mat, hg.Vec3(0, 0, 0), hg.DTHA_Center, hg.DTVA_Center, cls.text_uniform_values, [], cls.text_render_state)
 
 	@classmethod
 	def render_widget_container(cls, view_id, container):
@@ -156,15 +203,19 @@ class HarfangGUIRenderer:
 		hg.SetViewFrameBuffer(view_id, container["frame_buffer"].handle)
 	
 		hg.SetViewMode(view_id, hg.VM_Sequential)
-		w, h = int(container["size"].x), int(container["size"].y)
+		w, h = int(container["size"].x * cls.frame_buffers_scale), int(container["size"].y * cls.frame_buffers_scale)
 		hg.SetViewRect(view_id, 0, 0, w, h)
 		
-		hg.SetViewOrthographic(view_id, 0, 0, w, h, hg.TransformationMat4(hg.Vec3(w / 2 + container["scroll_position"].x, h / 2 + container["scroll_position"].y, 0), hg.Vec3(0, 0, 0), hg.Vec3(1, -1, 1)), 0, 101, h)
+		hg.SetViewOrthographic(view_id, 0, 0, w, h, hg.TransformationMat4(hg.Vec3(w / 2 + container["scroll_position"].x * cls.frame_buffers_scale, h / 2 + container["scroll_position"].y * cls.frame_buffers_scale, 0), hg.Vec3(0, 0, 0), hg.Vec3(1, -1, 1)), 0, 101, h)
 		hg.SetViewClear(view_id, hg.CF_Depth | hg.CF_Color, hg.Color(1, 1, 1, 0), 1, 0)
 
 		for draw_element in draw_list:
 			if draw_element["type"] == "box":
 					cls.draw_box(view_id, draw_element["vertices"], draw_element["color"], draw_element["texture"])
+			elif draw_element["type"] == "convex_polygon":
+					cls.draw_convex_polygon(view_id, draw_element["vertices"], draw_element["color"])
+			elif draw_element["type"] == "rounded_borders":
+					cls.draw_rounded_borders(view_id, draw_element["vertices_ext"], draw_element["vertices_in"], draw_element["color"])
 			elif draw_element["type"] == "box_border":
 					cls.draw_box_border(view_id, draw_element["vertices"], draw_element["color"])
 			elif draw_element["type"] == "opaque_box":
@@ -375,7 +426,7 @@ class HarfangUISkin:
 			"button_box": {
 				"display_text": "label",
 				"text_size": 1,
-				"properties": ["button_offset", "button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_border_thickness", "widget_border_color"]
+				"properties": ["button_offset", "button_box_color", "button_text_color", "text_size", "button_text_margins", "button_rounded_radius", "widget_border_thickness", "widget_border_color"]
 				},
 			"label_box": {
 				"display_text": "label",
@@ -558,7 +609,7 @@ class HarfangGUISceneGraph:
 			
 	
 	@classmethod
-	def add_box(cls, matrix, pos, size, color):
+	def add_box(cls, matrix:hg.Mat4, pos:hg.Vec3, size:hg.Vec3, color:hg.Color):
 
 		p0 = matrix * pos
 		p1 = matrix * hg.Vec3(pos.x, pos.y + size.y, pos.z)
@@ -567,6 +618,52 @@ class HarfangGUISceneGraph:
 
 		cls.widgets_containers_displays_lists[cls.current_container_id].append({"type": "box", "vertices": [p0, p1, p2, p3], "color": color, "texture": None})
 	
+	@classmethod
+	def compute_rounded_rectangle(cls, matrix:hg.Mat4, pos:hg.Vec3, size:hg.Vec3, corner_radius:hg.Vec4):
+		num_steps = 8
+		max_radius = min(size.x, size.y) / 2
+		a_step = pi/(2*num_steps)
+		rs = corner_radius * max_radius
+		
+		centers = [
+			pos.x + rs.x, pos.y + rs.x, 
+			pos.x + size.x - rs.y, pos.y + rs.y,
+			pos.x + size.x - rs.z, pos.y + size.y - rs.z,
+			pos.x + rs.w, pos.y + size.y - rs.w
+			]
+		
+		a = pi
+		
+		vertices = []
+		rsl = [rs.x, rs.y, rs.z, rs.w]
+		for c_part in range(4):
+			cx, cy = centers[c_part * 2], centers[c_part * 2 + 1]
+			r = rsl[c_part]
+			for i in range(num_steps+1):
+				px = r * cos(a) + cx
+				py = r * sin(a) + cy
+				vertices.append(matrix * hg.Vec3(px, py, 0))
+				if i < num_steps:
+					a += a_step
+		return vertices
+	
+	@classmethod
+	def add_rounded_box(cls, matrix:hg.Mat4, pos:hg.Vec3, size:hg.Vec3, color:hg.Color, corner_radius:hg.Vec4):
+		vertices = cls.compute_rounded_rectangle(matrix, pos, size, corner_radius)
+		cls.widgets_containers_displays_lists[cls.current_container_id].append({"type": "convex_polygon", "vertices": vertices, "color": color})
+
+	@classmethod
+	def add_rounded_border(cls, matrix:hg.Mat4, pos:hg.Vec3, size:hg.Vec3, border_thickness:float, color:hg.Color, corner_radius:hg.Vec4):
+
+		vertices_ext = cls.compute_rounded_rectangle(matrix, pos, size, corner_radius)
+		pos.x += border_thickness
+		pos.y += border_thickness
+		size.x -= 2*border_thickness
+		size.y -= 2*border_thickness
+		vertices_in = cls.compute_rounded_rectangle(matrix, pos, size, corner_radius)
+
+		cls.widgets_containers_displays_lists[cls.current_container_id].append({"type": "rounded_borders", "vertices_ext": vertices_ext, "vertices_in": vertices_in, "color": color})
+
 	@classmethod
 	def add_box_border(cls, matrix, pos, size, border_thickness, color):
 		
@@ -962,6 +1059,8 @@ class HarfangUI:
 								component_layer_states[class_state_name]["value"] = hg.Vec2(v[0], v[1])
 							elif class_property["type"] == "vec3":
 								component_layer_states[class_state_name]["value"] = hg.Vec3(v[0], v[1], v[2])
+							elif class_property["type"] == "vec4":
+								component_layer_states[class_state_name]["value"] = hg.Vec4(v[0], v[1], v[2], v[3])
 							elif class_property["type"] == "color":
 								component_layer_states[class_state_name]["value"] = hg.Color(v[0], v[1], v[2], v[3])
 							elif class_property["type"] == "RGBA32":
@@ -1856,8 +1955,8 @@ class HarfangUI:
 
 		if widgets_container["frame_buffer"] is None:
 			
-			widgets_container["color_texture"] = hg.CreateTexture(fb_size.x, fb_size.y, widgets_container["widget_id"] + "_ctex", hg.TF_RenderTarget, hg.TF_RGBA8)
-			widgets_container["depth_texture"] =  hg.CreateTexture(fb_size.x, fb_size.y, widgets_container["widget_id"] + "_dtex", hg.TF_RenderTarget, hg.TF_D32F)
+			widgets_container["color_texture"] = hg.CreateTexture(int(fb_size.x * HarfangGUIRenderer.frame_buffers_scale), int(fb_size.y* HarfangGUIRenderer.frame_buffers_scale), widgets_container["widget_id"] + "_ctex", hg.TF_RenderTarget | hg.TF_SamplerMinAnisotropic, hg.TF_RGBA8)
+			widgets_container["depth_texture"] =  hg.CreateTexture(int(fb_size.x* HarfangGUIRenderer.frame_buffers_scale), int(fb_size.y* HarfangGUIRenderer.frame_buffers_scale), widgets_container["widget_id"] + "_dtex", hg.TF_RenderTarget, hg.TF_D32F)
 			widgets_container["frame_buffer"] = hg.CreateFrameBuffer(widgets_container["color_texture"], widgets_container["depth_texture"], widgets_container["widget_id"] + "_fb")
 	
 	@classmethod
@@ -1915,9 +2014,9 @@ class HarfangUI:
 					HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"window_box_color") * opacity)
 			
 			elif component["type"]=="button_box":
-				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity)
+				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity, cls.get_property_value(component,"button_rounded_radius"))
 				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id, cls.get_property_value(component,"button_text_color") * opacity)
-				HarfangGUISceneGraph.add_box_border(matrix, cpos, component["size"], cls.get_property_value(component,"widget_border_thickness"), cls.get_property_value(component,"widget_border_color") )
+				HarfangGUISceneGraph.add_rounded_border(matrix, cpos, component["size"], cls.get_property_value(component,"widget_border_thickness"), cls.get_property_value(component,"widget_border_color"), cls.get_property_value(component,"button_rounded_radius") )
 			
 			elif component["type"] == "info_text":
 				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id, cls.get_property_value(component,"info_text_color") * opacity)

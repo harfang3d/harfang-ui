@@ -254,6 +254,30 @@
                     "idle": {
                         "value": 1,
                         "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": 4,
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "button_rounded_radius":
+    {
+        "type": "vec4",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [1, 1, 1, 1],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [0, 0.5, 0.5, 0.5],
+                        "delay": 0.2
                     }
                 }
             }
