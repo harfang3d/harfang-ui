@@ -1495,7 +1495,7 @@ class HarfangUI:
 				widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y * pyf, position.z
 				widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x * rxf, rotation.y, rotation.z * rzf
 
-			if not (flag_hide_title or flag_invisible):
+			if not (flag_hide_title or flag_invisible): #!!! ATTENTION if hide title or invisible change !!!
 				widget["default_cursor_start_line"].y = 5 + widget["components"]["window_title"]["size"].y
 
 			if "mouse_move" in widget["states"]:
@@ -1590,13 +1590,12 @@ class HarfangUI:
 
 			if widget["flag_scrollbar_v"]:
 				title_height = bt if (widget["flag_hide_title"] or widget["flag_invisible"])  else widget["components"]["window_title"]["size"].y
-				#print(str(title_height))
 				cursor = hg.Vec3(spos)
 				cursor.x += w_size.x - scrollbar_size - bt
 				cursor.y += title_height
 				cls.set_cursor_pos(cursor)
 				height = w_size.y - (bt + title_height)
-				py = cls.scrollbar_v(widget["widget_id"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v) + mn.y
+				py = cls.scrollbar_v(widget["widget_id"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, align=cls.HGUIAF_TOPLEFT) + mn.y
 			
 			if widget["flag_scrollbar_h"]:
 				cursor = hg.Vec3(spos)
@@ -1604,7 +1603,7 @@ class HarfangUI:
 				cursor.x += bt
 				cls.set_cursor_pos(cursor)
 				width = w_size.x - 2 * bt if ws_size.y <= w_size.y else w_size.x - 2 * bt - scrollbar_size
-				px = cls.scrollbar_h(widget["widget_id"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h) + mn.x
+				px = cls.scrollbar_h(widget["widget_id"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, align=cls.HGUIAF_TOPLEFT) + mn.x
 
 			cls.set_scroll_position(widget["widget_id"], px, py, 0)
 
@@ -2152,7 +2151,7 @@ class HarfangUI:
 				title_height = focussed_container["components"]["window_title"]["size"].y
 
 			if pointer_position.y < title_height:
-				flag_hover_container = True # flag_hover_container: True if only container is hoverd, and no container's child
+				flag_hover_container = True # flag_hover_container: True if only container is hovered, and no container's child
 			else:
 				flag_hover_container = False
 			
@@ -2269,14 +2268,17 @@ class HarfangUI:
 			p_pointer = parent["pointers"][controller_id]
 			if p_pointer["pointer_world_position"] is not None:
 				impact_2Dpos = window_inv * p_pointer["pointer_world_position"]
+				# !!! Get an eye on scroll position hierarchy !!!
+				impact_2Dpos.x += parent["scroll_position"].x
+				impact_2Dpos.y += parent["scroll_position"].y
+		
 				if 0 < impact_2Dpos.x < widgets_container["size"].x and 0 < impact_2Dpos.y < widgets_container["size"].y:
 					wc_pointer["pointer_world_position"] = p_pointer["pointer_world_position"] # !!! New Vec3 if necessary !!!
 					flag_pointer_in = True
 				impact_2Dpos = hg.Vec2(impact_2Dpos.x, impact_2Dpos.y)
 		else:
-			window_pos = hg.GetT(widgets_container["world_matrix"])
-			window_size = widgets_container["size"]
-			
+			#window_pos = hg.GetT(widgets_container["world_matrix"])
+			#window_size = widgets_container["size"]
 			#ray_distance = hg.Len(window_pos - p0)
 			#if ray_distance < max(window_size.x, window_size.y) * widgets_container["scale"].x * 4: # Widget container distance to ray origin limitation
 			p0_local = window_inv * cls.controllers[controller_id]["ray_p0"]
@@ -2309,6 +2311,12 @@ class HarfangUI:
 		window_inv = hg.InverseFast(widgets_container["world_matrix"])
 
 		local_pointer = window_inv * hg.Vec3(pointer_pos2D.x, pointer_pos2D.y, hg.GetT(widgets_container["world_matrix"]).z)
+		wc = widgets_container
+		while wc["parent_id"] != "MainContainer2D": #Find a way to resolve this hierarchy with matrix
+			parent = cls.widgets[wc["parent_id"]]
+			local_pointer.x += parent["scroll_position"].x
+			local_pointer.y += parent["scroll_position"].y
+			wc = parent
 		
 		impact_2Dpos = hg.Vec2(local_pointer.x, local_pointer.y)
 		if 0 < local_pointer.x < widgets_container["size"].x and 0 < local_pointer.y < widgets_container["size"].y:
@@ -2490,8 +2498,8 @@ class HarfangUI:
 		return flag_changed, widget["components"]["input_box"]["text"]
 	
 	@classmethod
-	def scrollbar(cls, widget_id, width, height, part_size, total_size, scroll_position = None, flag_reset = False, flag_horizontal = False):
-		widget = cls.get_widget("scrollbar_h" if flag_horizontal else "scrollbar_v", widget_id)
+	def scrollbar(cls, widget_id, width, height, part_size, total_size, scroll_position, flag_reset, flag_horizontal, args):
+		widget = cls.get_widget("scrollbar_h" if flag_horizontal else "scrollbar_v", widget_id, args)
 		
 		widget["components"]["scrollbar"]["size"].x = width if flag_horizontal else max(cls.get_property_value(widget["components"]["scrollbar"], "scrollbar_thickness"), width)
 		widget["components"]["scrollbar"]["size"].y = max(cls.get_property_value(widget["components"]["scrollbar"], "scrollbar_thickness"), height) if flag_horizontal else height
@@ -2538,13 +2546,13 @@ class HarfangUI:
 
 
 	@classmethod
-	def scrollbar_v(cls, widget_id, width, height, part_size, total_size, scroll_position = None, flag_reset = False):
-		return cls.scrollbar(widget_id, width, height, part_size, total_size, scroll_position, flag_reset, False)
+	def scrollbar_v(cls, widget_id, width, height, part_size, total_size, scroll_position = None, flag_reset = False, **args):
+		return cls.scrollbar(widget_id, width, height, part_size, total_size, scroll_position, flag_reset, False, args)
 
 
 	@classmethod
-	def scrollbar_h(cls, widget_id, width, height, part_size, total_size, scroll_position = None, flag_reset = False):
-		return cls.scrollbar(widget_id, width, height, part_size, total_size, scroll_position, flag_reset, True)
+	def scrollbar_h(cls, widget_id, width, height, part_size, total_size, scroll_position = None, flag_reset = False, **args):
+		return cls.scrollbar(widget_id, width, height, part_size, total_size, scroll_position, flag_reset, True, args)
 		
 	@classmethod
 	def radio_image_button(cls, widget_id, texture_path, current_idx, radio_idx, image_size: hg.Vec2 = None, **args):

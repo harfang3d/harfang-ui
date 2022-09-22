@@ -39,9 +39,11 @@ flag_check_box0 = False
 flag_check_box = False
 flag_check_box2 = False
 flag_check_box3 = False
+flag_check_box31 = False
 my_text2 = "Go"
 my_text3 = "Hello !"
 my_text4 = "World"
+my_text31 = "HarfangGUI"
 
 current_rib = 0
 toggle_btn_idx = 0
@@ -157,6 +159,14 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
                 
                 hgui.end_window()
 
+            if hgui.begin_window_2D("my_window_3.1", hg.Vec2(500, 100), hg.Vec2(200, 100), 1 ):
+                f, d = hgui.check_box("Check box 3.1", flag_check_box31)
+                if f:
+                    flag_check_box31 = d
+                f, my_text31 = hgui.input_text("Input text 3.1", my_text31)
+                if hgui.button("My button 3.2"):
+                    print("click btn 3.2")
+                hgui.end_window()
 
             hgui.end_window()
             

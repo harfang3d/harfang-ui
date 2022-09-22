@@ -133,7 +133,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 				if hgui.button("Hello button 3.1"):
 					print("Click btn 3.1")
 				
-				"""
+				
 				if hgui.begin_window_2D("my_window_3.1", hg.Vec2(-50, 100), hg.Vec2(200, 100), 1, hgui.HGUIWF_HideTitle ):
 					f, d = hgui.check_box("Check box 3.1", flag_check_box31)
 					if f:
@@ -142,7 +142,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 					if hgui.button("My button 3.2"):
 						print("click btn 3.2")
 					hgui.end_window()
-				"""
+				
 
 				if hgui.begin_window_2D("my_window_3.2", hg.Vec2(70, 130), hg.Vec2(200, 100), 1):
 					if hgui.button("My button 3.3"):
