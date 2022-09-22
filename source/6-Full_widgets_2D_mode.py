@@ -72,19 +72,19 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 
 			if hgui.button("Hello button 1", align = hgui.HGUIAF_BOTTOMRIGHT ):
 				print("Click btn 1")
-			hgui.same_line()
+			#hgui.same_line()
 			if hgui.button("Hello button 2", align = hgui.HGUIAF_BOTTOM):
 				print("Click btn 2")
-			hgui.same_line()
+			#hgui.same_line()
 			if hgui.button("Hello button 22", align = hgui.HGUIAF_BOTTOMLEFT):
 				print("Click btn 22")
 
 			if hgui.button("Hello button 3", align = hgui.HGUIAF_TOPRIGHT):
 				print("Click btn 3")
-			hgui.same_line()
+			#hgui.same_line()
 			if hgui.button("Hello button 4", align = hgui.HGUIAF_TOP):
 				print("Click btn 4")
-			hgui.same_line()
+			#hgui.same_line()
 			
 			hgui.set_inner_line_space_size(10)
 			hgui.set_line_space_size(20)
@@ -113,7 +113,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 			if hgui.begin_window_2D("my_window_2", hg.Vec2(650, 100), hg.Vec2(400, 400), 1, hgui.HGUIWF_NoPointerMove ):
 				if hgui.button("Hello button 5"):
 					print("Click btn 5")
-				if hgui.begin_window_2D("my_window_2.1", hg.Vec2(50, 100), hg.Vec2(200, 100), 1 ):
+				if hgui.begin_window_2D("my_window_2.1", hg.Vec2(50, 100), hg.Vec2(200, 200), 1 ):
 					f, d = hgui.check_box("Check box 2", flag_check_box2)
 					if f:
 						flag_check_box2 = d
@@ -132,6 +132,8 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 			if hgui.begin_window_2D("my_window_3", hg.Vec2(670, 120), hg.Vec2(400, 400), 1 ):
 				if hgui.button("Hello button 3.1"):
 					print("Click btn 3.1")
+				
+				"""
 				if hgui.begin_window_2D("my_window_3.1", hg.Vec2(-50, 100), hg.Vec2(200, 100), 1, hgui.HGUIWF_HideTitle ):
 					f, d = hgui.check_box("Check box 3.1", flag_check_box31)
 					if f:
@@ -140,6 +142,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 					if hgui.button("My button 3.2"):
 						print("click btn 3.2")
 					hgui.end_window()
+				"""
 
 				if hgui.begin_window_2D("my_window_3.2", hg.Vec2(70, 130), hg.Vec2(200, 100), 1):
 					if hgui.button("My button 3.3"):

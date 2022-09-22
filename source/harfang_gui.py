@@ -402,17 +402,17 @@ class HarfangUISkin:
 			"window_background": {
 				"cursor_auto": False,
 				"size_factor": [1, 1, 1],
-				"properties": ["window_box_color", "window_box_border_thickness", "window_box_border_color"] #"widget_opacity"
+				"properties": ["window_box_color", "window_box_border_thickness", "window_box_border_color", "window_rounded_radius"] #"widget_opacity"
 				},
 			"window_title": {
 				"display_text": "label",
 				"text_size": 1,
 				"cursor_auto": False,
 				"size_factor": [1, -1, -1],
-				"properties": ["window_box_border_color", "window_title_margins", "window_title_color"]
+				"properties": ["window_box_border_color", "window_title_margins", "window_title_color", "window_title_rounded_radius"]
 			},
 			"scrollbar": {
-				"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_thikness"]
+				"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_thikness", "scrollbar_rounded_radius"]
 			},
 			"info_text": {
 				"display_text": "text",
@@ -423,45 +423,45 @@ class HarfangUISkin:
 				"texture": None,
 				"properties": ["info_image_offset", "info_image_margins", "texture_box_color"]
 				},
-			"button_box": {
+			"button_component": {
 				"display_text": "label",
 				"text_size": 1,
-				"properties": ["button_offset", "button_box_color", "button_text_color", "text_size", "button_text_margins", "button_rounded_radius", "widget_border_thickness", "widget_border_color"]
+				"properties": ["button_offset", "button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_rounded_radius", "widget_border_thickness", "widget_border_color"]
 				},
 			"label_box": {
 				"display_text": "label",
 				"text_size": 1,
-				"properties": ["text_size", "label_text_margins", "label_box_color", "label_text_color"]
+				"properties": ["text_size", "label_text_margins", "widget_rounded_radius", "label_box_color", "label_text_color"]
 				},
 			"image_button": {
 				"texture": None,
 				"texture_size": hg.Vec2(1, 1),
-				"properties": ["button_image_texture_scale","button_offset", "button_image_margins", "button_box_color", "texture_box_color", "widget_border_thickness", "widget_border_color"]
+				"properties": ["button_image_texture_scale","button_offset", "button_image_margins", "button_box_color", "widget_rounded_radius", "texture_box_color", "widget_border_thickness", "widget_border_color"]
 				},
 			"check_box":{
 				"texture": "hgui_textures/check.png",
-				"properties": ["button_offset","check_size", "checkbox_margins", "button_box_color", "check_color"]
+				"properties": ["button_offset","check_size", "checkbox_margins", "widget_rounded_radius", "button_box_color", "check_color"]
 				},
 			"input_box": {
 				"display_text": "text",
 				"input_text": "edit_text",
 				"text_size": 1,
-				"properties": ["text_size", "label_text_margins", "input_box_color", "input_text_color"]
+				"properties": ["text_size", "label_text_margins", "input_box_color", "widget_rounded_radius", "input_text_color"]
 				},
 			"radio_image_button": {
 				"texture": None,
-				"properties": ["radio_image_offset","radio_button_image_margins", "radio_button_box_color", "texture_box_color", "radio_image_border_color", "radio_image_border_thickness"]
+				"properties": ["radio_image_offset","radio_button_image_margins", "radio_button_box_color", "widget_rounded_radius", "texture_box_color", "radio_image_border_color", "radio_image_border_thickness"]
 				},
 			"toggle_button_box": {
 				"display_text": "text",
 				"forced_text_width": None,
 				"texts": None,
 				"text_size": 1,
-				"properties": ["button_offset", "button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_border_thickness", "widget_border_color"]
+				"properties": ["button_offset", "button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_rounded_radius", "widget_border_thickness", "widget_border_color"]
 				},
 			"toggle_image_button": {
 				"textures": None,
-				"properties": ["toggle_image_button_offset","toggle_image_button_margins", "toggle_image_button_box_color", "toggle_image_button_texture_box_color", "toggle_image_button_border_color", "toggle_image_button_border_thickness"]
+				"properties": ["toggle_image_button_offset","toggle_image_button_margins","widget_rounded_radius", "toggle_image_button_box_color", "toggle_image_button_texture_box_color", "toggle_image_button_border_color", "toggle_image_button_border_thickness"]
 				}
 		}
 
@@ -471,7 +471,7 @@ class HarfangUISkin:
 			"scrollbar_h": {"components": ["scrollbar"], "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25},
 			"info_text" : {"components": ["info_text"]},
 			"info_image" : {"components": ["info_image"]},
-			"button": {"components": ["button_box"]},
+			"button": {"components": ["button_component"]},
 			"image_button": {"components": ["image_button", "label_box"]},
 			"check_box": {"components": ["check_box", "label_box"]},
 			"input_text": {"components": ["label_box", "input_box"]},
@@ -660,7 +660,13 @@ class HarfangGUISceneGraph:
 		pos.y += border_thickness
 		size.x -= 2*border_thickness
 		size.y -= 2*border_thickness
-		vertices_in = cls.compute_rounded_rectangle(matrix, pos, size, corner_radius)
+		max_radius = min(size.x, size.y)
+		
+		def comp_cin(corner):
+			return (max_radius * corner - border_thickness) / (max_radius - border_thickness)
+		
+		corner_radius_in = hg.Vec4(comp_cin(corner_radius.x), comp_cin(corner_radius.y), comp_cin(corner_radius.z), comp_cin(corner_radius.w) )
+		vertices_in = cls.compute_rounded_rectangle(matrix, pos, size, corner_radius_in )
 
 		cls.widgets_containers_displays_lists[cls.current_container_id].append({"type": "rounded_borders", "vertices_ext": vertices_ext, "vertices_in": vertices_in, "color": color})
 
@@ -1584,6 +1590,7 @@ class HarfangUI:
 
 			if widget["flag_scrollbar_v"]:
 				title_height = bt if (widget["flag_hide_title"] or widget["flag_invisible"])  else widget["components"]["window_title"]["size"].y
+				#print(str(title_height))
 				cursor = hg.Vec3(spos)
 				cursor.x += w_size.x - scrollbar_size - bt
 				cursor.y += title_height
@@ -1980,11 +1987,11 @@ class HarfangUI:
 			cpos = component["position"] + component["offset"] + scroll_pos
 
 			if  component["type"]=="window_background":
-				HarfangGUISceneGraph.add_box_border(matrix, cpos, component["size"], cls.get_property_value(component,"window_box_border_thickness"), cls.get_property_value(component,"window_box_border_color") * opacity)
+				HarfangGUISceneGraph.add_rounded_border(matrix, cpos, component["size"], cls.get_property_value(component,"window_box_border_thickness"), cls.get_property_value(component,"window_box_border_color") * opacity, cls.get_property_value(component,"window_rounded_radius"))
 			
 			elif component["type"] == "window_title":
 				if not widgets_container["flag_hide_title"]:
-					HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"window_box_border_color") * opacity)
+					HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"window_box_border_color") * opacity, cls.get_property_value(component,"window_title_rounded_radius"))
 					HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id, cls.get_property_value(component,"window_title_color") * opacity)
 
 	@classmethod
@@ -2011,38 +2018,38 @@ class HarfangUI:
 			
 			if  component["type"]=="window_background":
 				if not widget["flag_invisible"]:
-					HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"window_box_color") * opacity)
+					HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"window_box_color") * opacity, cls.get_property_value(component,"window_rounded_radius"))
 			
-			elif component["type"]=="button_box":
-				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity, cls.get_property_value(component,"button_rounded_radius"))
+			elif component["type"]=="button_component":
+				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity, cls.get_property_value(component,"widget_rounded_radius"))
 				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id, cls.get_property_value(component,"button_text_color") * opacity)
-				HarfangGUISceneGraph.add_rounded_border(matrix, cpos, component["size"], cls.get_property_value(component,"widget_border_thickness"), cls.get_property_value(component,"widget_border_color"), cls.get_property_value(component,"button_rounded_radius") )
+				HarfangGUISceneGraph.add_rounded_border(matrix, cpos, component["size"], cls.get_property_value(component,"widget_border_thickness"), cls.get_property_value(component,"widget_border_color"), cls.get_property_value(component,"widget_rounded_radius"))
 			
 			elif component["type"] == "info_text":
 				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id, cls.get_property_value(component,"info_text_color") * opacity)
 
 			elif component["type"] == "image_button":
 				margins = cls.get_property_value(component,"button_image_margins")
-				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity)
+				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity, cls.get_property_value(component,"widget_rounded_radius"))
 				HarfangGUISceneGraph.add_texture_box(matrix, cpos + margins, component["size"] - margins * 2, cls.get_property_value(component,"texture_box_color") * opacity, component["texture"])
-				HarfangGUISceneGraph.add_box_border(matrix, cpos, component["size"], cls.get_property_value(component,"widget_border_thickness"), cls.get_property_value(component,"widget_border_color") )
+				HarfangGUISceneGraph.add_rounded_border(matrix, cpos, component["size"], cls.get_property_value(component,"widget_border_thickness"), cls.get_property_value(component,"widget_border_color"), cls.get_property_value(component,"widget_rounded_radius"))
 			
 			elif component["type"] == "radio_image_button":
 				margins = cls.get_property_value(component,"radio_button_image_margins")
-				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"radio_button_box_color") * opacity)
+				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"radio_button_box_color") * opacity, cls.get_property_value(component,"widget_rounded_radius"))
 				HarfangGUISceneGraph.add_texture_box(matrix, cpos + margins, component["size"] - margins * 2, cls.get_property_value(component,"texture_box_color") * opacity, component["texture"])
-				HarfangGUISceneGraph.add_box_border(matrix, cpos, component["size"], cls.get_property_value(component,"radio_image_border_thickness"), cls.get_property_value(component,"radio_image_border_color"))
+				HarfangGUISceneGraph.add_rounded_border(matrix, cpos, component["size"], cls.get_property_value(component,"radio_image_border_thickness"), cls.get_property_value(component,"radio_image_border_color"), cls.get_property_value(component,"widget_rounded_radius"))
 			
 			elif component["type"]=="toggle_button_box":
-				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity)
+				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity, cls.get_property_value(component,"widget_rounded_radius"))
 				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id, cls.get_property_value(component,"button_text_color") * opacity)
-				HarfangGUISceneGraph.add_box_border(matrix, cpos, component["size"], cls.get_property_value(component,"widget_border_thickness"), cls.get_property_value(component,"widget_border_color") )
+				HarfangGUISceneGraph.add_rounded_border(matrix, cpos, component["size"], cls.get_property_value(component,"widget_border_thickness"), cls.get_property_value(component,"widget_border_color"), cls.get_property_value(component,"widget_rounded_radius"))
 			
 			elif component["type"] == "toggle_image_button":
 				margins = cls.get_property_value(component,"toggle_image_button_margins")
-				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"toggle_image_button_box_color") * opacity)
+				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"toggle_image_button_box_color") * opacity, cls.get_property_value(component,"widget_rounded_radius"))
 				HarfangGUISceneGraph.add_texture_box(matrix, cpos + margins, component["size"] - margins * 2, cls.get_property_value(component,"toggle_image_button_texture_box_color") * opacity, component["textures"][widget["toggle_idx"]])
-				HarfangGUISceneGraph.add_box_border(matrix, cpos, component["size"], cls.get_property_value(component,"toggle_image_button_border_thickness"), cls.get_property_value(component,"toggle_image_button_border_color") )
+				HarfangGUISceneGraph.add_rounded_border(matrix, cpos, component["size"], cls.get_property_value(component,"toggle_image_button_border_thickness"), cls.get_property_value(component,"toggle_image_button_border_color"), cls.get_property_value(component,"widget_rounded_radius"))
 
 
 			elif component["type"] == "info_image":
@@ -2051,15 +2058,15 @@ class HarfangUI:
 
 			elif component["type"] == "check_box":
 				margins = cls.get_property_value(component,"checkbox_margins")
-				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity)
+				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity, cls.get_property_value(component,"widget_rounded_radius"))
 				HarfangGUISceneGraph.add_texture_box(matrix, cpos + margins, cls.get_property_value(component,"check_size"), cls.get_property_value(component,"check_color") * opacity, component["texture"])
 			
 			elif component["type"] == "label_box":
-				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"label_box_color") * opacity)
+				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"label_box_color") * opacity, cls.get_property_value(component,"widget_rounded_radius"))
 				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id,  cls.get_property_value(component,"label_text_color") * opacity)
 			
 			elif component["type"] == "input_box":
-				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"input_box_color") * opacity)
+				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"input_box_color") * opacity, cls.get_property_value(component,"widget_rounded_radius"))
 				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id,  cls.get_property_value(component,"input_text_color") * opacity)
 				#Draw keyboard cursor:
 				if "edit" in component["states"]:
@@ -2069,7 +2076,7 @@ class HarfangUI:
 						tc_size *= component["text_size"]
 					p = cpos + component["size"] / 2 - component["display_text_size"] / 2
 					p.x += tc_size.x
-					HarfangGUISceneGraph.add_box(matrix,  p, hg.Vec3(2, component["display_text_size"].y, 0), HarfangUISkin.keyboard_cursor_color * opacity)
+					HarfangGUISceneGraph.add_rounded_box(matrix,  p, hg.Vec3(2, component["display_text_size"].y, 0), HarfangUISkin.keyboard_cursor_color * opacity, cls.get_property_value(component,"widget_rounded_radius"))
 			
 			elif component["type"]=="scrollbar":
 				if widget["type"] == "scrollbar_v":
@@ -2089,7 +2096,7 @@ class HarfangUI:
 					margin = 0
 				margins = hg.Vec2(margin, margin)
 				HarfangGUISceneGraph.add_box(matrix, cpos, component["size"], cls.get_property_value(component,"scrollbar_background_color") * opacity)
-				HarfangGUISceneGraph.add_box(matrix, cpos + bar_pos, hg.Vec3(bar_width, bar_height, 0), cls.get_property_value(component,"scrollbar_color") * opacity)
+				HarfangGUISceneGraph.add_rounded_box(matrix, cpos + bar_pos, hg.Vec3(bar_width, bar_height, 0), cls.get_property_value(component,"scrollbar_color") * opacity, cls.get_property_value(component,"scrollbar_rounded_radius"))
 	
 	@classmethod
 	def activate_pointer_VR(cls, flag: bool):
@@ -2401,7 +2408,7 @@ class HarfangUI:
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
-		widget["components"]["button_box"]["label"] = cls.get_label_from_id(widget_id)
+		widget["components"]["button_component"]["label"] = cls.get_label_from_id(widget_id)
 		widget["position"] = cls.get_cursor_position()
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
@@ -2505,6 +2512,16 @@ class HarfangUI:
 			if "MLB_pressed" in cls.current_signals and widget["widget_id"] in cls.current_signals["MLB_pressed"]:
 				cls.set_widget_state(widget, "mouse_move")
 				cls.set_ui_state(cls.UI_STATE_WIDGET_MOUSE_FOCUS)
+
+		if cls.current_focused_widget is not None:
+			if cls.current_focused_widget["widget_id"] == widget["parent_id"]:
+				mw = cls.mouse.Wheel()
+				if not cls.keyboard.Down(hg.K_LShift) and not flag_horizontal:
+					s = total_size / widget["components"]["scrollbar"]["size"].y
+					scroll_position -= mw * s * 20
+				elif cls.keyboard.Down(hg.K_LShift) and flag_horizontal:
+					s = total_size / widget["components"]["scrollbar"]["size"].x
+					scroll_position += mw * s * 20
 		
 		widget["part_size"] = part_size
 		widget["total_size"] = total_size

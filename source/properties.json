@@ -158,6 +158,38 @@
             }
         ]
     },
+    "window_rounded_radius":
+    {
+        "type": "vec4",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [0.05, 0.05, 0.05, 0.05],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "window_title_rounded_radius":
+    {
+        "type": "vec4",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [0.2, 0.2, 0.0, 0.0],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
     "window_box_border_thickness": {
         "type": "float",
         "layers": [
@@ -263,7 +295,7 @@
             }
         ]
     },
-    "button_rounded_radius":
+    "widget_rounded_radius":
     {
         "type": "vec4",
         "layers": [
@@ -276,7 +308,23 @@
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [0, 0.5, 0.5, 0.5],
+                        "value": [0, 0, 0, 0],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "scrollbar_rounded_radius":
+    {
+        "type": "vec4",
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [1, 1, 1, 1],
                         "delay": 0.2
                     }
                 }
