@@ -398,68 +398,80 @@ class HarfangUISkin:
 
 		cls.properties = cls.load_properties("properties.json")
 
+		cls.primitives = {
+			"box":["background_color", "border_color", "border_thickness"],
+			"rounded_box":["background_color", "border_color", "border_thickness", "corner_radius"],
+			"text":["text_color", "margins", "text_size", "text", "forced_text_width"],
+			"texture":["margins","texture_color", "texture_size", "texture_scale"],
+			"text_rounded_box":["text_color", "text_size","forced_text_width" ,"margins", "background_color", "border_color", "border_thickness", "corner_radius", "text"],
+			"texture_rounded_box":["margins", "texture_color", "texture_size", "texture_scale", "background_color", "border_color", "border_thickness", "corner_radius"],
+			"rounded_scrollbar":["background_color", "scrollbar_color","scrollbar_thickness","corner_radius"]
+		}
+
 		cls.components = {
 			"window_background": {
+				"primitive":"rounded_box",
 				"cursor_auto": False,
 				"size_factor": [1, 1, 1],
 				"properties": ["window_box_color", "window_box_border_thickness", "window_box_border_color", "window_rounded_radius"] #"widget_opacity"
 				},
+			
 			"window_title": {
-				"display_text": "label",
-				"text_size": 1,
+				"primitive":"text_rounded_box",
 				"cursor_auto": False,
 				"size_factor": [1, -1, -1],
 				"properties": ["window_box_border_color", "window_title_margins", "window_title_color", "window_title_rounded_radius"]
 			},
-			"scrollbar": {
-				"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_thikness", "scrollbar_rounded_radius"]
-			},
+
 			"info_text": {
-				"display_text": "text",
-				"text_size": 1,
-				"properties": ["info_text_color", "text_size", "info_text_margins"]
+				"primitive":"text",
+				"properties": ["info_text_color", "info_text_size", "info_text_margins"]
 				},
+
+			"scrollbar": {
+				"primitive":"rounded_scrollbar",
+				"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_rounded_radius"]
+			},
+			
 			"info_image": {
-				"texture": None,
+				"primitive":"texture",
 				"properties": ["info_image_offset", "info_image_margins", "texture_box_color"]
 				},
+
 			"button_component": {
-				"display_text": "label",
-				"text_size": 1,
+				"primitive":"text_rounded_box",
 				"properties": ["button_offset", "button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_rounded_radius", "widget_border_thickness", "widget_border_color"]
 				},
+
 			"label_box": {
-				"display_text": "label",
-				"text_size": 1,
+				"primitive": "text_rounded_box",
 				"properties": ["text_size", "label_text_margins", "widget_rounded_radius", "label_box_color", "label_text_color"]
 				},
+
 			"image_button": {
-				"texture": None,
-				"texture_size": hg.Vec2(1, 1),
+				"primitive": "texture_rounded_box",
 				"properties": ["button_image_texture_scale","button_offset", "button_image_margins", "button_box_color", "widget_rounded_radius", "texture_box_color", "widget_border_thickness", "widget_border_color"]
 				},
 			"check_box":{
+				"primitive": "texture_rounded_box",
 				"texture": "hgui_textures/check.png",
 				"properties": ["button_offset","check_size", "checkbox_margins", "widget_rounded_radius", "button_box_color", "check_color"]
 				},
 			"input_box": {
-				"display_text": "text",
-				"input_text": "edit_text",
-				"text_size": 1,
+				"primitive": "text_rounded_box",
 				"properties": ["text_size", "label_text_margins", "input_box_color", "widget_rounded_radius", "input_text_color"]
 				},
 			"radio_image_button": {
-				"texture": None,
+				"primitive": "texture_rounded_box",
 				"properties": ["radio_image_offset","radio_button_image_margins", "radio_button_box_color", "widget_rounded_radius", "texture_box_color", "radio_image_border_color", "radio_image_border_thickness"]
 				},
 			"toggle_button_box": {
-				"display_text": "text",
-				"forced_text_width": None,
+				"primitive": "text_rounded_box",
 				"texts": None,
-				"text_size": 1,
 				"properties": ["button_offset", "button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_rounded_radius", "widget_border_thickness", "widget_border_color"]
 				},
 			"toggle_image_button": {
+				"primitive": "texture_rounded_box",
 				"textures": None,
 				"properties": ["toggle_image_button_offset","toggle_image_button_margins","widget_rounded_radius", "toggle_image_button_box_color", "toggle_image_button_texture_box_color", "toggle_image_button_border_color", "toggle_image_button_border_thickness"]
 				}
@@ -928,14 +940,20 @@ class HarfangUI:
 	def new_component(cls, type):
 		component = cls.new_gui_object(type)
 		component["classe"] = "component"
+		primitive_name = HarfangUISkin.components[type]["primitive"]
+		primitive = HarfangUISkin.primitives[primitive_name]
 		component.update(
 			{
+				"primitive": primitive_name, #Render shape type
 				"properties" : {},
 				"cursor_auto": True,	#False if cursor is not incremented in widget rendering
-				"content_scale": hg.Vec3(1, 1, 1), # Generaly used for scaling content but margins and offset.
 				"size_factor": hg.Vec3(-1, -1, -1) # Size linked to container size. factor <= 0 : no proportional size correction. factor > 0 : size = max(component_size * factor, container_size) 
 			}
 		)
+		for property_name in primitive:
+			if property_name == "text":
+				component["display_text_size"] = hg.Vec3(0, 0, 0)
+			component[property_name] = None
 		return component
 
 	@classmethod
@@ -1040,13 +1058,7 @@ class HarfangUI:
 						component[key] = hg.Vec3(value[0], value[1], value[2])
 					else:
 						component[key] = value
-			if "display_text" in component:
-				text_field = component["display_text"]
-				component[text_field] = "undefined"
-				component["display_text_size"] = hg.Vec3(0, 0, 0)
-			if "input_text" in component:
-				input_field = component["input_text"]
-				component[input_field] = "undefined"
+			
 			for property_name in component_model["properties"]:
 				if property_name in  HarfangUISkin.properties:
 					class_property = HarfangUISkin.properties[property_name]
@@ -1740,25 +1752,38 @@ class HarfangUI:
 	def update_component_properties(cls, widget, component):
 		
 		# Compute content size
-		flag_text = False
-		text_field = ""
-		if "texture_size" in component:
-			component["size"].x = component["texture_size"].x
-			component["size"].y = component["texture_size"].y
-		if "display_text" in component:
-			text_field = component["display_text"]
-			flag_text = True
-		if flag_text:
-			txt_size = HarfangGUIRenderer.compute_text_size(cls.current_font_id, component[text_field])
-			if "forced_text_width" in component and component["forced_text_width"] is not None:
-				txt_size.x = component["forced_text_width"]
-			component["size"] = hg.Vec3(txt_size.x, txt_size.y, 0)
-			if "text_size" in component:
-				component["size"] *= component["text_size"]
-			component["display_text_size"].x, component["display_text_size"].y = component["size"].x, component["size"].y #Keep the string size for special displays (keyboard cursor for inputs widgets...)
-		
-		# Applies content scale, before properties modifies size:
-		component["size"] *= component["content_scale"]
+
+		if component["primitive"] == "texture_rounded_box":
+			sx, sy = 0, 0
+			if component["texture_size"] is not None:
+				sx, sy = component["texture_size"].x, component["texture_size"].y
+			if component["texture_scale"] is not None:
+				sx *= component["texture_scale"].x
+				sy *= component["texture_scale"].y
+			if component["margins"] is not None:
+				sx += component["margins"].x * 2
+				sy += component["margins"].y * 2
+			
+			component["size"].x, component["size"].y = sx, sy
+
+		if component["primitive"] == "text":
+			sx, sy = 0, 0
+			if component["text"] is not None:
+				txt_size = HarfangGUIRenderer.compute_text_size(cls.current_font_id, component["text"])
+				sx, sy = txt_size.x, txt_size.y
+			if component["forced_text_width"] is not None:
+				sx = component["forced_text_width"]
+			if component["text_size"] is not None:
+				sx *= component["text_size"]
+				sy *= component["text_size"]
+			
+			component["display_text_size"].x, component["display_text_size"].y = sx, sy #Keep the string size for special displays (keyboard cursor for inputs widgets...)
+			
+			if component["margins"] is not None:
+				sx += component["margins"].x * 2
+				sy += component["margins"].y * 2
+
+			component["size"].x, component["size.y"] = sx, sy
 
 		# Applies properties
 		for property_name, component_property in component["properties"].items():

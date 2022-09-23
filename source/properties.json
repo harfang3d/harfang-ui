@@ -1,6 +1,263 @@
 {
+    "window_box_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#141414",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "window_box_border_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "border_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "no_focus",
+                "states": {
+                    "no_focus": {
+                        "value": [
+                            "#2a2a2e",
+                            100
+                        ],
+                        "delay": 0.2
+                    },
+                    "focus": {
+                        "value": [
+                            "#3a3a3d",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            },
+            {
+                "operator": "add",
+                "default_state": "mouse_idle",
+                "states": {
+                    "mouse_idle": {
+                        "value": [
+                            "#0",
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_move": {
+                        "value": [
+                            "#050505",
+                            0
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "window_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [0.05, 0.05, 0.05, 0.05],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "window_title_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [0.2, 0.2, 0.0, 0.0],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "window_box_border_thickness": {
+        "type": "float",
+        "linked_value": {
+            "name": "border_thickness",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "no_focus",
+                "states": {
+                    "no_focus": {
+                        "value": 1,
+                        "delay": 0.2
+                    },
+                    "focus": {
+                        "value": 2,
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "window_title_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "window_title_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "text_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#888888",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+
+    "info_text_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            15,
+                            15,
+                            0
+                        ],
+                        "delay": 0
+                    }
+                }
+            }
+        ]
+    },
+    "info_text_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "text_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#fdfdfd",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "info_text_size": {
+        "type": "float",
+        "linked_value": {
+            "name": "text_size",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 1,
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": 1,
+                        "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": 1,
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+
     "scrollbar_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "scrollbar_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -46,6 +303,10 @@
     },
     "scrollbar_background_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "background_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -71,150 +332,9 @@
     },
     "scrollbar_thickness": {
         "type": "float",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 8,
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": 8,
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "window_box_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "window_box_border_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "no_focus",
-                "states": {
-                    "no_focus": {
-                        "value": [
-                            "#666666",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "focus": {
-                        "value": [
-                            "#7f7f7f",
-                            100
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            },
-            {
-                "operator": "add",
-                "default_state": "mouse_idle",
-                "states": {
-                    "mouse_idle": {
-                        "value": [
-                            "#0",
-                            0
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_move": {
-                        "value": [
-                            "#33",
-                            0
-                        ],
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "window_rounded_radius":
-    {
-        "type": "vec4",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [0.05, 0.05, 0.05, 0.05],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "window_title_rounded_radius":
-    {
-        "type": "vec4",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [0.2, 0.2, 0.0, 0.0],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "window_box_border_thickness": {
-        "type": "float",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "no_focus",
-                "states": {
-                    "no_focus": {
-                        "value": 1,
-                        "delay": 0.2
-                    },
-                    "focus": {
-                        "value": 3,
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "window_title_margins": {
-        "type": "vec3",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
+            "name": "scrollbar_thickness",
+            "operator": "set"
         },
         "layers": [
             {
@@ -222,37 +342,24 @@
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            5,
-                            5,
-                            0
-                        ],
+                        "value": 8,
                         "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": 8,
+                        "delay": 0.15
                     }
                 }
             }
         ]
     },
-    "window_title_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#e5e5ff",
-                            100
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
+    
     "widget_border_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "border_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -278,6 +385,10 @@
     },
     "widget_border_thickness": {
         "type": "float",
+        "linked_value": {
+            "name": "border_thickness",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -298,6 +409,10 @@
     "widget_rounded_radius":
     {
         "type": "vec4",
+        "linked_value": {
+            "name": "corner_radius",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -318,6 +433,10 @@
     "scrollbar_rounded_radius":
     {
         "type": "vec4",
+        "linked_value": {
+            "name": "corner_radius",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -335,7 +454,6 @@
         "type": "float",
         "linked_value": {
             "name": "opacity",
-            "factor": 1,
             "operator": "set",
             "parent": "widget"
         },
@@ -359,8 +477,7 @@
     "button_text_margins": {
         "type": "vec3",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
+            "name": "margins",
             "operator": "add"
         },
         "layers": [
@@ -418,8 +535,7 @@
     "label_text_margins": {
         "type": "vec3",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
+            "name": "margins",
             "operator": "add"
         },
         "layers": [
@@ -442,7 +558,7 @@
     "check_size": {
         "type": "vec3",
         "linked_value": {
-            "name": "size",
+            "name": "texture_scale",
             "operator": "set"
         },
         "layers": [
@@ -481,9 +597,8 @@
     "checkbox_margins": {
         "type": "vec3",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
+            "name": "margins",
+            "operator": "set"
         },
         "layers": [
             {
@@ -502,36 +617,11 @@
             }
         ]
     },
-    "info_text_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            15,
-                            15,
-                            0
-                        ],
-                        "delay": 0
-                    }
-                }
-            }
-        ]
-    },
     "button_image_margins": {
         "type": "vec3",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
+            "name": "margins",
+            "operator": "set"
         },
         "layers": [
             {
@@ -569,8 +659,7 @@
     "button_image_texture_scale": {
         "type": "vec3",
         "linked_value": {
-            "name": "content_scale",
-            "factor": 1,
+            "name": "texture_scale",
             "operator": "set"
         },
         "layers": [
@@ -609,9 +698,8 @@
     "info_image_margins": {
         "type": "vec3",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
+            "name": "margins",
+            "operator": "set"
         },
         "layers": [
             {
@@ -678,6 +766,10 @@
     },
     "texture_box_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "texture_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -710,6 +802,10 @@
     },
     "button_box_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "background_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -742,6 +838,10 @@
     },
     "label_box_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "background_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -774,6 +874,10 @@
     },
     "button_text_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "text_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -806,6 +910,10 @@
     },
     "label_text_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "text_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -836,26 +944,13 @@
             }
         ]
     },
-    "info_text_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#b2b2b2",
-                            100
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
+    
     "check_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "texture_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -908,6 +1003,10 @@
     },
     "input_box_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "background_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -960,6 +1059,10 @@
     },
     "input_text_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "text_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -1012,6 +1115,10 @@
     },
     "radio_button_box_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "background_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -1089,9 +1196,8 @@
     "radio_button_image_margins": {
         "type": "vec3",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
+            "name": "margins",
+            "operator": "set"
         },
         "layers": [
             {
@@ -1128,6 +1234,10 @@
     },
     "radio_image_border_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "border_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -1173,6 +1283,10 @@
     },
     "radio_image_border_thickness": {
         "type": "float",
+        "linked_value": {
+            "name": "border_thickness",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -1192,6 +1306,10 @@
     },
     "toggle_image_button_box_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "background_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -1269,9 +1387,8 @@
     "toggle_image_button_margins": {
         "type": "vec3",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
+            "name": "margins",
+            "operator": "set"
         },
         "layers": [
             {
@@ -1308,6 +1425,10 @@
     },
     "toggle_image_button_border_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "border_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -1353,6 +1474,10 @@
     },
     "toggle_image_button_border_thickness": {
         "type": "float",
+        "linked_value": {
+            "name": "border_thickness",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -1372,6 +1497,10 @@
     },
     "toggle_image_button_texture_box_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "texture_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
