@@ -951,9 +951,13 @@ class HarfangUI:
 			}
 		)
 		for property_name in primitive:
+			component[property_name] = None
+			# Default values
 			if property_name == "text":
 				component["display_text_size"] = hg.Vec3(0, 0, 0)
-			component[property_name] = None
+				component["text"] = ""
+			if property_name == "text_size":
+				component["text_size"] = 1
 		return component
 
 	@classmethod
@@ -1753,7 +1757,7 @@ class HarfangUI:
 		
 		# Compute content size
 
-		if component["primitive"] == "texture_rounded_box":
+		if component["primitive"] == "texture_rounded_box" or component["primitive"] == "texture_rounded_box":
 			sx, sy = 0, 0
 			if component["texture_size"] is not None:
 				sx, sy = component["texture_size"].x, component["texture_size"].y
@@ -1766,7 +1770,7 @@ class HarfangUI:
 			
 			component["size"].x, component["size"].y = sx, sy
 
-		if component["primitive"] == "text":
+		if component["primitive"] == "text" or component["primitive"] == "text_rounded_box":
 			sx, sy = 0, 0
 			if component["text"] is not None:
 				txt_size = HarfangGUIRenderer.compute_text_size(cls.current_font_id, component["text"])
@@ -2016,7 +2020,7 @@ class HarfangUI:
 			elif component["type"] == "window_title":
 				if not widgets_container["flag_hide_title"]:
 					HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"window_box_border_color") * opacity, cls.get_property_value(component,"window_title_rounded_radius"))
-					HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id, cls.get_property_value(component,"window_title_color") * opacity)
+					HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component["text"], cls.current_font_id, cls.get_property_value(component,"window_title_color") * opacity)
 
 	@classmethod
 	def build_widget(cls, widgets_container, matrix, widget):
@@ -2046,11 +2050,11 @@ class HarfangUI:
 			
 			elif component["type"]=="button_component":
 				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity, cls.get_property_value(component,"widget_rounded_radius"))
-				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id, cls.get_property_value(component,"button_text_color") * opacity)
+				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component["text"], cls.current_font_id, cls.get_property_value(component,"button_text_color") * opacity)
 				HarfangGUISceneGraph.add_rounded_border(matrix, cpos, component["size"], cls.get_property_value(component,"widget_border_thickness"), cls.get_property_value(component,"widget_border_color"), cls.get_property_value(component,"widget_rounded_radius"))
 			
 			elif component["type"] == "info_text":
-				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id, cls.get_property_value(component,"info_text_color") * opacity)
+				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component["text"], cls.current_font_id, cls.get_property_value(component,"info_text_color") * opacity)
 
 			elif component["type"] == "image_button":
 				margins = cls.get_property_value(component,"button_image_margins")
@@ -2066,7 +2070,7 @@ class HarfangUI:
 			
 			elif component["type"]=="toggle_button_box":
 				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"button_box_color") * opacity, cls.get_property_value(component,"widget_rounded_radius"))
-				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id, cls.get_property_value(component,"button_text_color") * opacity)
+				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component["text"], cls.current_font_id, cls.get_property_value(component,"button_text_color") * opacity)
 				HarfangGUISceneGraph.add_rounded_border(matrix, cpos, component["size"], cls.get_property_value(component,"widget_border_thickness"), cls.get_property_value(component,"widget_border_color"), cls.get_property_value(component,"widget_rounded_radius"))
 			
 			elif component["type"] == "toggle_image_button":
@@ -2087,14 +2091,14 @@ class HarfangUI:
 			
 			elif component["type"] == "label_box":
 				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"label_box_color") * opacity, cls.get_property_value(component,"widget_rounded_radius"))
-				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id,  cls.get_property_value(component,"label_text_color") * opacity)
+				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component["text"], cls.current_font_id,  cls.get_property_value(component,"label_text_color") * opacity)
 			
 			elif component["type"] == "input_box":
 				HarfangGUISceneGraph.add_rounded_box(matrix, cpos, component["size"], cls.get_property_value(component,"input_box_color") * opacity, cls.get_property_value(component,"widget_rounded_radius"))
-				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component[component["display_text"]], cls.current_font_id,  cls.get_property_value(component,"input_text_color") * opacity)
+				HarfangGUISceneGraph.add_text(matrix, cpos + component["size"] / 2, component["text_size"], component["text"], cls.current_font_id,  cls.get_property_value(component,"input_text_color") * opacity)
 				#Draw keyboard cursor:
 				if "edit" in component["states"]:
-					tc_txt = component["edit_text"][:cls.kb_cursor_pos]
+					tc_txt = component["text"][:cls.kb_cursor_pos]
 					tc_size = HarfangGUIRenderer.compute_text_size(cls.current_font_id, tc_txt)
 					if "text_size" in component:
 						tc_size *= component["text_size"]
@@ -2356,41 +2360,40 @@ class HarfangUI:
 	# ------------ String edition
 
 	@classmethod
-	def start_edit_string(cls, widget, widget_property):
-		widget_property["edit_text"] = widget_property["text"]
-		widget_property["display_text"] = "edit_text"
+	def start_edit_string(cls, widget, component):
+		component["text_mem"] = component["text"]
 		cls.set_widget_state(widget, "edit")
 		cls.set_ui_state(cls.UI_STATE_WIDGET_KEYBOARD_FOCUS) # Get keyboard control
 		cls.set_widget_state(widget,"idle")
-		cls.kb_cursor_pos = len(widget_property["edit_text"])
+		cls.kb_cursor_pos = len(component["text"])
 		cls.ascii_connect = hg.OnTextInput.Connect(on_key_press)
 
 	@classmethod
-	def stop_edit_string(cls, widget, widget_property):
+	def stop_edit_string(cls, widget, component):
 		cls.set_widget_state(widget, "no_edit")
-		widget_property["display_text"] = "text"
 		cls.set_ui_state(cls.UI_STATE_MAIN)	# Resume keyboard control to ui
+		component["text"] = component["text_mem"]
 		widget["flag_update_rest_size"] = True
 		if cls.ascii_connect is not None:
 			hg.OnTextInput.Disconnect(cls.ascii_connect)
 			cls.ascii_connect = None
 	
 	@classmethod
-	def update_edit_string(cls, widget, widget_property_id):
+	def update_edit_string(cls, widget, component_id):
 		
-		widget_property = widget["components"][widget_property_id]
+		component = widget["components"][component_id]
 		
 		if not "edit" in widget["states"]:
 			if "mouse_click" in cls.current_signals and widget["widget_id"] in cls.current_signals["mouse_click"]:
-				cls.start_edit_string(widget, widget_property)
+				cls.start_edit_string(widget, component)
 
 		else:
 			if "MLB_pressed" in cls.current_signals and not widget["widget_id"] in cls.current_signals["MLB_pressed"]:
-				cls.stop_edit_string(widget, widget_property)
+				cls.stop_edit_string(widget, component)
 			
 			elif cls.ui_state == cls.UI_STATE_WIDGET_KEYBOARD_FOCUS:
 
-				str_l = len(widget_property["edit_text"])
+				str_l = len(component["text"])
 				if cls.keyboard.Pressed(hg.K_Right) and cls.kb_cursor_pos < str_l:
 					cls.kb_cursor_pos +=1
 					
@@ -2399,23 +2402,21 @@ class HarfangUI:
 				
 				elif cls.keyboard.Pressed(hg.K_Backspace) and cls.kb_cursor_pos > 0:
 					cls.kb_cursor_pos -= 1
-					widget_property["edit_text"] = widget_property["edit_text"][:cls.kb_cursor_pos] + widget_property["edit_text"][cls.kb_cursor_pos+1:]
+					component["text"] = component["text"][:cls.kb_cursor_pos] + component["text"][cls.kb_cursor_pos+1:]
 					widget["flag_update_rest_size"] = True
 		
 				elif cls.keyboard.Pressed(hg.K_Suppr) and cls.kb_cursor_pos < str_l:
-					widget_property["edit_text"] = widget_property["edit_text"][:cls.kb_cursor_pos] + widget_property["edit_text"][cls.kb_cursor_pos+1:]
+					component["text"] = component["text"][:cls.kb_cursor_pos] + component["text"][cls.kb_cursor_pos+1:]
 					widget["flag_update_rest_size"] = True
 
 				elif cls.keyboard.Pressed(hg.K_Return) or cls.keyboard.Pressed(hg.K_Enter):
-					widget_property["text"] = widget_property["edit_text"]
 					cls.set_widget_state(widget, "no_edit")
-					widget_property["display_text"] = "text"
 					cls.set_ui_state(cls.UI_STATE_MAIN)	# Resume keyboard control to ui
 					widget["flag_update_rest_size"] = True
 					return True #String changed
 				else:
 					if cls.ascii_code is not None:
-						widget_property["edit_text"] = widget_property["edit_text"][:cls.kb_cursor_pos] + cls.ascii_code + widget_property["edit_text"][cls.kb_cursor_pos:]
+						component["text"] = component["text"][:cls.kb_cursor_pos] + cls.ascii_code + component["text"][cls.kb_cursor_pos:]
 						cls.kb_cursor_pos += 1
 						widget["flag_update_rest_size"] = True
 						cls.ascii_code = None
@@ -2441,7 +2442,7 @@ class HarfangUI:
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
-		widget["components"]["button_component"]["label"] = cls.get_label_from_id(widget_id)
+		widget["components"]["button_component"]["text"] = cls.get_label_from_id(widget_id)
 		widget["position"] = cls.get_cursor_position()
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
@@ -2461,7 +2462,7 @@ class HarfangUI:
 		widget["components"]["image_button"]["texture_size"].x = image_size.x
 		widget["components"]["image_button"]["texture_size"].y = image_size.y
 		widget["components"]["image_button"]["texture"] = texture_path
-		widget["components"]["label_box"]["label"] = cls.get_label_from_id(widget_id)
+		widget["components"]["label_box"]["text"] = cls.get_label_from_id(widget_id)
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
 		return mouse_click
@@ -2494,7 +2495,7 @@ class HarfangUI:
 		else:
 			widget["components"]["label_box"]["hidden"] = False
 
-		widget["components"]["label_box"]["label"] = cls.get_label_from_id(widget_id)
+		widget["components"]["label_box"]["text"] = cls.get_label_from_id(widget_id)
 		widget["position"] = cls.get_cursor_position()
 		
 		cls.update_widget_components(widget)
@@ -2516,7 +2517,7 @@ class HarfangUI:
 			widget["components"]["label_box"]["hidden"] = False
 
 		widget["position"] = cls.get_cursor_position()
-		widget["components"]["label_box"]["label"] = cls.get_label_from_id(widget_id)
+		widget["components"]["label_box"]["text"] = cls.get_label_from_id(widget_id)
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
 

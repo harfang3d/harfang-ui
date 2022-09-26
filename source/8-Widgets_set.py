@@ -43,7 +43,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             
             hgui.info_text("info1", "Information text")
             
-            f= hgui.button("My_button")
+            #f= hgui.button("My_button")
             
             hgui.end_window()
 		

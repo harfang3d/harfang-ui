@@ -478,7 +478,7 @@
         "type": "vec3",
         "linked_value": {
             "name": "margins",
-            "operator": "add"
+            "operator": "set"
         },
         "layers": [
             {
@@ -536,7 +536,7 @@
         "type": "vec3",
         "linked_value": {
             "name": "margins",
-            "operator": "add"
+            "operator": "set"
         },
         "layers": [
             {
