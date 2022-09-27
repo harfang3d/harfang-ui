@@ -956,8 +956,10 @@ class HarfangUI:
 			if property_name == "text":
 				component["display_text_size"] = hg.Vec3(0, 0, 0)
 				component["text"] = ""
-			if property_name == "text_size":
-				component["text_size"] = 1
+			elif property_name == "text_size":
+				component[property_name] = 1
+			elif property_name == "texture_size":
+				component[property_name] = hg.Vec2(1, 1)
 		return component
 
 	@classmethod
@@ -1051,7 +1053,7 @@ class HarfangUI:
 
 
 	@classmethod
-	def create_component(cls,component_type):
+	def create_component(cls, component_type, widget):
 		if component_type in HarfangUISkin.components:
 			component = cls.new_component(component_type)
 			component_model = HarfangUISkin.components[component_type]
@@ -1105,7 +1107,32 @@ class HarfangUI:
 						component_layer = {"current_state":default_state_name, "current_state_t0":0, "value":default_value, "value_start":default_value, "value_end":default_value, "states":component_layer_states}
 						component_layers.append(component_layer)
 					
-					component["properties"][property_name] = {"layers":component_layers, "value":default_final_value}
+					component_property = {"layers":component_layers, "value":default_final_value}
+					
+					if "linked_value" in class_property:
+						lv = class_property["linked_value"]
+						
+						if "parent" in lv:
+							parent_classe = lv["parent"]
+							if parent_classe == "widget":
+								obj = widget
+							elif parent_classe == "component":
+								obj = component
+							else:
+								obj = component
+						else:
+							obj = component
+						
+						if lv["name"] in obj:
+							v = component_property["value"]
+							if "factor" in lv:
+								v *= lv["factor"]
+							if lv["operator"] == "set":
+								obj[lv["name"]] = v
+							elif lv["operator"] == "add":
+								obj[lv["name"]] += v
+
+					component["properties"][property_name] = component_property
 			return component
 		return None
 
@@ -1117,10 +1144,16 @@ class HarfangUI:
 		widgets_type_containers = ["window"]
 
 		if widget_type in HarfangUISkin.widgets_models:
+
+			if widget_type in widgets_type_containers:
+				widget = cls.new_widgets_container(widget_type)
+			else:
+				widget = cls.new_single_widget(widget_type)
+
 			components_order = []
 			widget_model = HarfangUISkin.widgets_models[widget_type]
 			for component_type in widget_model["components"]:
-				component = cls.create_component(component_type)
+				component = cls.create_component(component_type, widget)
 				components_order.append(component)
 
 			#Creation of a dictionnary to facilitate access to components
@@ -1128,11 +1161,6 @@ class HarfangUI:
 			for component in components_order:
 				components_dict[component["type"]] = component
 
-			if widget_type in widgets_type_containers:
-				widget = cls.new_widgets_container(widget_type)
-			else:
-				widget = cls.new_single_widget(widget_type)
-			
 			widget["widget_id"] = widget_id
 			widget["components"] = components_dict
 			widget["components_render_order"] = components_order
@@ -1504,7 +1532,7 @@ class HarfangUI:
 			thickness = 0 if flag_invisible else cls.get_property_states_value(widget["components"]["window_background"], "window_box_border_thickness",["focus"] )
 			widget["default_cursor_start_line"].x = 5 + thickness
 			widget["default_cursor_start_line"].y = 5 + thickness
-			widget["components"]["window_title"]["label"] = cls.get_label_from_id(widget["widget_id"])
+			widget["components"]["window_title"]["text"] = cls.get_label_from_id(widget["widget_id"])
 		
 		else:
 			if not flag_move:
@@ -1787,7 +1815,7 @@ class HarfangUI:
 				sx += component["margins"].x * 2
 				sy += component["margins"].y * 2
 
-			component["size"].x, component["size.y"] = sx, sy
+			component["size"].x, component["size"].y = sx, sy
 
 		# Applies properties
 		for property_name, component_property in component["properties"].items():
@@ -2603,8 +2631,8 @@ class HarfangUI:
 				cls.set_widget_state(widget,"unselected")
 
 		widget["position"] = cls.get_cursor_position()
-		widget["components"]["radio_image_button"]["size"].x = image_size.x
-		widget["components"]["radio_image_button"]["size"].y = image_size.y
+		widget["components"]["radio_image_button"]["texture_size"].x = image_size.x
+		widget["components"]["radio_image_button"]["texture_size"].y = image_size.y
 		widget["components"]["radio_image_button"]["texture"] = texture_path
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
@@ -2635,8 +2663,8 @@ class HarfangUI:
 			mouse_click = True
 			current_idx = (current_idx + 1) % len(textures_paths)
 		widget["position"] = cls.get_cursor_position()
-		widget["components"]["toggle_image_button"]["size"].x = image_size.x
-		widget["components"]["toggle_image_button"]["size"].y = image_size.y
+		widget["components"]["toggle_image_button"]["texture_size"].x = image_size.x
+		widget["components"]["toggle_image_button"]["texture_size"].y = image_size.y
 		widget["components"]["toggle_image_button"]["textures"] = textures_paths
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)

@@ -419,11 +419,11 @@
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [1, 1, 1, 1],
+                        "value": [0.5, 0.5, 0.5, 0.5],
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": [0, 0, 0, 0],
+                        "value": [0.4, 0.4, 0.4, 0.4],
                         "delay": 0.2
                     }
                 }
@@ -630,24 +630,24 @@
                 "states": {
                     "idle": {
                         "value": [
-                            2,
-                            2,
+                            5,
+                            5,
                             0
                         ],
                         "delay": 0.2
                     },
                     "mouse_hover": {
                         "value": [
-                            2,
-                            2,
+                            5,
+                            5,
                             0
                         ],
                         "delay": 0.15
                     },
                     "MLB_down": {
                         "value": [
-                            2,
-                            2,
+                            5,
+                            5,
                             0
                         ],
                         "delay": 0.05
