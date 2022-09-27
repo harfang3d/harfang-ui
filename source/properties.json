@@ -70,6 +70,55 @@
             }
         ]
     },
+    "window_title_background_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "no_focus",
+                "states": {
+                    "no_focus": {
+                        "value": [
+                            "#2a2a2e",
+                            100
+                        ],
+                        "delay": 0.2
+                    },
+                    "focus": {
+                        "value": [
+                            "#3a3a3d",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            },
+            {
+                "operator": "add",
+                "default_state": "mouse_idle",
+                "states": {
+                    "mouse_idle": {
+                        "value": [
+                            "#0",
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_move": {
+                        "value": [
+                            "#050505",
+                            0
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
     "window_rounded_radius":
     {
         "type": "vec4",

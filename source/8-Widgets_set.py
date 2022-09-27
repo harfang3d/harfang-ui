@@ -45,12 +45,15 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
     if hgui.begin_frame(dt, mouse, keyboard, width, height):
         if hgui.begin_window_2D("My window",  hg.Vec2(50, 50), hg.Vec2(1124, 600), 1):
             
+            """
             hgui.info_text("info1", "Information text")
             
             if hgui.button("My_button"):
                 print("button")
+            
             if hgui.button_image("My_button_image","textures/logo.png", hg.Vec2(64,64), show_label=True, stacking=hgui.HGUI_STACK_VERTICAL):
                 print("button image")
+            
             hgui.image("my image", "textures/logo.png", hg.Vec2(80,80))
             f,cb = hgui.check_box("my checkbox",cb)
             f,it = hgui.input_text("my input text",it)
@@ -62,8 +65,8 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             _, current_rib = hgui.radio_image_button("rib_2","textures/cube_3.png", current_rib, 2)
             hgui.same_line()
             _, current_rib = hgui.radio_image_button("rib_3","textures/cube_4.png", current_rib, 3)
-
-
+            
+            """
             hgui.end_window()
 		
         hgui.end_frame(view_id)
