@@ -207,7 +207,7 @@ class HarfangGUIRenderer:
 		hg.SetViewRect(view_id, 0, 0, w, h)
 		
 		hg.SetViewOrthographic(view_id, 0, 0, w, h, hg.TransformationMat4(hg.Vec3(w / 2 + container["scroll_position"].x * cls.frame_buffers_scale, h / 2 + container["scroll_position"].y * cls.frame_buffers_scale, 0), hg.Vec3(0, 0, 0), hg.Vec3(1, -1, 1)), 0, 101, h)
-		hg.SetViewClear(view_id, hg.CF_Depth | hg.CF_Color, hg.Color(1, 1, 1, 0), 1, 0)
+		hg.SetViewClear(view_id, hg.CF_Depth | hg.CF_Color, hg.Color(0, 0, 0, 0), 1, 0)
 
 		for draw_element in draw_list:
 			if draw_element["type"] == "box":
@@ -442,20 +442,34 @@ class HarfangUISkin:
 				"properties": ["info_text_color", "info_text_size", "info_text_margins"]
 				},
 
+			"info_image": {
+				"primitives":["texture"],
+				"properties": ["info_image_margins", "info_texture_color"]
+				},
+			"info_image_label": {
+				"primitives":["text"],
+				"properties": ["label_text_color", "label_text_size", "info_image_label_margins"]
+				},
+
+			"input_box": {
+				"primitives": ["filled_rounded_box", "input_text"],
+				"properties": ["text_size", "label_text_margins", "input_box_color", "widget_rounded_radius", "input_text_color"]
+				},
+			"input_text_label": {
+				"primitives": ["text"],
+				"properties": ["label_text_size", "label_text_margins", "label_text_color"]
+				},
+			"button_component": {
+				"primitives":["rounded_box", "text"],
+				"properties": ["button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_rounded_radius", "widget_border_thickness", "widget_border_color"]
+				},
+
 			"scrollbar": {
 				"primitives":["rounded_scrollbar"],
 				"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_rounded_radius"]
 			},
 			
-			"info_image": {
-				"primitives":["texture"],
-				"properties": ["info_image_offset", "info_image_margins", "texture_box_color"]
-				},
-
-			"button_component": {
-				"primitives":["rounded_box", "text"],
-				"properties": ["button_offset", "button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_rounded_radius", "widget_border_thickness", "widget_border_color"]
-				},
+			
 
 			"label_box": {
 				"primitives": ["rounded_box", "text"],
@@ -471,10 +485,7 @@ class HarfangUISkin:
 				"texture": "hgui_textures/check.png",
 				"properties": ["button_offset","check_size", "checkbox_margins", "widget_rounded_radius", "button_box_color", "check_color"]
 				},
-			"input_box": {
-				"primitives": ["rounded_box", "input_text"],
-				"properties": ["text_size", "label_text_margins", "input_box_color", "widget_rounded_radius", "input_text_color"]
-				},
+			
 			"radio_image_button": {
 				"primitives": ["rounded_box", "texture"],
 				"properties": ["radio_image_offset","radio_button_image_margins", "radio_button_box_color", "widget_rounded_radius", "texture_box_color", "radio_image_border_color", "radio_image_border_thickness"]
@@ -493,14 +504,15 @@ class HarfangUISkin:
 
 		cls.widgets_models = {
 			"window" : {"components": ["window_background", "window_borders", "window_title"]},
+			"info_text" : {"components": ["info_text"]},
+			"info_image" : {"components": ["info_image", "info_image_label"], "stacking": HarfangUI.HGUI_STACK_VERTICAL},
+			"input_text": {"components": ["input_text_label", "input_box"]},
+			"button": {"components": ["button_component"]},
+
 			"scrollbar_v": {"components": ["scrollbar"], "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25},
 			"scrollbar_h": {"components": ["scrollbar"], "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25},
-			"info_text" : {"components": ["info_text"]},
-			"info_image" : {"components": ["info_image"]},
-			"button": {"components": ["button_component"]},
 			"image_button": {"components": ["image_button", "label_box"]},
 			"check_box": {"components": ["check_box", "label_box"]},
-			"input_text": {"components": ["label_box", "input_box"]},
 			"radio_image_button": {"components": ["radio_image_button"], "radio_idx": 0},
 			"toggle_button": {"components": ["toggle_button_box"], "toggle_idx": 0},
 			"toggle_image_button": {"components": ["toggle_image_button"], "toggle_idx": 0}
@@ -1186,7 +1198,7 @@ class HarfangUI:
 			widget["cursor_start_line"].z = widget["default_cursor_start_line"].z
 			
 			for key, value in widget_model.items():
-				if key not in widget:
+				if key != "components":
 					widget[key] = value # !!! If Value is a Harfang Object, add a deepcopy
 			return widget
 		return None	
@@ -1532,6 +1544,7 @@ class HarfangUI:
 		widget["flag_hide_title"] = flag_hide_title
 		widget["components"]["window_title"]["hidden"] = flag_hide_title
 		widget["flag_invisible"] = flag_invisible
+		widget["components"]["window_background"]["hidden"] = flag_invisible
 		widget["flag_hide_scrollbars"] = flag_hide_scrollbars
 		widget["flag_overlay"] = flag_overlay
 		
@@ -2458,6 +2471,41 @@ class HarfangUI:
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
 
+	@classmethod
+	def image(cls, widget_id, texture_path, image_size: hg.Vec2, **args):
+		widget = cls.get_widget("info_image", widget_id, args)
+		widget["position"] = cls.get_cursor_position()
+		if "show_label" in args:
+			widget["components"]["info_image_label"]["hidden"] = not args["show_label"]
+		else:
+			widget["components"]["info_image_label"]["hidden"] = True
+		widget["components"]["info_image"]["texture_size"].x = image_size.x
+		widget["components"]["info_image"]["texture_size"].y = image_size.y
+		widget["components"]["info_image"]["texture"] = texture_path
+		widget["components"]["info_image_label"]["text"] = cls.get_label_from_id(widget_id)
+		cls.update_widget_components(widget)
+		cls.update_cursor(widget)
+
+	@classmethod
+	def input_text(cls, widget_id, text = None, **args):
+		widget = cls.get_widget("input_text", widget_id, args)
+		if text is not None:
+			widget["components"]["input_box"]["text"] = text
+		
+		flag_changed = cls.update_edit_string(widget, "input_box")
+
+		if "show_label" in args:
+			widget["components"]["input_text_label"]["hidden"] = not args["show_label"]
+		else:
+			widget["components"]["input_text_label"]["hidden"] = False
+
+		widget["position"] = cls.get_cursor_position()
+		widget["components"]["input_text_label"]["text"] = cls.get_label_from_id(widget_id)
+		cls.update_widget_components(widget)
+		cls.update_cursor(widget)
+
+		return flag_changed, widget["components"]["input_box"]["text"]
+
 
 	@classmethod
 	def button(cls, widget_id, **args):
@@ -2490,15 +2538,7 @@ class HarfangUI:
 		cls.update_cursor(widget)
 		return mouse_click
 	
-	@classmethod
-	def image(cls, widget_id, texture_path, image_size: hg.Vec2, **args):
-		widget = cls.get_widget("info_image", widget_id, args)
-		widget["position"] = cls.get_cursor_position()
-		widget["components"]["info_image"]["size"].x = image_size.x
-		widget["components"]["info_image"]["size"].y = image_size.y
-		widget["components"]["info_image"]["texture"] = texture_path
-		cls.update_widget_components(widget)
-		cls.update_cursor(widget)
+	
 
 	@classmethod
 	def check_box(cls, widget_id, checked: bool, **args):
@@ -2526,25 +2566,6 @@ class HarfangUI:
 
 		return mouse_click, checked
 
-	@classmethod
-	def input_text(cls, widget_id, text = None, **args):
-		widget = cls.get_widget("input_text", widget_id, args)
-		if text is not None:
-			widget["components"]["input_box"]["text"] = text
-		
-		flag_changed = cls.update_edit_string(widget, "input_box")
-
-		if "show_label" in args:
-			widget["components"]["label_box"]["hidden"] = not args["show_label"]
-		else:
-			widget["components"]["label_box"]["hidden"] = False
-
-		widget["position"] = cls.get_cursor_position()
-		widget["components"]["label_box"]["text"] = cls.get_label_from_id(widget_id)
-		cls.update_widget_components(widget)
-		cls.update_cursor(widget)
-
-		return flag_changed, widget["components"]["input_box"]["text"]
 	
 	@classmethod
 	def scrollbar(cls, widget_id, width, height, part_size, total_size, scroll_position, flag_reset, flag_horizontal, args):

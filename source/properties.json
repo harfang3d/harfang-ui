@@ -287,19 +287,167 @@
                     "idle": {
                         "value": 1,
                         "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": 1,
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": 1,
-                        "delay": 0.05
                     }
                 }
             }
         ]
     },
+
+    "info_image_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            2,
+                            2,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "info_texture_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "texture_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#ffffff",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "info_image_label_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            2,
+                            2,
+                            0
+                        ],
+                        "delay": 0
+                    }
+                }
+            }
+        ]
+    },
+
+    "label_text_size": {
+        "type": "float",
+        "linked_value": {
+            "name": "text_size",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 1,
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "label_text_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "text_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#fdfdfd",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "label_text_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            10,
+                            10,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "widget_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [1, 1, 1, 1],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+
+
 
     "scrollbar_color": {
         "type": "RGB24_APercent",
@@ -314,17 +462,17 @@
                 "states": {
                     "idle": {
                         "value": [
-                            "#666666",
+                            "#2a2a2e",
                             100
                         ],
                         "delay": 0.2
                     },
                     "mouse_hover": {
                         "value": [
-                            "#999999",
+                            "#3a3a3d",
                             100
                         ],
-                        "delay": 0.15
+                        "delay": 0.2
                     }
                 }
             },
@@ -363,17 +511,10 @@
                 "states": {
                     "idle": {
                         "value": [
-                            "#333333",
+                            "#141414",
                             100
                         ],
                         "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
-                        "delay": 0.15
                     }
                 }
             }
@@ -455,30 +596,7 @@
             }
         ]
     },
-    "widget_rounded_radius":
-    {
-        "type": "vec4",
-        "linked_value": {
-            "name": "corner_radius",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [0.5, 0.5, 0.5, 0.5],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [0.4, 0.4, 0.4, 0.4],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
+    
     "scrollbar_rounded_radius":
     {
         "type": "vec4",
@@ -523,6 +641,7 @@
             }
         ]
     },
+
     "button_text_margins": {
         "type": "vec3",
         "linked_value": {
@@ -554,56 +673,7 @@
             }
         ]
     },
-    "text_size": {
-        "type": "float",
-        "linked_value": {
-            "name": "text_size",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 1,
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": 1,
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": 1,
-                        "delay": 0.05
-                    }
-                }
-            }
-        ]
-    },
-    "label_text_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "margins",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            15,
-                            15,
-                            0
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
+    
     "check_size": {
         "type": "vec3",
         "linked_value": {
@@ -744,75 +814,7 @@
             }
         ]
     },
-    "info_image_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "margins",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            5,
-                            5,
-                            0
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "button_offset": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "offset",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            0,
-                            0,
-                            0
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "info_image_offset": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "offset",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            0,
-                            0,
-                            0
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
+   
     "texture_box_color": {
         "type": "RGB24_APercent",
         "linked_value": {
@@ -957,42 +959,6 @@
             }
         ]
     },
-    "label_text_color": {
-        "type": "RGB24_APercent",
-        "linked_value": {
-            "name": "text_color",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#cccccc",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
-                        "delay": 0.05
-                    }
-                }
-            }
-        ]
-    },
     
     "check_color": {
         "type": "RGB24_APercent",
@@ -1063,24 +1029,17 @@
                 "states": {
                     "idle": {
                         "value": [
-                            "#3f3f3f",
+                            "#2a2a2e",
                             100
                         ],
                         "delay": 0.2
                     },
                     "mouse_hover": {
                         "value": [
-                            "#5f5f5f",
+                            "#37373d",
                             100
                         ],
                         "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            "#7f7f7f",
-                            100
-                        ],
-                        "delay": 0.05
                     }
                 }
             },
