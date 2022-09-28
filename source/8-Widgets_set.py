@@ -43,9 +43,9 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
     view_id = 0
 	
     if hgui.begin_frame(dt, mouse, keyboard, width, height):
-        if hgui.begin_window_2D("My window",  hg.Vec2(50, 50), hg.Vec2(1124, 600), 1):
+        if hgui.begin_window_2D("My window",  hg.Vec2(50, 50), hg.Vec2(1124, 600), 1, hgui.HGUIWF_HideTitle):
             
-            """
+            
             hgui.info_text("info1", "Information text")
             
             if hgui.button("My_button"):
@@ -66,7 +66,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             hgui.same_line()
             _, current_rib = hgui.radio_image_button("rib_3","textures/cube_4.png", current_rib, 3)
             
-            """
+            
             hgui.end_window()
 		
         hgui.end_frame(view_id)
