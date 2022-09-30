@@ -399,37 +399,178 @@ class HarfangUISkin:
 		cls.properties = cls.load_properties("properties.json")
 
 		cls.primitives = {
-			"box":["background_color", "border_color", "border_thickness"],
-			"filled_box":["background_color"],
-			"box_borders":["border_color", "border_thickness"],
+			"box":{
+				"background_color":{
+					"type": "RGB24_APercent",
+					"value": ["#555555", 100]
+					},
+				"border_color":{
+					"type": "RGB24_APercent",
+					"value": ["#aaaaaa", 100]
+					},
+				"border_thickness":{
+					"type": "float",
+					"value": 1
+					}
+				},
 			
-			"rounded_box":["background_color", "border_color", "border_thickness", "corner_radius"],
-			"filled_rounded_box":["background_color", "corner_radius"],
-			"rounded_box_borders":["border_color", "border_thickness", "corner_radius"],
+			"filled_box":{
+				"background_color":{
+					"type": "RGB24_APercent",
+					"value": ["#555555", 100]
+					}
+				},
 			
-			"text":["text_color", "text_size", "text", "forced_text_width"],
-			"input_text":["text_color", "cursor_color", "text_size", "text", "forced_text_width"],
-			"texture":["texture", "texture_color", "texture_size", "texture_scale"],
-			"rounded_scrollbar":["background_color", "scrollbar_color","scrollbar_thickness","corner_radius"]			
+			"box_borders":{
+				"border_color":{
+					"type": "RGB24_APercent",
+					"value": ["#aaaaaa", 100]
+					},
+				"border_thickness":{
+					"type": "float",
+					"value": 1
+					}
+				},
+			
+			"rounded_box":{
+				"background_color":{
+					"type": "RGB24_APercent",
+					"value": ["#555555", 100]
+					},
+				"border_color":{
+					"type": "RGB24_APercent",
+					"value": ["#aaaaaa", 100]
+					},
+				"border_thickness":{
+					"type": "float",
+					"value": 1
+					}, 
+				"corner_radius":{
+					"type": "vec4",
+					"value": [0.5, 0.5, 0.5, 0.5]
+					}
+				},
+
+			"filled_rounded_box":{
+				"background_color":{
+					"type": "RGB24_APercent",
+					"value": ["#555555", 100]
+					},
+				 "corner_radius":{
+					"type": "vec4",
+					"value": [0.5, 0.5, 0.5, 0.5]
+					}
+				},
+
+			"rounded_box_borders":{
+				"border_color":{
+					"type": "RGB24_APercent",
+					"value": ["#aaaaaa", 100]
+					},
+				"border_thickness":{
+					"type": "float",
+					"value": 1
+					},
+				"corner_radius":{
+					"type": "vec4",
+					"value": [0.5, 0.5, 0.5, 0.5]
+					}
+				},
+			
+			"text":{
+				"text_color":{
+					"type": "RGB24_APercent",
+					"value": ["#ffffff", 100]
+					},
+				"text_size":{
+					"type": "float",
+					"value": 1
+					},
+				"text":{
+					"type":" string"
+					},
+				"forced_text_width":{
+					"type": float
+					}
+				},
+			
+			"input_text":{
+				"text_color":{
+					"type": "RGB24_APercent",
+					"value": ["#ffffff", 100]
+					},
+				"cursor_color":{
+					"type": "RGB24_APercent",
+					"value": ["#dddddd", 100]
+					},
+				"text_size":{
+					"type": "float",
+					"value": 1
+					},
+				"text":{
+					"type":" string"
+					},
+				"forced_text_width":{
+					"type": float
+					}
+				},
+			
+			"texture":{
+				"texture":{
+						"type": "string"
+					},
+				"texture_color":{
+					"type": "RGB24_APercent",
+					"value": ["#ffffff", 100]
+					},
+				"texture_size":{
+						"type": "vec2",
+						"value":[1, 1]
+					},
+				"texture_scale":{
+						"type": "vec2",
+						"value":[1, 1]
+					}
+				},
+
+			"rounded_scrollbar":{
+				"background_color":{
+					"type": "RGB24_APercent",
+					"value": ["#555555", 100]
+					},
+				"scrollbar_color":{
+					"type": "RGB24_APercent",
+					"value": ["#aaaaaa", 100]
+					},
+				"scrollbar_thickness":{
+					"type": "float",
+					"value": 1
+					}, 
+				"corner_radius":{
+					"type": "vec4",
+					"value": [1, 1, 1, 1]
+					}
+			}		
 		}
 
 		cls.components = {
+			# Références par noms pour le script, à transformer en références par indices dans une list globale d'objets.
 			"window_background": {
-				"primitives":["filled_rounded_box"],
+				"primitives":[{"type": "filled_rounded_box", "name":"window_background_primitive"}],
 				"cursor_auto": False,
 				"size_factor": [1, 1, 1],
 				"properties": ["window_box_color", "window_rounded_radius"] 
 				},
 			"window_borders": {
 				"overlay": True,
-				"primitives":["rounded_box_borders"],
+				"primitives":[{"type": "rounded_box_borders", "name":"window_borders_primitive"],
 				"cursor_auto": False,
 				"size_factor": [1, 1, 1],
 				"properties": ["window_box_border_thickness", "window_box_border_color", "window_rounded_radius"]
 				},
 			"window_title": {
 				"overlay": True,
-				"primitives":["rounded_box", "text"],
+				"primitives":[{"type": "rounded_box", "name":"window_title_rounded_box"}, {"type": "text", "name":"window_title_text_primitive"}],
 				"cursor_auto": False,
 				"size_factor": [1, -1, -1],
 				"properties": ["window_title_margins", "window_title_background_color", "window_title_color", "window_title_rounded_radius"]
@@ -554,6 +695,14 @@ class HarfangUISkin:
 						state["value"] = [str(hex(vrgb24)).replace("0x", "#"), int(v.a * 100)]
 		
 		cls.save_properties("properties_rgb24_apercent.json")
+
+	@staticmethod
+	def RGBA32_to_Color(value:str):
+		return hg.ColorFromRGBA32(hg.ARGB32ToRGBA32(int(value.replace("#", "0x"),16)))
+
+	@staticmethod
+	def RGB24_APercent_to_Color(value:list):
+		return hg.ColorFromRGBA32(hg.ARGB32ToRGBA32((int(value[0].replace("#", "0x"),16)<<8) + int(value[1]/100 * 255)))
 
 
 	@classmethod
@@ -973,6 +1122,7 @@ class HarfangUI:
 		)
 		for primitive_name in HarfangUISkin.components[type]["primitives"]:
 			component["primitives"].append(cls.new_primitive(primitive_name))
+			"""
 			primitive_model = HarfangUISkin.primitives[primitive_name]
 			for property_name in primitive_model:
 				component[property_name] = None
@@ -989,6 +1139,7 @@ class HarfangUI:
 					component[property_name] = HarfangUISkin.keyboard_cursor_color
 				elif property_name == "texture_color":
 					component[property_name] = hg.Color(1, 1, 1, 1)
+			"""
 		return component
 
 	@classmethod
@@ -998,8 +1149,22 @@ class HarfangUI:
 			"hidden": False,
 			"position": hg.Vec3(0, 0, 0)
 		}
-		
-
+		primitive_model = HarfangUISkin.primitives[type]
+		for variable_name, vd in primitive_model.items():
+			t = vd["type"]
+			if "value" in vd:
+				v = vd["value"]
+				if t == "color": 			v = hg.Color(v[0], v[1], v[2], v[3])
+				elif t == "RGBA32":			v = HarfangUISkin.RGBA32_to_Color(v)
+				elif t == "RGB24_APercent": v = HarfangUISkin.RGB24_APercent_to_Color(v)
+				elif t == "float":			pass #v = v
+				elif t == "string":			pass #v = v
+				elif t == "vec2":			v = hg.Vec2(v[0], v[1])
+				elif t == "vec3":			v = hg.Vec3(v[0], v[1], v[2])
+				elif t == "vec4":			v = hg.Vec4(v[0], v[1], v[2], v[3])
+			else:
+				v = None
+			new_primitive[variable_name] = v
 		return new_primitive
 
 	@classmethod
@@ -1091,7 +1256,6 @@ class HarfangUI:
 		})
 		return container
 
-
 	@classmethod
 	def create_component(cls, component_type, widget):
 		if component_type in HarfangUISkin.components:
@@ -1128,9 +1292,9 @@ class HarfangUI:
 							elif class_property["type"] == "color":
 								component_layer_states[class_state_name]["value"] = hg.Color(v[0], v[1], v[2], v[3])
 							elif class_property["type"] == "RGBA32":
-								component_layer_states[class_state_name]["value"] = hg.ColorFromRGBA32(hg.ARGB32ToRGBA32(int(v.replace("#", "0x"),16)))
+								component_layer_states[class_state_name]["value"] = HarfangUISkin.RGBA32_to_Color(v)
 							elif class_property["type"] == "RGB24_APercent":
-								component_layer_states[class_state_name]["value"] = hg.ColorFromRGBA32(hg.ARGB32ToRGBA32((int(v[0].replace("#", "0x"),16)<<8) + int(v[1]/100 * 255)))
+								component_layer_states[class_state_name]["value"] = HarfangUISkin.RGB24_APercent_to_Color(v)
 						
 						default_state_name = class_layer["default_state"]
 						default_value = component_layer_states[default_state_name]["value"]
