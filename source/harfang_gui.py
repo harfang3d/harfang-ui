@@ -409,7 +409,7 @@ class HarfangUISkin:
 			
 			"text":["text_color", "text_size", "text", "forced_text_width"],
 			"input_text":["text_color", "cursor_color", "text_size", "text", "forced_text_width"],
-			"texture":["texture_color", "texture_size", "texture_scale"],
+			"texture":["texture", "texture_color", "texture_size", "texture_scale"],
 			"rounded_scrollbar":["background_color", "scrollbar_color","scrollbar_thickness","corner_radius"]			
 		}
 
@@ -420,7 +420,6 @@ class HarfangUISkin:
 				"size_factor": [1, 1, 1],
 				"properties": ["window_box_color", "window_rounded_radius"] 
 				},
-			
 			"window_borders": {
 				"overlay": True,
 				"primitives":["rounded_box_borders"],
@@ -428,34 +427,30 @@ class HarfangUISkin:
 				"size_factor": [1, 1, 1],
 				"properties": ["window_box_border_thickness", "window_box_border_color", "window_rounded_radius"]
 				},
-			
 			"window_title": {
 				"overlay": True,
 				"primitives":["rounded_box", "text"],
 				"cursor_auto": False,
 				"size_factor": [1, -1, -1],
 				"properties": ["window_title_margins", "window_title_background_color", "window_title_color", "window_title_rounded_radius"]
-			},
-
+				},
 			"info_text": {
 				"primitives":["text"],
 				"properties": ["info_text_color", "info_text_size", "info_text_margins"]
 				},
-
 			"info_image": {
 				"primitives":["texture"],
-				"properties": ["info_image_margins", "info_texture_color"]
+				"properties": ["info_image_margins"]
 				},
 			"info_image_label": {
 				"primitives":["text"],
 				"properties": ["label_text_color", "label_text_size", "info_image_label_margins"]
 				},
-
 			"input_box": {
 				"primitives": ["filled_rounded_box", "input_text"],
 				"properties": ["text_size", "label_text_margins", "input_box_color", "widget_rounded_radius", "input_text_color"]
 				},
-			"input_text_label": {
+			"basic_label": {
 				"primitives": ["text"],
 				"properties": ["label_text_size", "label_text_margins", "label_text_color"]
 				},
@@ -465,56 +460,55 @@ class HarfangUISkin:
 				},
 			"image_button": {
 				"primitives": ["filled_rounded_box", "texture", "text"],
-				"properties": ["button_image_margins", "button_box_color", "widget_rounded_radius", "texture_box_color", "label_text_color"]
+				"properties": ["button_image_label_space", "button_image_margins", "button_box_color", "widget_rounded_radius", "label_text_color"]
 				},
-
-			"label_box": {
-				"primitives": ["filled_rounded_box", "text"],
-				"properties": ["text_size", "label_text_margins", "widget_rounded_radius", "label_box_color", "label_text_color"]
+			"check_box":{
+				"primitives": ["rounded_box", "texture"],
+				"texture": "hgui_textures/Icon_Check.png",
+				"properties": ["check_size", "checkbox_margins", "checkbox_rounded_radius", "checkbox_box_color", "check_color"]
 				},
+			"toggle_image_button": {
+				"primitives": ["rounded_box", "texture"],
+				"textures": None,
+				"toggle_idx": 0,
+				"properties": ["toggle_image_button_margins","widget_rounded_radius", "toggle_image_button_box_color"]
+				},
+			
 
-			
-			
 			"scrollbar": {
 				"primitives":["rounded_scrollbar"],
 				"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_rounded_radius"]
 				},
-			"check_box":{
-				"primitives": ["rounded_box", "texture"],
-				"texture": "hgui_textures/check.png",
-				"properties": ["check_size", "checkbox_margins", "widget_rounded_radius", "button_box_color", "check_color"]
-				},
+			
 			
 			"radio_image_button": {
 				"primitives": ["rounded_box", "texture"],
-				"properties": ["radio_image_offset","radio_button_image_margins", "radio_button_box_color", "widget_rounded_radius", "texture_box_color", "radio_image_border_color", "radio_image_border_thickness"]
+				"properties": ["radio_image_offset","radio_button_image_margins", "radio_button_box_color", "widget_rounded_radius", "radio_image_border_color", "radio_image_border_thickness"]
 				},
 			"toggle_button_box": {
 				"primitives": ["rounded_box", "text"],
 				"texts": None,
 				"properties": ["button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_rounded_radius", "widget_border_thickness", "widget_border_color"]
 				},
-			"toggle_image_button": {
-				"primitives": ["rounded_box", "texture"],
-				"textures": None,
-				"properties": ["toggle_image_button_offset","toggle_image_button_margins","widget_rounded_radius", "toggle_image_button_box_color", "toggle_image_button_texture_box_color", "toggle_image_button_border_color", "toggle_image_button_border_thickness"]
-				}
+			
 		}
 
 		cls.widgets_models = {
 			"window" : {"components": ["window_background", "window_borders", "window_title"]},
 			"info_text" : {"components": ["info_text"]},
 			"info_image" : {"components": ["info_image", "info_image_label"], "stacking": HarfangUI.HGUI_STACK_VERTICAL},
-			"input_text": {"components": ["input_text_label", "input_box"]},
+			"input_text": {"components": ["basic_label", "input_box"]},
 			"button": {"components": ["button_component"]},
 			"image_button": {"components": ["image_button"]},
+			"check_box": {"components": ["basic_label", "check_box"]},
+			"toggle_image_button": {"components": ["basic_label", "toggle_image_button"]},
 
 			"scrollbar_v": {"components": ["scrollbar"], "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25},
 			"scrollbar_h": {"components": ["scrollbar"], "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25},
-			"check_box": {"components": ["check_box", "label_box"]},
+			
 			"radio_image_button": {"components": ["radio_image_button"], "radio_idx": 0},
-			"toggle_button": {"components": ["toggle_button_box"], "toggle_idx": 0},
-			"toggle_image_button": {"components": ["toggle_image_button"], "toggle_idx": 0}
+			"toggle_button": {"components": ["toggle_button_box"], "toggle_idx": 0}
+			
 		}
 
 
@@ -993,6 +987,8 @@ class HarfangUI:
 					component[property_name] = hg.Vec2(1, 1)
 				elif property_name == "cursor_color":
 					component[property_name] = HarfangUISkin.keyboard_cursor_color
+				elif property_name == "texture_color":
+					component[property_name] = hg.Color(1, 1, 1, 1)
 		return component
 
 	@classmethod
@@ -1002,6 +998,8 @@ class HarfangUI:
 			"hidden": False,
 			"position": hg.Vec3(0, 0, 0)
 		}
+		
+
 		return new_primitive
 
 	@classmethod
@@ -2542,12 +2540,12 @@ class HarfangUI:
 		flag_changed = cls.update_edit_string(widget, "input_box")
 
 		if "show_label" in args:
-			widget["components"]["input_text_label"]["hidden"] = not args["show_label"]
+			widget["components"]["basic_label"]["hidden"] = not args["show_label"]
 		else:
-			widget["components"]["input_text_label"]["hidden"] = False
+			widget["components"]["basic_label"]["hidden"] = False
 
 		widget["position"] = cls.get_cursor_position()
-		widget["components"]["input_text_label"]["text"] = cls.get_label_from_id(widget_id)
+		widget["components"]["basic_label"]["text"] = cls.get_label_from_id(widget_id)
 		cls.update_widget_components(widget)
 		cls.update_cursor(widget)
 
@@ -2601,11 +2599,11 @@ class HarfangUI:
 			cls.set_widget_state(widget,"unchecked")
 		
 		if "show_label" in args:
-			widget["components"]["label_box"]["hidden"] = not args["show_label"]
+			widget["components"]["basic_label"]["hidden"] = not args["show_label"]
 		else:
-			widget["components"]["label_box"]["hidden"] = False
+			widget["components"]["basic_label"]["hidden"] = False
 
-		widget["components"]["label_box"]["text"] = cls.get_label_from_id(widget_id)
+		widget["components"]["basic_label"]["text"] = cls.get_label_from_id(widget_id)
 		widget["position"] = cls.get_cursor_position()
 		
 		cls.update_widget_components(widget)
@@ -2613,6 +2611,29 @@ class HarfangUI:
 
 		return mouse_click, checked
 
+	@classmethod
+	def toggle_image_button(cls, widget_id, textures_paths: list, current_idx, image_size: hg.Vec2, **args):
+		widget = cls.get_widget("toggle_image_button", widget_id, args)
+		mouse_click = False
+		widget["toggle_idx"] = min(len(textures_paths)-1, current_idx)
+		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
+			mouse_click = True
+			current_idx = (current_idx + 1) % len(textures_paths)
+		
+		if "show_label" in args:
+			widget["components"]["basic_label"]["hidden"] = not args["show_label"]
+		else:
+			widget["components"]["basic_label"]["hidden"] = True
+		widget["components"]["basic_label"]["text"] = cls.get_label_from_id(widget_id)
+
+		widget["position"] = cls.get_cursor_position()
+		widget["components"]["toggle_image_button"]["texture_size"].x = image_size.x
+		widget["components"]["toggle_image_button"]["texture_size"].y = image_size.y
+		widget["components"]["toggle_image_button"]["textures"] = textures_paths
+		widget["components"]["toggle_image_button"]["texture"] = widget["components"]["toggle_image_button"]["textures"][widget["toggle_idx"]]
+		cls.update_widget_components(widget)
+		cls.update_cursor(widget)
+		return mouse_click, current_idx
 	
 	@classmethod
 	def scrollbar(cls, widget_id, width, height, part_size, total_size, scroll_position, flag_reset, flag_horizontal, args):
@@ -2717,19 +2738,3 @@ class HarfangUI:
 		cls.update_cursor(widget)
 		return mouse_click, current_idx
 
-	@classmethod
-	def toggle_image_button(cls, widget_id, textures_paths: list, current_idx, image_size: hg.Vec2, **args):
-		widget = cls.get_widget("toggle_image_button", widget_id, args)
-		mouse_click = False
-		widget["toggle_idx"] = min(len(textures_paths)-1, current_idx)
-		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
-			mouse_click = True
-			current_idx = (current_idx + 1) % len(textures_paths)
-		widget["position"] = cls.get_cursor_position()
-		widget["components"]["toggle_image_button"]["texture_size"].x = image_size.x
-		widget["components"]["toggle_image_button"]["texture_size"].y = image_size.y
-		widget["components"]["toggle_image_button"]["textures"] = textures_paths
-		widget["components"]["toggle_image_button"]["texture"] = widget["components"]["toggle_image_button"]["textures"][widget["toggle_idx"]]
-		cls.update_widget_components(widget)
-		cls.update_cursor(widget)
-		return mouse_click, current_idx

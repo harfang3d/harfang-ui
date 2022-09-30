@@ -31,6 +31,7 @@ mouse = hg.Mouse()
 cb = True
 it = "input text"
 current_rib = 0
+toggle_image_idx = 0
 
 while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window): 
 	
@@ -66,7 +67,15 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             hgui.same_line()
             f = hgui.button_image("label##button_image", "textures/coffee.png", hg.Vec2(20,20), show_label=True)
         
-            
+            f, cb = hgui.check_box("Checkbox", cb, show_label=False)
+            hgui.same_line()
+            f,cb = hgui.check_box("Checkbox##label", cb)
+
+            tex_list = ["hgui_textures/Icon_Pause.png", "hgui_textures/Icon_Play.png"]
+            f, toggle_image_idx = hgui.toggle_image_button("Toggle", tex_list, toggle_image_idx, hg.Vec2(15, 15))
+            hgui.same_line()
+            f, toggle_image_idx = hgui.toggle_image_button("Toggle##label", tex_list, toggle_image_idx, hg.Vec2(15, 15), show_label=True)
+
             """
             if hgui.button("My_button"):
                 print("button")
