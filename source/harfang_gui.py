@@ -1,3 +1,4 @@
+from tkinter import Scrollbar
 import harfang as hg
 from math import sin, cos, inf, pi
 from mouse_pointer_3d import MousePointer3D
@@ -552,92 +553,99 @@ class HarfangUISkin:
 					}
 			}		
 		}
-
+		# Références par noms pour le script, à transformer en références par indices dans une list globale d'objets.
 		cls.components = {
-			# Références par noms pour le script, à transformer en références par indices dans une list globale d'objets.
 			"window_background": {
-				"primitives":[{"type": "filled_rounded_box", "name":"window_background_primitive"}],
+				"primitives":[{"type": "filled_rounded_box", "name":"window_background.1"}],
 				"cursor_auto": False,
-				"size_factor": [1, 1, 1],
-				"properties": ["window_box_color", "window_rounded_radius"] 
+				"size_factor": [1, 1, 1]
 				},
 			"window_borders": {
 				"overlay": True,
-				"primitives":[{"type": "rounded_box_borders", "name":"window_borders_primitive"],
+				"primitives":[{"type": "rounded_box_borders", "name":"window_borders.1"}],
 				"cursor_auto": False,
-				"size_factor": [1, 1, 1],
-				"properties": ["window_box_border_thickness", "window_box_border_color", "window_rounded_radius"]
+				"size_factor": [1, 1, 1]
 				},
 			"window_title": {
 				"overlay": True,
-				"primitives":[{"type": "rounded_box", "name":"window_title_rounded_box"}, {"type": "text", "name":"window_title_text_primitive"}],
+				"primitives":[{"type": "filled_rounded_box", "name":"window_title.1"}, {"type": "text", "name":"window_title.2"}],
 				"cursor_auto": False,
-				"size_factor": [1, -1, -1],
-				"properties": ["window_title_margins", "window_title_background_color", "window_title_color", "window_title_rounded_radius"]
+				"size_factor": [1, -1, -1]
 				},
+			
 			"info_text": {
-				"primitives":["text"],
-				"properties": ["info_text_color", "info_text_size", "info_text_margins"]
+				"primitives":[{"type": "text", "name": "info_text.1"}]
 				},
+			
 			"info_image": {
-				"primitives":["texture"],
-				"properties": ["info_image_margins"]
+				"primitives":[{"type":"texture", "name": "info_image.1"}]
 				},
 			"info_image_label": {
-				"primitives":["text"],
-				"properties": ["label_text_color", "label_text_size", "info_image_label_margins"]
+				"primitives":[{"type": "text", "name": "info_image_label.1"}]
 				},
+			
 			"input_box": {
-				"primitives": ["filled_rounded_box", "input_text"],
+				"primitives": [{"type": "filled_rounded_box", "name": "input_box.1"}, {"type": "input_text", "name": "input_box.2"}],
 				"properties": ["text_size", "label_text_margins", "input_box_color", "widget_rounded_radius", "input_text_color"]
 				},
 			"basic_label": {
-				"primitives": ["text"],
+				"primitives": [{"type": "text", "name": "basic_label.1"}],
 				"properties": ["label_text_size", "label_text_margins", "label_text_color"]
 				},
 			"button_component": {
-				"primitives":["filled_rounded_box", "text"],
+				"primitives":[{"type": "filled_rounded_box", "name": "button_component.1"}, {"type": "text", "name": "button_component.2"}],
 				"properties": ["button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_rounded_radius"]
 				},
 			"image_button": {
-				"primitives": ["filled_rounded_box", "texture", "text"],
+				"primitives": [{"type": "filled_rounded_box", "name": "image_button.1"}, {"type": "texture", "name": "image_button.2"}, {"type": "text", "name": "image_button.3"}],
 				"properties": ["button_image_label_space", "button_image_margins", "button_box_color", "widget_rounded_radius", "label_text_color"]
 				},
 			"check_box":{
-				"primitives": ["rounded_box", "texture"],
+				"primitives": [{"type": "rounded_box", "name": "check_box.1"}, {"type": "texture","name": "check_box.2"}],
 				"texture": "hgui_textures/Icon_Check.png",
 				"properties": ["check_size", "checkbox_margins", "checkbox_rounded_radius", "checkbox_box_color", "check_color"]
 				},
 			"toggle_image_button": {
-				"primitives": ["rounded_box", "texture"],
+				"primitives": [{"type": "rounded_box", "name": "toggle_image_button.1"}, {"type": "texture", "name": "toggle_image_button.2"}],
 				"textures": None,
 				"toggle_idx": 0,
 				"properties": ["toggle_image_button_margins","widget_rounded_radius", "toggle_image_button_box_color"]
 				},
-			
 
 			"scrollbar": {
-				"primitives":["rounded_scrollbar"],
+				"primitives":[{"type": "rounded_scrollbar", "name": "scrollbar.1"}],
 				"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_rounded_radius"]
 				},
 			
 			
 			"radio_image_button": {
-				"primitives": ["rounded_box", "texture"],
+				"primitives": [{"type": "rounded_box", "name": "radio_image_button.1"}, {"type": "texture", "name": "radio_image_button.2"}],
 				"properties": ["radio_image_offset","radio_button_image_margins", "radio_button_box_color", "widget_rounded_radius", "radio_image_border_color", "radio_image_border_thickness"]
 				},
 			"toggle_button_box": {
-				"primitives": ["rounded_box", "text"],
+				"primitives": [{"type": "rounded_box", "name": "toggle_button_box.1"}, {"type": "text", "name": "toggle_button_box.2"}],
 				"texts": None,
 				"properties": ["button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_rounded_radius", "widget_border_thickness", "widget_border_color"]
-				},
+				}
 			
-		}
+			}
 
 		cls.widgets_models = {
-			"window" : {"components": ["window_background", "window_borders", "window_title"]},
-			"info_text" : {"components": ["info_text"]},
-			"info_image" : {"components": ["info_image", "info_image_label"], "stacking": HarfangUI.HGUI_STACK_VERTICAL},
+			"window" : {"components": ["window_background", "window_borders", "window_title"],
+						"poperties:" : ["window_box_color", "window_box_border_thickness", "window_box_border_color", "window_rounded_radius",
+						"window_title_margins", "window_title_background_color", "window_title_color", "window_title_rounded_radius"]
+						},
+
+			"info_text" : {"components": ["info_text"],
+							"properties": ["info_text_color", "info_text_size", "info_text_margins"]
+						},
+			
+			"info_image" : {"components": ["info_image", "info_image_label"], "stacking": HarfangUI.HGUI_STACK_VERTICAL,
+							"properties": ["info_image_margins", "label_text_color", "label_text_size", "info_image_label_margins"]
+						},
+			
+			
+			
 			"input_text": {"components": ["basic_label", "input_box"]},
 			"button": {"components": ["button_component"]},
 			"image_button": {"components": ["image_button"]},
@@ -1120,8 +1128,8 @@ class HarfangUI:
 				"size_factor": hg.Vec3(-1, -1, -1) # Size linked to container size. factor <= 0 : no proportional size correction. factor > 0 : size = max(component_size * factor, container_size) 
 			}
 		)
-		for primitive_name in HarfangUISkin.components[type]["primitives"]:
-			component["primitives"].append(cls.new_primitive(primitive_name))
+		for primitive_def in HarfangUISkin.components[type]["primitives"]:
+			component["primitives"].append(cls.new_primitive(primitive_def["type"], primitive_def["name"]))
 			"""
 			primitive_model = HarfangUISkin.primitives[primitive_name]
 			for property_name in primitive_model:
@@ -1143,9 +1151,10 @@ class HarfangUI:
 		return component
 
 	@classmethod
-	def new_primitive(cls, type):
+	def new_primitive(cls, type, name):
 		new_primitive = {
 			"type": type,
+			"name": name,
 			"hidden": False,
 			"position": hg.Vec3(0, 0, 0)
 		}
