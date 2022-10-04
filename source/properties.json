@@ -2,6 +2,7 @@
     "window_box_color": {
         "type": "RGB24_APercent",
         "linked_value": {
+            "objects": ["window_background.1"],
             "name": "background_color",
             "operator": "set"
         },
@@ -24,6 +25,7 @@
     "window_box_border_color": {
         "type": "RGB24_APercent",
         "linked_value": {
+            "objects": ["window_borders.1"],
             "name": "border_color",
             "operator": "set"
         },
@@ -73,6 +75,7 @@
     "window_title_background_color": {
         "type": "RGB24_APercent",
         "linked_value": {
+            "objects": ["window_title.1"],
             "name": "background_color",
             "operator": "set"
         },
@@ -123,6 +126,7 @@
     {
         "type": "vec4",
         "linked_value": {
+            "objects": ["window_background.1"],
             "name": "corner_radius",
             "operator": "set"
         },
@@ -143,6 +147,7 @@
     {
         "type": "vec4",
         "linked_value": {
+            "objects": ["window_title.1"],
             "name": "corner_radius",
             "operator": "set"
         },
@@ -162,6 +167,7 @@
     "window_box_border_thickness": {
         "type": "float",
         "linked_value": {
+            "objects": ["window_borders.1"],
             "name": "border_thickness",
             "operator": "set"
         },
@@ -185,6 +191,7 @@
     "window_title_margins": {
         "type": "vec3",
         "linked_value": {
+            "objects": ["window_title"],
             "name": "margins",
             "operator": "set"
         },
@@ -208,6 +215,7 @@
     "window_title_color": {
         "type": "RGB24_APercent",
         "linked_value": {
+            "objects": ["window_title.2"],
             "name": "text_color",
             "operator": "set"
         },
@@ -227,10 +235,10 @@
             }
         ]
     },
-
     "info_text_margins": {
         "type": "vec3",
         "linked_value": {
+            "objects": ["info_text"],
             "name": "margins",
             "operator": "set"
         },
@@ -273,29 +281,10 @@
             }
         ]
     },
-    "info_text_size": {
-        "type": "float",
-        "linked_value": {
-            "name": "text_size",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 1,
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-
     "info_image_margins": {
         "type": "vec3",
         "linked_value": {
+            "objects": ["info_image"],
             "name": "margins",
             "operator": "set"
         },
@@ -316,50 +305,7 @@
             }
         ]
     },
-    "info_image_label_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "margins",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            2,
-                            2,
-                            0
-                        ],
-                        "delay": 0
-                    }
-                }
-            }
-        ]
-    },
-
-    "label_text_size": {
-        "type": "float",
-        "linked_value": {
-            "name": "text_size",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 1,
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "label_text_color": {
+    "info_image_label_text_color": {
         "type": "RGB24_APercent",
         "linked_value": {
             "name": "text_color",
@@ -381,9 +327,10 @@
             }
         ]
     },
-    "label_text_margins": {
+    "info_image_label_margins": {
         "type": "vec3",
         "linked_value": {
+            "objects": ["info_image_label"],
             "name": "margins",
             "operator": "set"
         },
@@ -404,11 +351,12 @@
             }
         ]
     },
-    "widget_rounded_radius":
-    {
-        "type": "vec4",
+
+    "input_text_margins": {
+        "type": "vec3",
         "linked_value": {
-            "name": "corner_radius",
+            "objects": ["input_box"],
+            "name": "margins",
             "operator": "set"
         },
         "layers": [
@@ -417,7 +365,58 @@
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [1, 1, 1, 1],
+                        "value": [
+                            10,
+                            10,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "basic_label_text_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["basic_label.1"],
+            "name": "text_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#fdfdfd",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "basic_label_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "objects": ["basic_label"],
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            10,
+                            10,
+                            0
+                        ],
                         "delay": 0.2
                     }
                 }
@@ -427,6 +426,7 @@
     "input_box_color": {
         "type": "RGB24_APercent",
         "linked_value": {
+            "objects": ["input_box.1"],
             "name": "background_color",
             "operator": "set"
         },
@@ -473,9 +473,30 @@
             }
         ]
     },
+    "widget_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [1, 1, 1, 1],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
     "input_text_color": {
         "type": "RGB24_APercent",
         "linked_value": {
+            "objects": ["input_box.2"],
             "name": "text_color",
             "operator": "set"
         },
@@ -631,8 +652,8 @@
                 }
             }
         ]
-    },
-    "button_image_label_space": {
+    },    
+    "image_button_label_space": {
         "type": "float",
         "linked_value": {
             "name": "space_size",
@@ -651,7 +672,7 @@
             }
         ]
     },
-    "button_image_margins": {
+    "image_button_margins": {
         "type": "vec3",
         "linked_value": {
             "name": "margins",
@@ -674,9 +695,77 @@
             }
         ]
     },
+    "image_button_label_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "text_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#fdfdfd",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "checkbox_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "objects":["check_box"],
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "checkbox_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "objects":["check_box"],
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [0.5, 0.5, 0.5, 0.5],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
     "checkbox_box_color": {
         "type": "RGB24_APercent",
         "linked_value": {
+            "objects":["check_box"],
             "name": "background_color",
             "operator": "set"
         },
@@ -710,68 +799,10 @@
             }
         ]
     },
-    "check_size": {
-        "type": "vec2",
-        "linked_value": {
-            "name": "texture_scale",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            15,
-                            15
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            15,
-                            15
-                        ],
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            15,
-                            15
-                        ],
-                        "delay": 0.05
-                    }
-                }
-            }
-        ]
-    },
-    "checkbox_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "margins",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            5,
-                            5,
-                            0
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
     "check_color": {
         "type": "RGB24_APercent",
         "linked_value": {
+            "objects":["check_box"],
             "name": "texture_color",
             "operator": "set"
         },
@@ -811,11 +842,11 @@
             }
         ]
     },
-    "checkbox_rounded_radius":
-    {
-        "type": "vec4",
+    "toggle_image_button_margins": {
+        "type": "vec3",
         "linked_value": {
-            "name": "corner_radius",
+            "objects": ["toggle_image_button"],
+            "name": "margins",
             "operator": "set"
         },
         "layers": [
@@ -824,16 +855,21 @@
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [0.5, 0.5, 0.5, 0.5],
+                        "value": [
+                            15,
+                            15,
+                            0
+                        ],
                         "delay": 0.2
                     }
                 }
             }
         ]
-    },
+    },    
     "toggle_image_button_box_color": {
         "type": "RGB24_APercent",
         "linked_value": {
+            "objects": ["toggle_image_button"],
             "name": "background_color",
             "operator": "set"
         },
@@ -867,10 +903,34 @@
             }
         ]
     },
-    "toggle_image_button_margins": {
-        "type": "vec3",
+
+    "scrollbar_thickness": {
+        "type": "float",
         "linked_value": {
-            "name": "margins",
+            "name": "scrollbar_thickness",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 8,
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": 8,
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "scrollbar_background_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "background_color",
             "operator": "set"
         },
         "layers": [
@@ -880,9 +940,8 @@
                 "states": {
                     "idle": {
                         "value": [
-                            15,
-                            15,
-                            0
+                            "#141414",
+                            100
                         ],
                         "delay": 0.2
                     }
@@ -890,11 +949,6 @@
             }
         ]
     },
-    
-
-
-
-
     "scrollbar_color": {
         "type": "RGB24_APercent",
         "linked_value": {
@@ -944,103 +998,6 @@
             }
         ]
     },
-    "scrollbar_background_color": {
-        "type": "RGB24_APercent",
-        "linked_value": {
-            "name": "background_color",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#141414",
-                            100
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "scrollbar_thickness": {
-        "type": "float",
-        "linked_value": {
-            "name": "scrollbar_thickness",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 8,
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": 8,
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "widget_border_color": {
-        "type": "RGB24_APercent",
-        "linked_value": {
-            "name": "border_color",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#b2b2b2",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#e5e5e5",
-                            100
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "widget_border_thickness": {
-        "type": "float",
-        "linked_value": {
-            "name": "border_thickness",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 1,
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": 4,
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
     "scrollbar_rounded_radius":
     {
         "type": "vec4",
@@ -1061,24 +1018,32 @@
             }
         ]
     },
-    "widget_opacity": {
-        "type": "float",
+    "radio_image_offset": {
+        "type": "vec3",
         "linked_value": {
-            "name": "opacity",
-            "operator": "set",
-            "parent": "widget"
+            "objects":["radio_image_button"],
+            "name": "offset",
+            "operator": "set"
         },
         "layers": [
             {
                 "operator": "set",
-                "default_state": "idle",
+                "default_state": "unselected",
                 "states": {
-                    "idle": {
-                        "value": 0.85,
+                    "unselected": {
+                        "value": [
+                            0,
+                            0,
+                            0
+                        ],
                         "delay": 0.2
                     },
-                    "mouse_hover": {
-                        "value": 0.9,
+                    "selected": {
+                        "value": [
+                            0,
+                            -10,
+                            0
+                        ],
                         "delay": 0.15
                     }
                 }
@@ -1126,76 +1091,6 @@
                     "selected": {
                         "value": [
                             "#333333",
-                            0
-                        ],
-                        "delay": 0.05
-                    }
-                }
-            }
-        ]
-    },
-    "radio_image_offset": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "offset",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "unselected",
-                "states": {
-                    "unselected": {
-                        "value": [
-                            0,
-                            0,
-                            0
-                        ],
-                        "delay": 0.2
-                    },
-                    "selected": {
-                        "value": [
-                            0,
-                            -10,
-                            0
-                        ],
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "radio_button_image_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "margins",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            5,
-                            5,
-                            0
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            5,
-                            5,
-                            0
-                        ],
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            5,
-                            5,
                             0
                         ],
                         "delay": 0.05

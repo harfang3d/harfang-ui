@@ -576,58 +576,41 @@ class HarfangUISkin:
 			"info_text": {
 				"primitives":[{"type": "text", "name": "info_text.1"}]
 				},
-			
 			"info_image": {
 				"primitives":[{"type":"texture", "name": "info_image.1"}]
 				},
 			"info_image_label": {
 				"primitives":[{"type": "text", "name": "info_image_label.1"}]
 				},
-			
-			"input_box": {
-				"primitives": [{"type": "filled_rounded_box", "name": "input_box.1"}, {"type": "input_text", "name": "input_box.2"}],
-				"properties": ["text_size", "label_text_margins", "input_box_color", "widget_rounded_radius", "input_text_color"]
-				},
+
 			"basic_label": {
-				"primitives": [{"type": "text", "name": "basic_label.1"}],
-				"properties": ["label_text_size", "label_text_margins", "label_text_color"]
+				"primitives": [{"type": "text", "name": "basic_label.1"}]
+				},
+			"input_box": {
+				"primitives": [{"type": "filled_rounded_box", "name": "input_box.1"}, {"type": "input_text", "name": "input_box.2"}]
 				},
 			"button_component": {
-				"primitives":[{"type": "filled_rounded_box", "name": "button_component.1"}, {"type": "text", "name": "button_component.2"}],
-				"properties": ["button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_rounded_radius"]
+				"primitives":[{"type": "filled_rounded_box", "name": "button_component.1"}, {"type": "text", "name": "button_component.2"}]
 				},
 			"image_button": {
-				"primitives": [{"type": "filled_rounded_box", "name": "image_button.1"}, {"type": "texture", "name": "image_button.2"}, {"type": "text", "name": "image_button.3"}],
-				"properties": ["button_image_label_space", "button_image_margins", "button_box_color", "widget_rounded_radius", "label_text_color"]
+				"primitives": [{"type": "filled_rounded_box", "name": "image_button.1"}, {"type": "texture", "name": "image_button.2"}, {"type": "text", "name": "image_button.3"}]
 				},
 			"check_box":{
-				"primitives": [{"type": "rounded_box", "name": "check_box.1"}, {"type": "texture","name": "check_box.2"}],
-				"texture": "hgui_textures/Icon_Check.png",
-				"properties": ["check_size", "checkbox_margins", "checkbox_rounded_radius", "checkbox_box_color", "check_color"]
+				"primitives": [{"type": "filled_rounded_box", "name": "check_box.1"}, {"type": "texture","name": "check_box.2", "texture": "hgui_textures/Icon_Check.png", "texture_size": [15, 15]}],
 				},
 			"toggle_image_button": {
-				"primitives": [{"type": "rounded_box", "name": "toggle_image_button.1"}, {"type": "texture", "name": "toggle_image_button.2"}],
-				"textures": None,
-				"toggle_idx": 0,
-				"properties": ["toggle_image_button_margins","widget_rounded_radius", "toggle_image_button_box_color"]
+				"primitives": [{"type": "rounded_box", "name": "toggle_image_button.1"}, {"type": "texture", "name": "toggle_image_button.2"}]
 				},
-
 			"scrollbar": {
-				"primitives":[{"type": "rounded_scrollbar", "name": "scrollbar.1"}],
-				"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_rounded_radius"]
+				"primitives":[{"type": "rounded_scrollbar", "name": "scrollbar.1"}]
 				},
-			
-			
 			"radio_image_button": {
 				"primitives": [{"type": "rounded_box", "name": "radio_image_button.1"}, {"type": "texture", "name": "radio_image_button.2"}],
-				"properties": ["radio_image_offset","radio_button_image_margins", "radio_button_box_color", "widget_rounded_radius", "radio_image_border_color", "radio_image_border_thickness"]
+				"margins": [5, 5, 0],
 				},
 			"toggle_button_box": {
-				"primitives": [{"type": "rounded_box", "name": "toggle_button_box.1"}, {"type": "text", "name": "toggle_button_box.2"}],
-				"texts": None,
-				"properties": ["button_box_color", "button_text_color", "text_size", "button_text_margins", "widget_rounded_radius", "widget_border_thickness", "widget_border_color"]
+				"primitives": [{"type": "filled_rounded_box", "name": "toggle_button_box.1"}, {"type": "text", "name": "toggle_button_box.2"}]
 				}
-			
 			}
 
 		cls.widgets_models = {
@@ -637,27 +620,54 @@ class HarfangUISkin:
 						},
 
 			"info_text" : {"components": ["info_text"],
-							"properties": ["info_text_color", "info_text_size", "info_text_margins"]
+							"properties": ["info_text_color", "info_text_margins"]
 						},
 			
 			"info_image" : {"components": ["info_image", "info_image_label"], "stacking": HarfangUI.HGUI_STACK_VERTICAL,
-							"properties": ["info_image_margins", "label_text_color", "label_text_size", "info_image_label_margins"]
+							"properties": ["info_image_margins", "info_image_label_margins", "info_image_label_text_color"]
 						},
 			
+			"input_text": {"components": ["basic_label", "input_box"],
+							"properties": ["basic_label_margins", "basic_label_text_color",
+										"input_text_margins", "input_box_color", "widget_rounded_radius", "input_text_color"]
+							},
+	
+			"button": {"components": ["button_component"],
+						"properties": ["button_box_color", "button_text_color", "button_text_margins", "widget_rounded_radius"]
+						},
+	
+			"image_button": {"components": ["image_button"],
+						"properties": ["image_button_label_space", "image_button_margins", "button_box_color", "widget_rounded_radius", "image_button_label_color"]
+						},
+	
+			"check_box": {"components": ["basic_label", "check_box"],
+						"properties": ["basic_label_margins", "basic_label_text_color",
+									"checkbox_margins", "checkbox_rounded_radius", "checkbox_box_color", "check_color"],
+						},
 			
+			"toggle_image_button": {"components": ["basic_label", "toggle_image_button"],
+									"textures": None,
+									"toggle_idx": 0,
+									"properties": ["basic_label_margins", "basic_label_text_color",
+												"toggle_image_button_margins","widget_rounded_radius", "toggle_image_button_box_color"]
+									},
+			"scrollbar_v": {"components": ["scrollbar"], "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25,
+							"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_rounded_radius"]
+						},
+			"scrollbar_h": {"components": ["scrollbar"], "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25,
+							"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_rounded_radius"]
+						},
 			
-			"input_text": {"components": ["basic_label", "input_box"]},
-			"button": {"components": ["button_component"]},
-			"image_button": {"components": ["image_button"]},
-			"check_box": {"components": ["basic_label", "check_box"]},
-			"toggle_image_button": {"components": ["basic_label", "toggle_image_button"]},
-
-			"scrollbar_v": {"components": ["scrollbar"], "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25},
-			"scrollbar_h": {"components": ["scrollbar"], "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25},
+			"radio_image_button": {"components": ["radio_image_button"], "radio_idx": 0,
+								"properties": ["radio_image_offset", "radio_button_box_color",
+								"widget_rounded_radius", "radio_image_border_color", "radio_image_border_thickness"
+								]
+						},
 			
-			"radio_image_button": {"components": ["radio_image_button"], "radio_idx": 0},
-			"toggle_button": {"components": ["toggle_button_box"], "toggle_idx": 0}
-			
+			"toggle_button": {"components": ["toggle_button_box"], "toggle_idx": 0,
+								"texts": None,
+								"properties": ["button_box_color", "button_text_color", "button_text_margins", "widget_rounded_radius"]
+								}
 		}
 
 
@@ -1122,72 +1132,68 @@ class HarfangUI:
 				"cursor_position": hg.Vec3(0, 0, 0),
 				"space_size": 10, #distance between primitives
 				"margins": hg.Vec3(0, 0, 0),
-				"properties" : {},
 				"overlay": False, #Used for widgets containers. If True: component is rendered over children widgets
 				"cursor_auto": True,	#False if cursor is not incremented in widget rendering
 				"size_factor": hg.Vec3(-1, -1, -1) # Size linked to container size. factor <= 0 : no proportional size correction. factor > 0 : size = max(component_size * factor, container_size) 
 			}
 		)
 		for primitive_def in HarfangUISkin.components[type]["primitives"]:
-			component["primitives"].append(cls.new_primitive(primitive_def["type"], primitive_def["name"]))
-			"""
-			primitive_model = HarfangUISkin.primitives[primitive_name]
-			for property_name in primitive_model:
-				component[property_name] = None
-				# Default values
-				if property_name == "text":
-					component["display_text_size"] = hg.Vec3(0, 0, 0)
-				elif property_name == "text_size":
-					component[property_name] = 1
-				elif property_name == "texture_size":
-					component[property_name] = hg.Vec2(1, 1) # Must be 1,1 for default textures (checkbox, radio...) sized with their "texture_scale" parameter.
-				elif property_name == "texture_scale":
-					component[property_name] = hg.Vec2(1, 1)
-				elif property_name == "cursor_color":
-					component[property_name] = HarfangUISkin.keyboard_cursor_color
-				elif property_name == "texture_color":
-					component[property_name] = hg.Color(1, 1, 1, 1)
-			"""
+			component["primitives"].append(cls.new_primitive(primitive_def))
 		return component
 
+
+	@staticmethod
+	def transcrypt_var(v, t):
+		if t == "color": 			vt = hg.Color(v[0], v[1], v[2], v[3])
+		elif t == "RGBA32":			vt = HarfangUISkin.RGBA32_to_Color(v)
+		elif t == "RGB24_APercent": vt = HarfangUISkin.RGB24_APercent_to_Color(v)
+		elif t == "float":			vt = v
+		elif t == "string":			vt = v
+		elif t == "vec2":			vt = hg.Vec2(v[0], v[1])
+		elif t == "vec3":			vt = hg.Vec3(v[0], v[1], v[2])
+		elif t == "vec4":			vt = hg.Vec4(v[0], v[1], v[2], v[3])
+		return vt
+
+
 	@classmethod
-	def new_primitive(cls, type, name):
+	def new_primitive(cls, primitive_def):
 		new_primitive = {
-			"type": type,
-			"name": name,
+			"type": primitive_def["type"],
+			"name": primitive_def["name"],
 			"hidden": False,
 			"position": hg.Vec3(0, 0, 0)
 		}
+		# Create basic occurence
 		primitive_model = HarfangUISkin.primitives[type]
 		for variable_name, vd in primitive_model.items():
 			t = vd["type"]
 			if "value" in vd:
-				v = vd["value"]
-				if t == "color": 			v = hg.Color(v[0], v[1], v[2], v[3])
-				elif t == "RGBA32":			v = HarfangUISkin.RGBA32_to_Color(v)
-				elif t == "RGB24_APercent": v = HarfangUISkin.RGB24_APercent_to_Color(v)
-				elif t == "float":			pass #v = v
-				elif t == "string":			pass #v = v
-				elif t == "vec2":			v = hg.Vec2(v[0], v[1])
-				elif t == "vec3":			v = hg.Vec3(v[0], v[1], v[2])
-				elif t == "vec4":			v = hg.Vec4(v[0], v[1], v[2], v[3])
+				v = cls.transcrypt_var(vd["value"], t)
 			else:
 				v = None
 			new_primitive[variable_name] = v
+		# Overwrites/create occurence vars
+		ex_vars = ["type", "name"]
+		for variable_name, v in primitive_def.items():
+			if variable_name not in ex_vars:
+				if variable_name in primitive_model:
+					new_primitive[variable_name] = cls.transcrypt_var(v, primitive_model[variable_name["type"]])
+				else:
+					new_primitive[variable_name] = v
 		return new_primitive
 
 	@classmethod
-	def get_property_value(cls, component, property_name):
-		return component["properties"][property_name]["value"]
+	def get_property_value(cls, widget, property_name):
+		return widget["properties"][property_name]["value"]
 	
 	@classmethod
-	def get_property_states_value(cls, component, property_name, states):
+	def get_property_states_value(cls, widget, property_name, states):
 		class_property = HarfangUISkin.properties[property_name]
-		component_property = component["properties"][property_name]
+		widget_property = widget["properties"][property_name]
 		value = None
-		for layer_id in range(len(component_property["layers"])):
+		for layer_id in range(len(widget_property["layers"])):
 			class_layer = class_property["layers"][layer_id]
-			property_layer = component_property["layers"][layer_id]
+			property_layer = widget_property["layers"][layer_id]
 			for state_name in states:
 				if state_name in property_layer["states"]:
 					property_state = property_layer["states"][state_name]
@@ -1219,7 +1225,9 @@ class HarfangUI:
 			"components": {},
 			"components_render_order": [],
 			"components_order": cls.HGUI_ORDER_DEFAULT,
-			"parent_id": None # Parent container ID
+			"parent_id": None, # Parent container ID
+			"objects_dict": {}, #Components & primitives in same dict to optimize properties links referencement
+			"properties": {}
 		})
 		return widget
 
@@ -1268,84 +1276,20 @@ class HarfangUI:
 	@classmethod
 	def create_component(cls, component_type, widget):
 		if component_type in HarfangUISkin.components:
+			
+			#Basic component occurence
 			component = cls.new_component(component_type)
 			component_model = HarfangUISkin.components[component_type]
-			vec3_types = ["size_factor"] #fields that needs Vec3 copy
+			
+			#Overwrites and create vars
+			vec3_types = ["size_factor", "margins"] #fields that needs list_to_vec3 conversion
+			ex_vars = ["primitives"]
 			for key, value in component_model.items():
-				if key != "properties" and key != "primitives":
+				if key not in ex_vars:
 					if key in vec3_types:
 						component[key] = hg.Vec3(value[0], value[1], value[2])
 					else:
 						component[key] = value
-			
-			for property_name in component_model["properties"]:
-				if property_name in  HarfangUISkin.properties:
-					class_property = HarfangUISkin.properties[property_name]
-					# Creates layers occurences:
-					component_layers = []
-					for layer_id in range(len(class_property["layers"])):
-						class_layer = class_property["layers"][layer_id]
-						
-						component_layer_states = {}
-						for class_state_name, class_state in class_layer["states"].items():
-							component_layer_states[class_state_name] = dict(class_state)
-							v = class_state["value"]
-							if class_property["type"] == "float":
-								component_layer_states[class_state_name]["value"] = v
-							elif class_property["type"] == "vec2":
-								component_layer_states[class_state_name]["value"] = hg.Vec2(v[0], v[1])
-							elif class_property["type"] == "vec3":
-								component_layer_states[class_state_name]["value"] = hg.Vec3(v[0], v[1], v[2])
-							elif class_property["type"] == "vec4":
-								component_layer_states[class_state_name]["value"] = hg.Vec4(v[0], v[1], v[2], v[3])
-							elif class_property["type"] == "color":
-								component_layer_states[class_state_name]["value"] = hg.Color(v[0], v[1], v[2], v[3])
-							elif class_property["type"] == "RGBA32":
-								component_layer_states[class_state_name]["value"] = HarfangUISkin.RGBA32_to_Color(v)
-							elif class_property["type"] == "RGB24_APercent":
-								component_layer_states[class_state_name]["value"] = HarfangUISkin.RGB24_APercent_to_Color(v)
-						
-						default_state_name = class_layer["default_state"]
-						default_value = component_layer_states[default_state_name]["value"]
-						if layer_id == 0:
-							default_final_value = default_value
-						else:
-							if class_layer["operator"] == "set":
-								default_final_value = default_value
-							elif class_layer["operator"] == "add":
-								default_final_value += default_value
-							elif class_layer["operator"] == "multiply":
-								default_final_value *= default_value
-
-						component_layer = {"current_state":default_state_name, "current_state_t0":0, "value":default_value, "value_start":default_value, "value_end":default_value, "states":component_layer_states}
-						component_layers.append(component_layer)
-					
-					component_property = {"layers":component_layers, "value":default_final_value}
-					
-					if "linked_value" in class_property:
-						lv = class_property["linked_value"]
-						
-						if "parent" in lv:
-							parent_classe = lv["parent"]
-							if parent_classe == "widget":
-								obj = widget
-							elif parent_classe == "component":
-								obj = component
-							else:
-								obj = component
-						else:
-							obj = component
-						
-						if lv["name"] in obj:
-							v = component_property["value"]
-							if "factor" in lv:
-								v *= lv["factor"]
-							if lv["operator"] == "set":
-								obj[lv["name"]] = v
-							elif lv["operator"] == "add":
-								obj[lv["name"]] += v
-
-					component["properties"][property_name] = component_property
 			return component
 		return None
 
@@ -1371,19 +1315,77 @@ class HarfangUI:
 
 			#Creation of a dictionnary to facilitate access to components
 			components_dict = {}
+			primitives_dict = {}
 			for component in components_order:
 				components_dict[component["type"]] = component
+				for primitive in component["primitives"]:
+					primitives_dict[primitive["name"]] = primitive
 
 			widget["widget_id"] = widget_id
 			widget["components"] = components_dict
 			widget["components_render_order"] = components_order
+			widget["objects_dict"] = components_dict + primitives_dict
 			widget["cursor_start_line"].x = widget["default_cursor_start_line"].x
 			widget["cursor_start_line"].y = widget["default_cursor_start_line"].y
 			widget["cursor_start_line"].z = widget["default_cursor_start_line"].z
 			
+			ex_vars = ["components", "properties"]
 			for key, value in widget_model.items():
-				if key != "components":
+				if key not in ex_vars:
 					widget[key] = value # !!! If Value is a Harfang Object, add a deepcopy
+			
+			# Create properties
+			for property_name in widget_model["properties"]:
+				if property_name in  HarfangUISkin.properties:
+					class_property = HarfangUISkin.properties[property_name]
+					# Creates layers occurences:
+					property_layers = []
+					for layer_id in range(len(class_property["layers"])):
+						class_layer = class_property["layers"][layer_id]
+						
+						property_layer_states = {}
+						for class_state_name, class_state in class_layer["states"].items():
+							property_layer_states[class_state_name] = dict(class_state)
+							property_layer_states[class_state_name]["value"] = cls.transcrypt_var(class_state["value"], class_property["type"])
+						
+						default_state_name = class_layer["default_state"]
+						default_value = property_layer_states[default_state_name]["value"]
+						if layer_id == 0:
+							default_final_value = default_value
+						else:
+							if class_layer["operator"] == "set":
+								default_final_value = default_value
+							elif class_layer["operator"] == "add":
+								default_final_value += default_value
+							elif class_layer["operator"] == "multiply":
+								default_final_value *= default_value
+
+						property_layer = {"current_state":default_state_name, "current_state_t0":0, "value":default_value, "value_start":default_value, "value_end":default_value, "states":property_layer_states}
+						property_layers.append(property_layer)
+					
+					widget_property = {"layers":property_layers, "value":default_final_value}
+					
+					if "linked_value" in class_property:
+						lv = class_property["linked_value"]
+						
+						if "objects" in lv:
+							pass
+							##########################################
+						
+						if lv["name"] in obj:
+							v = widget_property["value"]
+							if "factor" in lv:
+								v *= lv["factor"]
+							if lv["operator"] == "set":
+								obj[lv["name"]] = v
+							elif lv["operator"] == "add":
+								obj[lv["name"]] += v
+
+					widget["properties"][property_name] = widget_property
+			
+			
+			
+			
 			return widget
 		return None	
 
@@ -1744,7 +1746,7 @@ class HarfangUI:
 			s = widget["size"]
 			s.x, s.y, s.z = size.x, size.y, size.z
 			
-			thickness = 0 if flag_invisible else cls.get_property_states_value(widget["components"]["window_borders"], "window_box_border_thickness",["focus"] )
+			thickness = 0 if flag_invisible else cls.get_property_states_value(widget, "window_box_border_thickness",["focus"] )
 			widget["default_cursor_start_line"].x = 5 + thickness
 			widget["default_cursor_start_line"].y = 5 + thickness
 			widget["components"]["window_title"]["text"] = cls.get_label_from_id(widget["widget_id"])
