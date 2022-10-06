@@ -593,13 +593,14 @@ class HarfangUISkin:
 				"primitives":[{"type": "filled_rounded_box", "name": "button_component.1"}, {"type": "text", "name": "button_component.2"}]
 				},
 			"image_button": {
-				"primitives": [{"type": "filled_rounded_box", "name": "image_button.1"}, {"type": "texture", "name": "image_button.2"}, {"type": "text", "name": "image_button.3"}, {"type": "text", "name": "image_button.4", "text_color": ["#dd4444", 100]}]
+				"primitives": [{"type": "filled_rounded_box", "name": "image_button.1"}, {"type": "texture", "name": "image_button.2"}, {"type": "text", "name": "image_button.3"}]
 				},
 			"check_box":{
 				"primitives": [{"type": "filled_rounded_box", "name": "check_box.1"}, {"type": "texture","name": "check_box.2", "texture": "hgui_textures/Icon_Check.png", "texture_size": [15, 15]}],
 				},
 			"toggle_image_button": {
-				"primitives": [{"type": "rounded_box", "name": "toggle_image_button.1"}, {"type": "texture", "name": "toggle_image_button.2"}]
+				"primitives": [{"type": "filled_rounded_box", "name": "toggle_image_button.1"}, {"type": "texture", "name": "toggle_image_button.2"}],
+				"textures": None, "toggle_idx": 0, "fade_delay": 0.2
 				},
 			"scrollbar": {
 				"primitives":[{"type": "rounded_scrollbar", "name": "scrollbar.1"}]
@@ -646,11 +647,12 @@ class HarfangUISkin:
 						},
 			
 			"toggle_image_button": {"components": ["basic_label", "toggle_image_button"],
-									"textures": None,
-									"toggle_idx": 0,
 									"properties": ["basic_label_margins", "basic_label_text_color",
 												"toggle_image_button_margins","widget_rounded_radius", "toggle_image_button_box_color"]
 									},
+			
+			
+			
 			"scrollbar_v": {"components": ["scrollbar"], "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25,
 							"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_rounded_radius"]
 						},
@@ -2123,11 +2125,11 @@ class HarfangUI:
 				for layer_id in range(len(property["layers"])):
 					layer = property["layers"][layer_id]
 					state_delay = layer["states"][layer["current_state"]]["delay"]
-					if abs(state_delay) < 1e-5:
+					t = (cls.timestamp - layer["current_state_t0"]) / max(1e-5,hg.time_from_sec_f(state_delay))
+					if abs(state_delay) < 1e-5 or t >= 1:
 						layer["value"] = layer["value_end"]
-					else:
-						t = (cls.timestamp - layer["current_state_t0"]) / hg.time_from_sec_f(state_delay)
-						layer["value"] = HarfangUISkin.interpolate_values(layer["value_start"], layer["value_end"], t)
+					elif 0 <= t <1 :
+							layer["value"] = HarfangUISkin.interpolate_values(layer["value_start"], layer["value_end"], t)
 					if layer["operator"] == "set":
 						property["value"] = layer["value"]
 					elif layer["operator"] == "multiply":
@@ -2746,19 +2748,15 @@ class HarfangUI:
 		widget = cls.get_widget("image_button", widget_id, args)
 		obj_texture = widget["objects_dict"]["image_button.2"]
 		obj_label = widget["objects_dict"]["image_button.3"]
-		obj_label2 = widget["objects_dict"]["image_button.4"]
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
 		widget["position"] = cls.get_cursor_position()
 		if "show_label" in args and args["show_label"]:
 			obj_label["text"] = cls.get_label_from_id(widget_id)
-			obj_label2["text"] = "text 2"
 			obj_label["hidden"] = False
-			obj_label2["hidden"] = False
 		else:
 			obj_label["hidden"] = True
-			obj_label2["hidden"] = True
 		obj_texture["texture_size"].x = image_size.x
 		obj_texture["texture_size"].y = image_size.y
 		obj_texture["texture"] = texture_path
@@ -2802,7 +2800,7 @@ class HarfangUI:
 		obj_label = widget["objects_dict"]["basic_label.1"]
 		obj_texture = widget["objects_dict"]["toggle_image_button.2"]
 		mouse_click = False
-		widget["toggle_idx"] = min(len(textures_paths)-1, current_idx)
+		widget["components"]["toggle_image_button"]["toggle_idx"] = min(len(textures_paths)-1, current_idx)
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
 			current_idx = (current_idx + 1) % len(textures_paths)
@@ -2817,7 +2815,7 @@ class HarfangUI:
 		obj_texture["texture_size"].x = image_size.x
 		obj_texture["texture_size"].y = image_size.y
 		widget["components"]["toggle_image_button"]["textures"] = textures_paths
-		obj_texture["texture"] = widget["components"]["toggle_image_button"]["textures"][widget["toggle_idx"]]
+		obj_texture["texture"] = widget["components"]["toggle_image_button"]["textures"][widget["components"]["toggle_image_button"]["toggle_idx"]]
 		cls.update_widget(widget)
 		cls.update_cursor(widget)
 		return mouse_click, current_idx
