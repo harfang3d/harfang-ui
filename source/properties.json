@@ -126,7 +126,7 @@
     {
         "type": "vec4",
         "linked_value": {
-            "objects": ["window_background.1"],
+            "objects": ["window_background.1", "window_borders.1"],
             "name": "corner_radius",
             "operator": "set"
         },
@@ -698,6 +698,7 @@
     "image_button_label_color": {
         "type": "RGB24_APercent",
         "linked_value": {
+            "objects": ["image_button.3"],
             "name": "text_color",
             "operator": "set"
         },

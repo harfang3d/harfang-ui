@@ -44,45 +44,46 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
     view_id = 0
 	
     if hgui.begin_frame(dt, mouse, keyboard, width, height):
-        if hgui.begin_window_2D("My window",  hg.Vec2(50, 50), hg.Vec2(1124, 600), 1, hgui.HGUIWF_HideTitle | hgui.HGUIWF_Invisible):
+        if hgui.begin_window_2D("My window",  hg.Vec2(50, 50), hg.Vec2(1124, 600), 1): #, hgui.HGUIWF_HideTitle | hgui.HGUIWF_Invisible):
             
             hgui.set_inner_line_space_size(200)
 
+            
             hgui.info_text("info1", "Information text")
 
             
             hgui.image("my image1", "textures/logo.png", hg.Vec2(90,80))
             
+            
             hgui.same_line()
             hgui.image("Info image label", "textures/logo.png", hg.Vec2(90,80), show_label=True)
             
-            f,it = hgui.input_text("Input text",it, show_label=False)
             
+            f,it = hgui.input_text("Input text",it, show_label=False)
             
             hgui.same_line()
             f,it = hgui.input_text("Input text label",it)
 
+            
             f = hgui.button("Button")
+            
             f = hgui.button_image("Button image", "textures/coffee.png", hg.Vec2(20,20))
+            
             hgui.same_line()
             f = hgui.button_image("label##button_image", "textures/coffee.png", hg.Vec2(20,20), show_label=True)
-        
+            
             f, cb = hgui.check_box("Checkbox", cb, show_label=False)
             hgui.same_line()
+            
             f,cb = hgui.check_box("Checkbox##label", cb)
-
+            
+            
             tex_list = ["hgui_textures/Icon_Pause.png", "hgui_textures/Icon_Play.png"]
             f, toggle_image_idx = hgui.toggle_image_button("Toggle", tex_list, toggle_image_idx, hg.Vec2(15, 15))
+            
             hgui.same_line()
             f, toggle_image_idx = hgui.toggle_image_button("Toggle##label", tex_list, toggle_image_idx, hg.Vec2(15, 15), show_label=True)
-
-            """
-            if hgui.button("My_button"):
-                print("button")
-            
-            hgui.image("my image", "textures/logo.png", hg.Vec2(80,80))
-            f,cb = hgui.check_box("my checkbox",cb)
-            f,it = hgui.input_text("my input text",it)
+            hgui.set_inner_line_space_size(10)
             
             _, current_rib = hgui.radio_image_button("rib_0","textures/cube_1.png", current_rib, 0, hg.Vec2(64, 64))
             hgui.same_line()
@@ -91,7 +92,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             _, current_rib = hgui.radio_image_button("rib_2","textures/cube_3.png", current_rib, 2)
             hgui.same_line()
             _, current_rib = hgui.radio_image_button("rib_3","textures/cube_4.png", current_rib, 3)
-            """
+            
             
             hgui.end_window()
 		
