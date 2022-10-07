@@ -843,10 +843,10 @@
             }
         ]
     },
-    "toggle_image_button_margins": {
+    "toggle_image_margins": {
         "type": "vec3",
         "linked_value": {
-            "objects": ["toggle_image_button"],
+            "objects": ["toggle_image"],
             "name": "margins",
             "operator": "set"
         },
@@ -867,10 +867,10 @@
             }
         ]
     },    
-    "toggle_image_button_box_color": {
+    "toggle_image_box_color": {
         "type": "RGB24_APercent",
         "linked_value": {
-            "objects": ["toggle_image_button"],
+            "objects": ["toggle_image"],
             "name": "background_color",
             "operator": "set"
         },

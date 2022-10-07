@@ -1,6 +1,6 @@
 from tkinter import Scrollbar
 import harfang as hg
-from math import sin, cos, inf, pi
+from math import sin, cos, inf, pi, floor
 from mouse_pointer_3d import MousePointer3D
 import json
 import copy
@@ -534,6 +534,32 @@ class HarfangUISkin:
 					}
 				},
 
+			"texture_toggle_fading":{
+				"textures":{
+						"type": "list"
+					},
+				"texture_color":{
+					"type": "RGB24_APercent",
+					"value": ["#ffffff", 100]
+					},
+				"texture_size":{
+						"type": "vec2",
+						"value":[1, 1]
+					},
+				"texture_scale":{
+						"type": "vec2",
+						"value":[1, 1]
+					},
+				"toggle_idx":{
+					"type": "int",
+					"value": 0
+					},
+				"fading_delay":{
+					"type": "float",
+					"value": 0.2
+					}
+				},
+
 			"rounded_scrollbar":{
 				"background_color":{
 					"type": "RGB24_APercent",
@@ -598,9 +624,8 @@ class HarfangUISkin:
 			"check_box":{
 				"primitives": [{"type": "filled_rounded_box", "name": "check_box.1"}, {"type": "texture","name": "check_box.2", "texture": "hgui_textures/Icon_Check.png", "texture_size": [15, 15]}],
 				},
-			"toggle_image_button": {
-				"primitives": [{"type": "filled_rounded_box", "name": "toggle_image_button.1"}, {"type": "texture", "name": "toggle_image_button.2"}],
-				"textures": None, "toggle_idx": 0, "fade_delay": 0.2
+			"toggle_image": {
+				"primitives": [{"type": "filled_rounded_box", "name": "toggle_image.box"}, {"type": "texture_toggle_fading", "name": "toggle_image.textures"}]
 				},
 			"scrollbar": {
 				"primitives":[{"type": "rounded_scrollbar", "name": "scrollbar.1"}]
@@ -646,9 +671,9 @@ class HarfangUISkin:
 									"checkbox_margins", "checkbox_rounded_radius", "checkbox_box_color", "check_color"],
 						},
 			
-			"toggle_image_button": {"components": ["basic_label", "toggle_image_button"],
+			"toggle_image_button": {"components": ["basic_label", "toggle_image"],
 									"properties": ["basic_label_margins", "basic_label_text_color",
-												"toggle_image_button_margins","widget_rounded_radius", "toggle_image_button_box_color"]
+												"toggle_image_margins","widget_rounded_radius", "toggle_image_box_color"]
 									},
 			
 			
@@ -1150,6 +1175,8 @@ class HarfangUI:
 		elif t == "RGB24_APercent": vt = HarfangUISkin.RGB24_APercent_to_Color(v)
 		elif t == "float":			vt = v
 		elif t == "string":			vt = v
+		elif t == "int":			vt = v
+		elif t == "list":			vt = v
 		elif t == "vec2":			vt = hg.Vec2(v[0], v[1])
 		elif t == "vec3":			vt = hg.Vec3(v[0], v[1], v[2])
 		elif t == "vec4":			vt = hg.Vec4(v[0], v[1], v[2], v[3])
@@ -2009,11 +2036,13 @@ class HarfangUI:
 	@classmethod
 	def update_component(cls, widget, component):
 		
+
+		# Component display vars
 		sx, sy = 0, 0
 		flag_compute_size = False # "text", "input_text" and "texture" primitives affects component size. 
 		cp = component["cursor_position"]
 		cp.x, cp.y = 0, 0
-		stackable_primitives = ["texture", "text", "input_text"] # All other primitives are size-responsive
+		stackable_primitives = ["texture", "texture_toggle_fading", "text", "input_text"] # All other primitives are size-responsive
 		# Compute content size
 		
 		for primitive in component["primitives"]:
@@ -2026,6 +2055,12 @@ class HarfangUI:
 
 				if primitive["type"] == "texture":
 					if primitive["texture"] is not None:
+						tsx, tsy = primitive["texture_size"].x, primitive["texture_size"].y
+						tsx *= primitive["texture_scale"].x
+						tsy *= primitive["texture_scale"].y
+				
+				if primitive["type"] == "texture_toggle_fading":
+					if primitive["textures"] is not None:
 						tsx, tsy = primitive["texture_size"].x, primitive["texture_size"].y
 						tsx *= primitive["texture_scale"].x
 						tsy *= primitive["texture_scale"].y
@@ -2357,6 +2392,36 @@ class HarfangUI:
 				elif primitive_id == "texture":
 					if primitive["texture"] is not None:
 						HarfangGUISceneGraph.add_texture_box(matrix, cpos + component["margins"] + primitive["position"], primitive["texture_scale"]  * primitive["texture_size"], primitive["texture_color"] * opacity, primitive["texture"])
+
+				elif primitive_id == "texture_toggle_fading":
+						if primitive["textures"] is not None:
+							fading = False
+							if "toggle_t0" not in primitive:
+								texture = primitive["textures"][primitive["toggle_idx"]]
+							else:
+								t = (cls.timestamp - primitive["toggle_t0"]) / hg.time_from_sec_f(primitive["fading_delay"])
+								if t >= 1:
+									texture = primitive["textures"][primitive["toggle_idx"]]
+								else:
+									fading = True
+									a = primitive["texture_color"].a
+									cs = hg.Color(primitive["texture_color"])
+									ce = hg.Color(cs)
+									cs.a = (1 - t) * a
+									ce.a = t * a
+									texture_s = primitive["textures"][primitive["toggle_idx_start"]]
+									texture_e = primitive["textures"][primitive["toggle_idx"]]
+									#print(str(primitive["toggle_idx_start"]))
+									#print(str(primitive["toggle_idx"]))
+									
+							if fading:
+								HarfangGUISceneGraph.add_texture_box(matrix, cpos + component["margins"] + primitive["position"], primitive["texture_scale"]  * primitive["texture_size"], ce * opacity, texture_e)
+								HarfangGUISceneGraph.add_texture_box(matrix, cpos + component["margins"] + primitive["position"], primitive["texture_scale"]  * primitive["texture_size"], cs * opacity, texture_s)
+
+							else:
+								HarfangGUISceneGraph.add_texture_box(matrix, cpos + component["margins"] + primitive["position"], primitive["texture_scale"]  * primitive["texture_size"], primitive["texture_color"] * opacity, texture)
+
+
 
 				elif primitive_id == "rounded_scrollbar":
 					if widget["type"] == "scrollbar_v":
@@ -2798,9 +2863,16 @@ class HarfangUI:
 	def toggle_image_button(cls, widget_id, textures_paths: list, current_idx, image_size: hg.Vec2, **args):
 		widget = cls.get_widget("toggle_image_button", widget_id, args)
 		obj_label = widget["objects_dict"]["basic_label.1"]
-		obj_texture = widget["objects_dict"]["toggle_image_button.2"]
+		obj_textures = widget["objects_dict"]["toggle_image.textures"]
 		mouse_click = False
-		widget["components"]["toggle_image_button"]["toggle_idx"] = min(len(textures_paths)-1, current_idx)
+		
+		# !!! Extract to a primitive function ? - Set toggle image current idx
+		current_idx_clamp = min(len(textures_paths)-1, current_idx)
+		if obj_textures["toggle_idx"] != current_idx_clamp:
+			obj_textures["toggle_idx_start"] = obj_textures["toggle_idx"]
+			obj_textures["toggle_idx"] = current_idx_clamp
+			obj_textures["toggle_t0"] = cls.timestamp
+
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
 			current_idx = (current_idx + 1) % len(textures_paths)
@@ -2812,10 +2884,9 @@ class HarfangUI:
 		obj_label["text"] = cls.get_label_from_id(widget_id)
 
 		widget["position"] = cls.get_cursor_position()
-		obj_texture["texture_size"].x = image_size.x
-		obj_texture["texture_size"].y = image_size.y
-		widget["components"]["toggle_image_button"]["textures"] = textures_paths
-		obj_texture["texture"] = widget["components"]["toggle_image_button"]["textures"][widget["components"]["toggle_image_button"]["toggle_idx"]]
+		obj_textures["texture_size"].x = image_size.x
+		obj_textures["texture_size"].y = image_size.y
+		obj_textures["textures"] = textures_paths
 		cls.update_widget(widget)
 		cls.update_cursor(widget)
 		return mouse_click, current_idx
