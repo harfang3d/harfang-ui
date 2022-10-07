@@ -59,7 +59,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             hgui.image("Info image label", "textures/logo.png", hg.Vec2(90,80), show_label=True)
             
             
-            f,it = hgui.input_text("Input text",it, show_label=False)
+            f,it = hgui.input_text("Input text",it, show_label=False, forced_text_width = 150)
             
             hgui.same_line()
             f,it = hgui.input_text("Input text label",it)

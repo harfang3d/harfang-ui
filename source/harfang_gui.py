@@ -2411,8 +2411,7 @@ class HarfangUI:
 									ce.a = t * a
 									texture_s = primitive["textures"][primitive["toggle_idx_start"]]
 									texture_e = primitive["textures"][primitive["toggle_idx"]]
-									#print(str(primitive["toggle_idx_start"]))
-									#print(str(primitive["toggle_idx"]))
+
 									
 							if fading:
 								HarfangGUISceneGraph.add_texture_box(matrix, cpos + component["margins"] + primitive["position"], primitive["texture_scale"]  * primitive["texture_size"], ce * opacity, texture_e)
@@ -2774,6 +2773,10 @@ class HarfangUI:
 		widget = cls.get_widget("input_text", widget_id, args)
 		obj_text = widget["objects_dict"]["input_box.2"]
 		obj_label = widget["objects_dict"]["basic_label.1"]
+		if "forced_text_width" in args:
+			obj_text["forced_text_width"] = args["forced_text_width"]
+		else:
+			obj_text["forced_text_width"] = 150
 		if text != obj_text["text"]:
 			widget["flag_update_rest_size"] = True
 		if text is not None:
@@ -2829,7 +2832,6 @@ class HarfangUI:
 		cls.update_widget(widget)
 		cls.update_cursor(widget)
 		return mouse_click
-	
 	
 
 	@classmethod
@@ -2979,11 +2981,12 @@ class HarfangUI:
 		return mouse_click, current_idx
 
 	@classmethod
-	def toggle_button(cls, widget_id, texts: list, current_idx, forced_text_width = None, **args):
+	def toggle_button(cls, widget_id, texts: list, current_idx, **args):
 		widget = cls.get_widget("toggle_button", widget_id, args)
 		obj_text = widget["objects_dict"]["toggle_button_box.2"]
 		widget["components"]["texts"] = texts
-		obj_text["forced_text_width"] = forced_text_width
+		if "forced_text_width" in args:
+			obj_text["forced_text_width"] = args["forced_text_width"]
 		widget["toggle_idx"] = min(len(texts)-1, current_idx)
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
