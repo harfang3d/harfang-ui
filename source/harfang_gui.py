@@ -2059,15 +2059,24 @@ class HarfangUI:
 						tsx *= primitive["texture_scale"].x
 						tsy *= primitive["texture_scale"].y
 				
-				if primitive["type"] == "texture_toggle_fading":
+				elif primitive["type"] == "texture_toggle_fading":
 					if primitive["textures"] is not None:
 						tsx, tsy = primitive["texture_size"].x, primitive["texture_size"].y
 						tsx *= primitive["texture_scale"].x
 						tsy *= primitive["texture_scale"].y
 
-				if primitive["type"] == "text" or primitive["type"] == "input_text":
+				elif primitive["type"] == "text":
 					if primitive["text"] is not None:
 						txt_size = HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"])
+						tsx, tsy = txt_size.x, txt_size.y
+						if primitive["forced_text_width"] is not None:
+							tsx = primitive["forced_text_width"]
+						tsx *= primitive["text_size"]
+						tsy *= primitive["text_size"]
+				
+				elif primitive["type"] == "input_text":
+					if primitive["display_text"] is not None:
+						txt_size = HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["display_text"])
 						tsx, tsy = txt_size.x, txt_size.y
 						if primitive["forced_text_width"] is not None:
 							tsx = primitive["forced_text_width"]
@@ -2378,11 +2387,12 @@ class HarfangUI:
 						HarfangGUISceneGraph.add_text(matrix, cpos + component["margins"] + primitive["position"], primitive["text_size"], primitive["text"], cls.current_font_id, primitive["text_color"] * opacity)
 
 				elif primitive_id == "input_text":
-					if primitive["text"] is not None:
+					if primitive["display_text"] is not None:
 						margins = component["margins"]
-						HarfangGUISceneGraph.add_text(matrix, cpos + margins + primitive["position"], primitive["text_size"], primitive["text"], cls.current_font_id, primitive["text_color"] * opacity)
+						HarfangGUISceneGraph.add_text(matrix, cpos + margins + primitive["position"], primitive["text_size"], primitive["display_text"], cls.current_font_id, primitive["text_color"] * opacity)
 						if "edit" in widget["states"]:
-							tc_txt = primitive["text"][:cls.kb_cursor_pos]
+							idx = cls.kb_cursor_pos - primitive["display_text_start_idx"]
+							tc_txt = primitive["display_text"][:idx]
 							tc_size = HarfangGUIRenderer.compute_text_size(cls.current_font_id, tc_txt)
 							tc_size *= primitive["text_size"]
 							p = cpos + margins + primitive["position"]
@@ -2694,6 +2704,42 @@ class HarfangUI:
 			hg.OnTextInput.Disconnect(cls.ascii_connect)
 			cls.ascii_connect = None
 	
+	
+	@classmethod
+	def clip_input_text(cls, widget, primitive):
+		if "display_text_start_idx" not in primitive:
+					primitive["display_text_start_idx"] = 0
+		if "display_text" not in primitive:
+			primitive["display_text"] = primitive["text"]
+		
+		if primitive["forced_text_width"] is not None:
+			txt_size = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"])).x
+			if txt_size > primitive["forced_text_width"]:
+				if primitive["display_text_start_idx"] > cls.kb_cursor_pos:
+					primitive["display_text_start_idx"] = max(0, cls.kb_cursor_pos - 10)
+				else:
+					t1 = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][primitive["display_text_start_idx"]:cls.kb_cursor_pos])).x
+					str_size = cls.kb_cursor_pos - primitive["display_text_start_idx"]
+					strt = primitive["display_text_start_idx"]
+					while t1 > primitive["forced_text_width"] and str_size >= 2:
+						str_size = int(2 * str_size / 3)
+						strt = cls.kb_cursor_pos - str_size
+						t1 = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][strt:cls.kb_cursor_pos])).x
+					primitive["display_text_start_idx"] = strt
+			
+			l_disp = len(primitive["text"])
+			t_disp = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][primitive["display_text_start_idx"]:l_disp])).x
+			while t_disp > primitive["forced_text_width"]:
+				l_disp -= 1
+				t_disp = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][primitive["display_text_start_idx"]:l_disp])).x
+
+			primitive["display_text"] = primitive["text"][primitive["display_text_start_idx"]:l_disp]
+
+		else:
+			primitive["display_text"] = primitive["text"]
+			primitive["display_text_start_idx"] = 0
+		
+
 	@classmethod
 	def update_edit_string(cls, widget, primitive_id):
 		
@@ -2729,6 +2775,7 @@ class HarfangUI:
 					cls.set_widget_state(widget, "no_edit")
 					cls.set_ui_state(cls.UI_STATE_MAIN)	# Resume keyboard control to ui
 					widget["flag_update_rest_size"] = True
+					cls.clip_input_text(widget, primitive)
 					return True #String changed
 				else:
 					if cls.ascii_code is not None:
@@ -2737,6 +2784,7 @@ class HarfangUI:
 						widget["flag_update_rest_size"] = True
 						cls.ascii_code = None
 
+		cls.clip_input_text(widget, primitive)
 		return False #String unchanged
 
 
