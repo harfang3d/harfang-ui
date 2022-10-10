@@ -126,7 +126,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             _, current_rib = hgui.radio_image_button("rib_3","textures/cube_4.png", current_rib, 3)
     
             lbl_list = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-            f, toggle_btn_idx = hgui.toggle_button("Texts_toggle", lbl_list, toggle_btn_idx, forced_text_width = 100)
+            f, toggle_btn_idx = hgui.toggle_button("Texts_toggle", lbl_list, toggle_btn_idx)
             if f:
                 print(str(toggle_btn_idx))
 

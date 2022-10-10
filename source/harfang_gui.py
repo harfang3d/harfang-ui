@@ -488,7 +488,7 @@ class HarfangUISkin:
 					"value": 1
 					},
 				"text":{
-					"type":" string"
+					"type":"string"
 					},
 				"forced_text_width":{
 					"type": float
@@ -509,7 +509,7 @@ class HarfangUISkin:
 					"value": 1
 					},
 				"text":{
-					"type":" string"
+					"type":"string"
 					},
 				"forced_text_width":{
 					"type": float
@@ -559,6 +559,32 @@ class HarfangUISkin:
 					"value": 0.2
 					}
 				},
+			
+			"text_toggle_fading":{
+				"text_color":{
+					"type": "RGB24_APercent",
+					"value": ["#ffffff", 100]
+					},
+				"text_size":{
+					"type": "float",
+					"value": 1
+					},
+				"texts":{
+					"type":"list"
+					},
+				"forced_text_width":{
+					"type": float
+					},
+				"toggle_idx":{
+					"type": "int",
+					"value": 0
+					},
+				"fading_delay":{
+					"type": "float",
+					"value": 0.2
+					}
+				},
+
 
 			"rounded_scrollbar":{
 				"background_color":{
@@ -635,7 +661,7 @@ class HarfangUISkin:
 				"margins": [5, 5, 0],
 				},
 			"toggle_button_box": {
-				"primitives": [{"type": "filled_rounded_box", "name": "toggle_button_box.1"}, {"type": "text", "name": "toggle_button_box.2"}]
+				"primitives": [{"type": "filled_rounded_box", "name": "toggle_button.box"}, {"type": "text_toggle_fading", "name": "toggle_button.texts"}]
 				}
 			}
 
@@ -692,7 +718,6 @@ class HarfangUISkin:
 						},
 			
 			"toggle_button": {"components": ["toggle_button_box"], "toggle_idx": 0,
-								"texts": None,
 								"properties": ["button_box_color", "button_text_color", "button_text_margins", "widget_rounded_radius"]
 								}
 		}
@@ -2045,7 +2070,7 @@ class HarfangUI:
 		flag_compute_size = False # "text", "input_text" and "texture" primitives affects component size. 
 		cp = component["cursor_position"]
 		cp.x, cp.y = 0, 0
-		stackable_primitives = ["texture", "texture_toggle_fading", "text", "input_text"] # All other primitives are size-responsive
+		stackable_primitives = ["texture", "texture_toggle_fading","text_toggle_fading" ,"text", "input_text"] # All other primitives are size-responsive
 		# Compute content size
 		
 		for primitive in component["primitives"]:
@@ -2071,6 +2096,15 @@ class HarfangUI:
 				elif primitive["type"] == "text":
 					if primitive["text"] is not None:
 						txt_size = HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"])
+						tsx, tsy = txt_size.x, txt_size.y
+						if primitive["forced_text_width"] is not None:
+							tsx = primitive["forced_text_width"]
+						tsx *= primitive["text_size"]
+						tsy *= primitive["text_size"]
+
+				elif primitive["type"] == "text_toggle_fading":
+					if primitive["texts"] is not None:
+						txt_size = HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["texts"][primitive["toggle_idx"]])
 						tsx, tsy = txt_size.x, txt_size.y
 						if primitive["forced_text_width"] is not None:
 							tsx = primitive["forced_text_width"]
@@ -2433,6 +2467,32 @@ class HarfangUI:
 							else:
 								HarfangGUISceneGraph.add_texture_box(matrix, cpos + component["margins"] + primitive["position"], primitive["texture_scale"]  * primitive["texture_size"], primitive["texture_color"] * opacity, texture)
 
+				elif primitive_id == "text_toggle_fading":
+						if primitive["texts"] is not None:
+							fading = False
+							if "toggle_t0" not in primitive:
+								text = primitive["texts"][primitive["toggle_idx"]]
+							else:
+								t = (cls.timestamp - primitive["toggle_t0"]) / hg.time_from_sec_f(primitive["fading_delay"])
+								if t >= 1:
+									text = primitive["texts"][primitive["toggle_idx"]]
+								else:
+									fading = True
+									a = primitive["text_color"].a
+									cs = hg.Color(primitive["text_color"])
+									ce = hg.Color(cs)
+									cs.a = (1 - t) * a
+									ce.a = t * a
+									text_s = primitive["texts"][primitive["toggle_idx_start"]]
+									text_e = primitive["texts"][primitive["toggle_idx"]]
+
+									
+							if fading:
+								HarfangGUISceneGraph.add_text(matrix, cpos + component["margins"] + primitive["position"], primitive["text_size"], text_s, cls.current_font_id, cs * opacity)
+								HarfangGUISceneGraph.add_text(matrix, cpos + component["margins"] + primitive["position"], primitive["text_size"], text_e, cls.current_font_id, ce * opacity)
+
+							else:
+								HarfangGUISceneGraph.add_text(matrix, cpos + component["margins"] + primitive["position"], primitive["text_size"], text, cls.current_font_id, primitive["text_color"] * opacity)
 
 
 				elif primitive_id == "rounded_scrollbar":
@@ -3062,16 +3122,29 @@ class HarfangUI:
 	@classmethod
 	def toggle_button(cls, widget_id, texts: list, current_idx, **args):
 		widget = cls.get_widget("toggle_button", widget_id, args)
-		obj_text = widget["objects_dict"]["toggle_button_box.2"]
-		widget["texts"] = texts
+		obj_text = widget["objects_dict"]["toggle_button.texts"]
+		
+		# !!! Extract to a primitive function ? - Set toggle image current idx
+		current_idx_clamp = min(len(texts)-1, current_idx)
+		if obj_text["toggle_idx"] != current_idx_clamp:
+			obj_text["toggle_idx_start"] = obj_text["toggle_idx"]
+			obj_text["toggle_idx"] = current_idx_clamp
+			obj_text["toggle_t0"] = cls.timestamp
+		
 		if "forced_text_width" in args:
 			obj_text["forced_text_width"] = args["forced_text_width"]
-		widget["toggle_idx"] = min(len(texts)-1, current_idx)
+		else:
+			if texts is not None and obj_text["texts"] != texts:
+				mx = 0
+				for text in texts:
+					mx = max(mx, (HarfangGUIRenderer.compute_text_size(cls.current_font_id, text)).x)
+				obj_text["forced_text_width"] = mx
+		
+		obj_text["texts"] = texts
 		mouse_click = False
 		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
 			mouse_click = True
 			current_idx = (current_idx + 1) % len(texts)
-		obj_text["text"] = widget["texts"][widget["toggle_idx"]]
 		widget["position"] = cls.get_cursor_position()
 		cls.update_widget(widget)
 		cls.update_cursor(widget)
