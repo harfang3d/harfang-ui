@@ -1030,6 +1030,9 @@ class HarfangUI:
 	focussed_containers = []
 
 	kb_cursor_pos = 0 # Used to edit input texts
+	kb_cursor_down_t0 = 0
+	kb_cursor_repeat_delay = 0.5 # Delay before repeat starts
+	kb_cursor_current_key_down = None
 
 	ascii_code = None
 	ascii_connect = None
@@ -2711,21 +2714,22 @@ class HarfangUI:
 					primitive["display_text_start_idx"] = 0
 		if "display_text" not in primitive:
 			primitive["display_text"] = primitive["text"]
-		
+
+		if primitive["display_text_start_idx"] > cls.kb_cursor_pos:
+					primitive["display_text_start_idx"] = max(0, cls.kb_cursor_pos - 10)
+
 		if primitive["forced_text_width"] is not None:
 			txt_size = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"])).x
 			if txt_size > primitive["forced_text_width"]:
-				if primitive["display_text_start_idx"] > cls.kb_cursor_pos:
-					primitive["display_text_start_idx"] = max(0, cls.kb_cursor_pos - 10)
-				else:
-					t1 = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][primitive["display_text_start_idx"]:cls.kb_cursor_pos])).x
-					str_size = cls.kb_cursor_pos - primitive["display_text_start_idx"]
-					strt = primitive["display_text_start_idx"]
-					while t1 > primitive["forced_text_width"] and str_size >= 2:
-						str_size = int(2 * str_size / 3)
-						strt = cls.kb_cursor_pos - str_size
-						t1 = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][strt:cls.kb_cursor_pos])).x
-					primitive["display_text_start_idx"] = strt
+				
+				t1 = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][primitive["display_text_start_idx"]:cls.kb_cursor_pos])).x
+				str_size = cls.kb_cursor_pos - primitive["display_text_start_idx"]
+				strt = primitive["display_text_start_idx"]
+				while t1 > primitive["forced_text_width"] and str_size >= 2:
+					str_size = int(2 * str_size / 3)
+					strt = cls.kb_cursor_pos - str_size
+					t1 = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][strt:cls.kb_cursor_pos])).x
+				primitive["display_text_start_idx"] = strt
 			
 			l_disp = len(primitive["text"])
 			t_disp = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][primitive["display_text_start_idx"]:l_disp])).x
@@ -2744,6 +2748,7 @@ class HarfangUI:
 	def update_edit_string(cls, widget, primitive_id):
 		
 		primitive = widget["objects_dict"][primitive_id]
+		flag_move_cursor = False
 		
 		if not "edit" in widget["states"]:
 			if "mouse_click" in cls.current_signals and widget["widget_id"] in cls.current_signals["mouse_click"]:
@@ -2756,35 +2761,61 @@ class HarfangUI:
 			elif cls.ui_state == cls.UI_STATE_WIDGET_KEYBOARD_FOCUS:
 
 				str_l = len(primitive["text"])
-				if cls.keyboard.Pressed(hg.K_Right) and cls.kb_cursor_pos < str_l:
-					cls.kb_cursor_pos +=1
-					
-				elif cls.keyboard.Pressed(hg.K_Left) and cls.kb_cursor_pos > 0:
-					cls.kb_cursor_pos -=1
+
+				flag_k_down = False
+				for k in range(hg.K_Last):
+					if cls.keyboard.Down(k):
+						if cls.kb_cursor_current_key_down != k:
+							cls.kb_cursor_down_t0 = cls.timestamp
+							cls.kb_cursor_current_key_down = k
+							t = -1
+							flag_k_down = True
+							break
+						else:
+							t = (cls.timestamp - cls.kb_cursor_down_t0) / hg.time_from_sec_f(cls.kb_cursor_repeat_delay)
+							flag_k_down = True
+							break
 				
-				elif cls.keyboard.Pressed(hg.K_Backspace) and cls.kb_cursor_pos > 0:
-					cls.kb_cursor_pos -= 1
-					primitive["text"] = primitive["text"][:cls.kb_cursor_pos] + primitive["text"][cls.kb_cursor_pos+1:]
-					widget["flag_update_rest_size"] = True
-		
-				elif cls.keyboard.Pressed(hg.K_Suppr) and cls.kb_cursor_pos < str_l:
-					primitive["text"] = primitive["text"][:cls.kb_cursor_pos] + primitive["text"][cls.kb_cursor_pos+1:]
-					widget["flag_update_rest_size"] = True
+				if not flag_k_down:
+					cls.kb_cursor_current_key_down = None
 
-				elif cls.keyboard.Pressed(hg.K_Return) or cls.keyboard.Pressed(hg.K_Enter):
-					cls.set_widget_state(widget, "no_edit")
-					cls.set_ui_state(cls.UI_STATE_MAIN)	# Resume keyboard control to ui
-					widget["flag_update_rest_size"] = True
-					cls.clip_input_text(widget, primitive)
-					return True #String changed
-				else:
-					if cls.ascii_code is not None:
-						primitive["text"] = primitive["text"][:cls.kb_cursor_pos] + cls.ascii_code + primitive["text"][cls.kb_cursor_pos:]
-						cls.kb_cursor_pos += 1
+				elif t<0 or t>1:
+				
+					if cls.kb_cursor_current_key_down == hg.K_Right and cls.kb_cursor_pos < str_l:
+							cls.kb_cursor_pos +=1
+							flag_move_cursor = True
+						
+					elif cls.kb_cursor_current_key_down == hg.K_Left and cls.kb_cursor_pos > 0:
+						cls.kb_cursor_pos -=1
+						flag_move_cursor = True
+					
+					elif cls.kb_cursor_current_key_down == hg.K_Backspace and cls.kb_cursor_pos > 0:
+						cls.kb_cursor_pos -= 1
+						primitive["text"] = primitive["text"][:cls.kb_cursor_pos] + primitive["text"][cls.kb_cursor_pos+1:]
 						widget["flag_update_rest_size"] = True
-						cls.ascii_code = None
+						flag_move_cursor = True
+			
+					elif cls.kb_cursor_current_key_down == hg.K_Suppr and cls.kb_cursor_pos < str_l:
+						primitive["text"] = primitive["text"][:cls.kb_cursor_pos] + primitive["text"][cls.kb_cursor_pos+1:]
+						widget["flag_update_rest_size"] = True
+						flag_move_cursor = True
 
-		cls.clip_input_text(widget, primitive)
+					elif cls.kb_cursor_current_key_down == hg.K_Return or cls.kb_cursor_current_key_down == hg.K_Enter:
+						cls.set_widget_state(widget, "no_edit")
+						cls.set_ui_state(cls.UI_STATE_MAIN)	# Resume keyboard control to ui
+						widget["flag_update_rest_size"] = True
+						cls.clip_input_text(widget, primitive)
+						return True #String changed
+					else:
+						if cls.ascii_code is not None:
+							primitive["text"] = primitive["text"][:cls.kb_cursor_pos] + cls.ascii_code + primitive["text"][cls.kb_cursor_pos:]
+							cls.kb_cursor_pos += 1
+							widget["flag_update_rest_size"] = True
+							cls.ascii_code = None
+							flag_move_cursor = True
+
+		if flag_move_cursor or widget["flag_new"]:
+			cls.clip_input_text(widget, primitive)
 		return False #String unchanged
 
 
@@ -3032,7 +3063,7 @@ class HarfangUI:
 	def toggle_button(cls, widget_id, texts: list, current_idx, **args):
 		widget = cls.get_widget("toggle_button", widget_id, args)
 		obj_text = widget["objects_dict"]["toggle_button_box.2"]
-		widget["components"]["texts"] = texts
+		widget["texts"] = texts
 		if "forced_text_width" in args:
 			obj_text["forced_text_width"] = args["forced_text_width"]
 		widget["toggle_idx"] = min(len(texts)-1, current_idx)

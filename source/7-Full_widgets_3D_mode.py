@@ -40,6 +40,7 @@ flag_check_box = False
 flag_check_box2 = False
 flag_check_box3 = False
 flag_check_box31 = False
+my_text = "Hello world"
 my_text2 = "Go"
 my_text3 = "Hello !"
 my_text4 = "World"
@@ -100,10 +101,10 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 
             hgui.image("img1", "textures/logo.png", hg.Vec2(221, 190))
 
-            f, my_text = hgui.input_text("Input text",stacking = hgui.HGUI_STACK_VERTICAL, align = hgui.HGUIAF_LEFT, components_order = hgui.HGUI_ORDER_DEFAULT)
+            f, my_text = hgui.input_text("Input text",my_text, stacking = hgui.HGUI_STACK_VERTICAL, align = hgui.HGUIAF_LEFT, components_order = hgui.HGUI_ORDER_DEFAULT)
             hgui.same_line()
 
-            f, my_text2 = hgui.input_text("Input text 2 ",show_label = False)
+            f, my_text2 = hgui.input_text("Input text 2 ",my_text2, show_label = False)
 
             if hgui.button("Hello button 1"):
                 print("Click btn 1")
@@ -125,7 +126,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             _, current_rib = hgui.radio_image_button("rib_3","textures/cube_4.png", current_rib, 3)
     
             lbl_list = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-            f, toggle_btn_idx = hgui.toggle_button("Texts_toggle", lbl_list, toggle_btn_idx, 100)
+            f, toggle_btn_idx = hgui.toggle_button("Texts_toggle", lbl_list, toggle_btn_idx, forced_text_width = 100)
             if f:
                 print(str(toggle_btn_idx))
 
