@@ -977,6 +977,7 @@ class HarfangUI:
 	flag_use_pointer_VR = True
 
 	# Screen
+	window = None
 	width = 0
 	height = 0
 
@@ -1503,6 +1504,7 @@ class HarfangUI:
 	@classmethod
 	def reset_main_containers(cls):
 		for w_container in [cls.main_widgets_container_2D, cls.main_widgets_container_3D]:
+			w_container["size"].x, w_container["size"].y = cls.width, cls.height
 			w_container["children_order"] = []
 			w_container["child_depth"] = 0
 			cp = w_container["cursor"]
@@ -1550,13 +1552,13 @@ class HarfangUI:
 			pass
 
 	@classmethod
-	def begin_frame(cls, dt, mouse: hg.Mouse, keyboard: hg.Keyboard, width: int, height: int, camera: hg.Node = None):
+	def begin_frame(cls, dt, mouse: hg.Mouse, keyboard: hg.Keyboard, window, camera: hg.Node = None):
 		
 		cls.flag_vr = False
 
 		cls.camera = camera
-		cls.width = width
-		cls.height = height
+		cls.window = window
+		_, cls.width, cls.height = hg.GetWindowClientSize(window)
 
 		cls.mouse = mouse
 		cls.keyboard = keyboard
@@ -1588,12 +1590,12 @@ class HarfangUI:
 		return True
 	
 	@classmethod
-	def begin_frame_vr(cls, dt, mouse: hg.Mouse, keyboard: hg.Keyboard, screenview_camera: hg.Node,  width: int, height: int, vr_state: hg.OpenVRState, left_fb: hg.FrameBuffer, right_fb: hg.FrameBuffer):
+	def begin_frame_vr(cls, dt, mouse: hg.Mouse, keyboard: hg.Keyboard, screenview_camera: hg.Node,  window, vr_state: hg.OpenVRState, left_fb: hg.FrameBuffer, right_fb: hg.FrameBuffer):
 		
 		cls.flag_vr = True
 
-		cls.width = width
-		cls.height = height
+		cls.window = window
+		_, cls.width, cls.height = hg.GetWindowClientSize(window)
 
 		cls.vr_state = vr_state
 		cls.left_fb = left_fb
@@ -1777,7 +1779,14 @@ class HarfangUI:
 	
 	@classmethod
 	def begin_window_2D(cls, widget_id, position:hg.Vec2, size:hg.Vec2, scale:float = 1, window_flags:int = 0):
-		return cls.begin_window(widget_id, hg.Vec3(position.x, position.y, 0), hg.Vec3(0, 0, 0), hg.Vec3(size.x, size.y, 0), scale, window_flags | cls.HGUIWF_2D)	# size: in pixels
+		n = len(HarfangGUISceneGraph.widgets_containers_stack)
+		if  n==0 or (n > 0 and HarfangGUISceneGraph.widgets_containers_stack[0] == cls.main_widgets_container_2D):
+			# HDPI scaling, only for 2D windows in Main 2D container:
+			scale_hdpi = hg.GetWindowContentScale(cls.window).x
+		else:
+			scale_hdpi = 1 
+		return cls.begin_window(widget_id, hg.Vec3(position.x, position.y, 0), hg.Vec3(0, 0, 0), hg.Vec3(size.x, size.y, 0), scale * scale_hdpi, window_flags | cls.HGUIWF_2D)	# size: in pixels
+	
 	# scale: pixel size
 	@classmethod
 	def begin_window(cls, widget_id, position:hg.Vec3 , rotation:hg.Vec3, size:hg.Vec3, scale:float = 1, window_flags:int = 0):
@@ -1788,6 +1797,8 @@ class HarfangUI:
 		flag_invisible = False if (window_flags & cls.HGUIWF_Invisible) == 0 else True
 		flag_hide_scrollbars = False if (window_flags & cls.HGUIWF_HideScrollbars) == 0 else True
 		flag_overlay = False if (window_flags & cls.HGUIWF_Overlay) == 0 else True
+
+		
 
 		# If first parent window is 3D, Y is space relative, Y-increment is upside. Else, Y-increment is downside
 		pyf, rxf, rzf = 1, 1, 1
@@ -1820,11 +1831,13 @@ class HarfangUI:
 		nsp = widget["new_scroll_position"]
 		sp = widget["scroll_position"]
 		sp.x, sp.y, sp.z = nsp.x, nsp.y, nsp.z
+
+		widget["scale"].x =  widget["scale"].y = widget["scale"].z = scale
 		
 		if widget["flag_new"]:
 			widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y * pyf, position.z
 			widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x * rxf, rotation.y, rotation.z * rzf
-			widget["scale"].x =  widget["scale"].y = widget["scale"].z = scale
+			
 			
 			s = widget["size"]
 			s.x, s.y, s.z = size.x, size.y, size.z

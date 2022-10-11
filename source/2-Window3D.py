@@ -64,7 +64,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape)  and hg.IsWindowOpen(window):
     scene.Update(dt)
     view_id, pass_view = hg.SubmitSceneToPipeline(view_id, scene, hg.IntRect(0, 0, width, height), True, pipeline, res)
 
-    if hgui.begin_frame(dt, mouse, keyboard, width, height, camera):
+    if hgui.begin_frame(dt, mouse, keyboard, window, camera):
             
         if hgui.begin_window("My window", hg.Vec3(-2, 2.65, 5), hg.Vec3(0, 0, 0), hg.Vec3(500, 300, 0), 10/1280 ):
 

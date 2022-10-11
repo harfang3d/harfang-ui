@@ -52,7 +52,7 @@ toggle_image_idx = 0
 
 while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window): 
 	
-    _, width, height = hg.RenderResetToWindow(window, width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
+    #_, width, height = hg.RenderResetToWindow(window, width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
     dt = hg.TickClock()
     dt_f = hg.time_to_sec_f(dt)
@@ -83,7 +83,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
     view_id, pass_view = hg.PrepareSceneForwardPipelineViewDependentRenderData(view_id, view_state, scene, render_data, pipeline, res, pass_view)
     view_id, pass_view = hg.SubmitSceneToForwardPipeline(view_id, scene, hg.IntRect(0, 0, width, height), view_state, pipeline, render_data, res)
 	
-    if hgui.begin_frame(dt, mouse, keyboard, width, height, camera):
+    if hgui.begin_frame(dt, mouse, keyboard, window, camera):
 
         if hgui.begin_window("my_window", hg.Vec3(-5, 5.65, 10), hg.Vec3(0, 0, 0), hg.Vec3(1280, 720, 0), 10/1280 ):
             
