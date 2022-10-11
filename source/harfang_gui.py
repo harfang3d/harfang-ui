@@ -718,8 +718,8 @@ class HarfangUISkin:
 								]
 						},
 			
-			"toggle_button": {"components": ["toggle_button_box"], "toggle_idx": 0,
-								"properties": ["button_box_color", "button_text_color", "button_text_margins", "widget_rounded_radius"]
+			"toggle_button": {"components": ["basic_label", "toggle_button_box"], "toggle_idx": 0,
+								"properties": ["basic_label_margins", "basic_label_text_color", "button_box_color", "button_text_color", "button_text_margins", "widget_rounded_radius"]
 								}
 		}
 
@@ -3161,7 +3161,13 @@ class HarfangUI:
 	def toggle_button(cls, widget_id, texts: list, current_idx, **args):
 		widget = cls.get_widget("toggle_button", widget_id, args)
 		obj_text = widget["objects_dict"]["toggle_button.texts"]
+		obj_label = widget["objects_dict"]["basic_label.1"]
 		
+		if "show_label" in args:
+			widget["components"]["basic_label"]["hidden"] = not args["show_label"]
+		else:
+			widget["components"]["basic_label"]["hidden"] = True
+		obj_label["text"] = cls.get_label_from_id(widget_id)
 		# !!! Extract to a primitive function ? - Set toggle image current idx
 		current_idx_clamp = min(len(texts)-1, current_idx)
 		if obj_text["toggle_idx"] != current_idx_clamp:

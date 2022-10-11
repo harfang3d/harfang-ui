@@ -32,6 +32,7 @@ cb = True
 it = "input text"
 current_rib = 0
 toggle_image_idx = 0
+toggle_btn_idx = 0
 
 while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window): 
 	
@@ -84,6 +85,12 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             hgui.same_line()
             f, toggle_image_idx = hgui.toggle_image_button("Toggle##label", tex_list, toggle_image_idx, hg.Vec2(15, 15), show_label=True)
             
+
+            lbl_list = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            f, toggle_btn_idx = hgui.toggle_button("Texts_toggle", lbl_list, toggle_btn_idx)
+            hgui.same_line()
+            f, toggle_btn_idx = hgui.toggle_button("Texts_toggle##label", lbl_list, toggle_btn_idx, show_label=True)
+
             """
             
             hgui.set_inner_line_space_size(10)
