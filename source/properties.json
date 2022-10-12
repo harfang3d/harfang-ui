@@ -235,6 +235,102 @@
             }
         ]
     },
+
+
+    "widget_group_box_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["wg_background.box"],
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#2a2a2e",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "widget_group_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "objects": ["wg_background.box"],
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [0.1, 0.1, 0.1, 0.1],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "widget_group_title_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "objects": ["widget_groupe_title"],
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "widget_group_title_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["widget_groupe_title"],
+            "name": "text_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#fdfdfd",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+
+
+
     "info_text_margins": {
         "type": "vec3",
         "linked_value": {
