@@ -117,13 +117,17 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             if f:
                 flag_check_box = d
             
-            _, current_rib = hgui.radio_image_button("rib_0","textures/cube_1.png", current_rib, 0, hg.Vec2(64, 64))
-            hgui.same_line()
-            _, current_rib = hgui.radio_image_button("rib_1","textures/cube_2.png", current_rib, 1)
-            hgui.same_line()
-            _, current_rib = hgui.radio_image_button("rib_2","textures/cube_3.png", current_rib, 2)
-            hgui.same_line()
-            _, current_rib = hgui.radio_image_button("rib_3","textures/cube_4.png", current_rib, 3)
+            if hgui.begin_widget_group_2D("Select texture"): #, cpos, hg.Vec2(373, 190)):
+                #hgui.set_inner_line_space_size(10)
+
+                _, current_rib = hgui.radio_image_button("rib_0","textures/cube_1.png", current_rib, 0, hg.Vec2(64, 64))
+                hgui.same_line()
+                _, current_rib = hgui.radio_image_button("rib_1","textures/cube_2.png", current_rib, 1)
+                hgui.same_line()
+                _, current_rib = hgui.radio_image_button("rib_2","textures/cube_3.png", current_rib, 2)
+                hgui.same_line()
+                _, current_rib = hgui.radio_image_button("rib_3","textures/cube_4.png", current_rib, 3)
+                hgui.end_widget_group()
     
             lbl_list = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             f, toggle_btn_idx = hgui.toggle_button("Texts_toggle", lbl_list, toggle_btn_idx)

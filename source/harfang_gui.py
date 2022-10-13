@@ -631,12 +631,13 @@ class HarfangUISkin:
 				"cursor_auto": False,
 				"size_factor": [1, 1, 1]
 			},
-			"widget_groupe_title": {
+			"widget_group_title": {
 				"overlay": True,
 				"align": HarfangUI.HGUIAF_CENTER,
-				"primitives":[{"type": "text", "name":"widget_groupe_title.text"}],
+				"primitives":[{"type": "text", "name":"widget_group_title.text"}],
 				"cursor_auto": False,
-				"size_factor": [1, -1, -1]
+				"size_factor": [1, -1, -1],
+				"margins": [25, 25, 0]
 				},
 
 			"info_text": {
@@ -688,7 +689,8 @@ class HarfangUISkin:
 
 			"widget_group" : {"components": ["widget_group_background", "widget_group_title"],
 							"properties" : ["widget_group_box_color", "widget_group_rounded_radius",
-							"widget_group_title_margins", "widget_group_title_color"]
+							"widget_group_title_margins", "widget_group_title_color"],
+							"margins": [25, 25, 25]
 							},
 
 			"info_text" : {"components": ["info_text"],
@@ -733,7 +735,7 @@ class HarfangUISkin:
 			
 			"radio_image_button": {"components": ["radio_image_button"], "radio_idx": 0,
 								"properties": ["radio_image_offset", "radio_button_box_color",
-								"widget_rounded_radius", "radio_image_border_color", "radio_image_border_thickness"
+								"radio_image_rounded_radius", "radio_image_border_color", "radio_image_border_thickness"
 								]
 						},
 			
@@ -1339,6 +1341,7 @@ class HarfangUI:
 		container = cls.new_single_widget(type)
 		container["classe"] = "widgets_container"
 		container.update({
+			"margins": hg.Vec3(5, 5, 5),
 			"stacking": cls.HGUI_STACK_VERTICAL,
 			"flag_2D": False,
 			"flag_invisible": False,
@@ -1391,7 +1394,7 @@ class HarfangUI:
 	def create_widget(cls, widget_type, widget_id):
 		
 		# Widgets types of "widgets_container" classe:
-		widgets_type_containers = ["window"]
+		widgets_type_containers = ["window", "widget_group"]
 
 		if widget_type in HarfangUISkin.widgets_models:
 
@@ -1423,10 +1426,15 @@ class HarfangUI:
 			widget["cursor_start_line"].y = widget["default_cursor_start_line"].y
 			widget["cursor_start_line"].z = widget["default_cursor_start_line"].z
 			
+			# Create or override values
 			ex_vars = ["components", "properties"]
+			vec3_types = ["margins"] 
 			for key, value in widget_model.items():
 				if key not in ex_vars:
-					widget[key] = value # !!! If Value is a Harfang Object, add a deepcopy
+					if key in vec3_types:
+						widget[key]= hg.Vec3(value[0], value[1], value[2])
+					else:
+						widget[key] = value # !!! If Value is a Harfang Object, add a deepcopy
 			
 			# Create properties
 			for property_name in widget_model["properties"]:
@@ -1809,6 +1817,178 @@ class HarfangUI:
 			if parent["scroll_position"].y < p_pointer["pointer_local_position"].y < parent["size"].y + parent["scroll_position"].y :
 				wpos.y = wpos.y + pointer_dt.y
 	
+
+	@classmethod
+	def begin_widget_group_2D(cls, widget_id):
+		n = len(HarfangGUISceneGraph.widgets_containers_stack)
+		if  n==0 or (n > 0 and HarfangGUISceneGraph.widgets_containers_stack[0] == cls.main_widgets_container_2D):
+			# HDPI scaling, only for 2D windows in Main 2D container:
+			scale_hdpi = hg.GetWindowContentScale(cls.window).x
+		else:
+			scale_hdpi = 1
+		position = cls.get_cursor_position()
+		flag = cls.begin_widget_group(widget_id, position, hg.Vec3(0, 0, 0), scale_hdpi, cls.HGUIWF_2D)	# size: in pixels
+		return flag
+
+	@classmethod
+	def begin_widget_group(cls, widget_id, position:hg.Vec3 , rotation:hg.Vec3, scale:float = 1, widget_group_flags:int = 0):
+		
+		flag_2D = False if (widget_group_flags & cls.HGUIWF_2D) == 0 else True
+		flag_overlay = False if (widget_group_flags & cls.HGUIWF_Overlay) == 0 else True
+		flag_hide_title = False if (widget_group_flags & cls.HGUIWF_HideTitle) == 0 else True
+		flag_hide_scrollbars = False if (widget_group_flags & cls.HGUIWF_HideScrollbars) == 0 else True
+
+		# If first parent window is 3D, Y is space relative, Y-increment is upside. Else, Y-increment is downside
+		pyf, rxf, rzf = 1, 1, 1
+		if not flag_2D:
+			if HarfangGUISceneGraph.get_current_container_child_depth() == 0:
+				pyf = -1
+				rxf *= -1
+				rzf *= -1
+				HarfangGUISceneGraph.widgets_containers_stack.append(cls.main_widgets_container_3D)
+			else:
+				parent = HarfangGUISceneGraph.get_current_container()
+				if parent is not None and parent["flag_2D"]:
+					print("HarfangGUI ERROR - 3D container can't be child of 2D container - " + widget_id)
+					return False
+		else:
+			if HarfangGUISceneGraph.get_current_container_child_depth() == 0:
+				HarfangGUISceneGraph.widgets_containers_stack.append(cls.main_widgets_container_2D)
+		
+		widget = cls.get_widget("widget_group", widget_id)
+		
+		widget["flag_2D"] = flag_2D
+		widget["flag_move"] = False
+		widget["flag_hide_title"] = flag_hide_title
+		widget["components"]["widget_group_title"]["hidden"] = flag_hide_title
+		widget["flag_invisible"] = False
+		widget["flag_hide_scrollbars"] = flag_hide_scrollbars
+		widget["flag_overlay"] = flag_overlay
+		
+		nsp = widget["new_scroll_position"]
+		sp = widget["scroll_position"]
+		sp.x, sp.y, sp.z = nsp.x, nsp.y, nsp.z
+
+		widget["scale"].x =  widget["scale"].y = widget["scale"].z = scale
+		s = widget["size"]
+		s.x, s.y, s.z = 0, 0, 0
+
+		if widget["flag_new"]:
+			widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y * pyf, position.z
+			widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x * rxf, rotation.y, rotation.z * rzf
+			
+			
+		
+			
+			widget["default_cursor_start_line"].x = widget["margins"].x
+			widget["default_cursor_start_line"].y = widget["margins"].y
+			widget["objects_dict"]["widget_group_title.text"]["text"] = cls.get_label_from_id(widget["widget_id"])
+		
+		else:
+			if not flag_hide_title:
+				widget["default_cursor_start_line"].y = 5 + widget["components"]["widget_group_title"]["size"].y
+			#if not flag_move:
+			widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y * pyf, position.z
+			widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x * rxf, rotation.y, rotation.z * rzf
+		
+		cls.push_widgets_container(widget)
+		return True
+
+	@classmethod
+	def end_widget_group(cls):
+		if len(HarfangGUISceneGraph.widgets_containers_stack) <= 1:
+			print("HarfangGUI ERROR - Widgets containers stack is empty !")
+		else:
+			scrollbar_size = 20
+			widget = HarfangGUISceneGraph.get_current_container()
+
+			#Update workspace
+			# Windows2D move don't affect scrollbars. Scrollbars only concerns simple widgets.
+			
+			w_size = widget["size"]
+			mn = widget["workspace_min"]
+			mx = widget["workspace_max"]
+			mx.x += widget["margins"].x
+			mx.y += widget["margins"].y
+			widget["workspace_size"] = mx - mn
+			ws_size = widget["workspace_size"]
+			
+			w_size.x, w_size.y = ws_size.x, ws_size.y
+		
+			# Scroll bars
+
+			spx = spy = None
+			flag_reset_bar_v = flag_reset_bar_h = False
+
+			if widget["flag_hide_scrollbars"]:
+				widget["flag_scrollbar_v"] = False
+				widget["flag_scrollbar_h"] = False
+			else:
+				# Vertical
+				if ws_size.y > w_size.y:
+					mx.y += scrollbar_size * 2
+					ws_size.y += scrollbar_size * 2
+					if not widget["flag_scrollbar_v"]:
+						spy = widget["scroll_position"].y - mn.y
+						flag_reset_bar_v = True
+					widget["flag_scrollbar_v"] = True
+				else:
+					widget["flag_scrollbar_v"] = False
+				
+				# Horizontal
+				if ws_size.x > w_size.x:
+					mx.x += scrollbar_size * 2
+					ws_size.x += scrollbar_size * 2
+					if not widget["flag_scrollbar_h"]:
+						spx = widget["scroll_position"].x - mn.x
+						flag_reset_bar_h = True
+					widget["flag_scrollbar_h"] = True
+				else:
+					widget["flag_scrollbar_h"] = False
+
+			# clamp scroll position
+
+			spos = widget["scroll_position"]
+			spos.x = min(mx.x - w_size.x, max(spos.x, mn.x))
+			spos.y = min(mx.y - w_size.y, max(spos.y, mn.y))
+			spos.z = min(mx.z - w_size.z, max(spos.z, mn.z))
+
+			bt = 0 #if widget["flag_invisible"] else widget["objects_dict"]["window_borders.1"]["border_thickness"]
+			
+			# Add scroll bars if necessary
+
+			px, py = widget["scroll_position"].x - mn.x, widget["scroll_position"].y - mn.y
+
+			if widget["flag_scrollbar_v"]:
+				title_height = bt if (widget["flag_hide_title"] or widget["flag_invisible"])  else widget["components"]["widget_group_title"]["size"].y
+				cursor = hg.Vec3(spos)
+				cursor.x += w_size.x - scrollbar_size - bt
+				cursor.y += title_height
+				cls.set_cursor_pos(cursor)
+				height = w_size.y - (bt + title_height)
+				py = cls.scrollbar_v(widget["widget_id"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, align=cls.HGUIAF_TOPLEFT) + mn.y
+			
+			if widget["flag_scrollbar_h"]:
+				cursor = hg.Vec3(spos)
+				cursor.y += w_size.y - scrollbar_size - bt
+				cursor.x += bt
+				cls.set_cursor_pos(cursor)
+				width = w_size.x - 2 * bt if ws_size.y <= w_size.y else w_size.x - 2 * bt - scrollbar_size
+				px = cls.scrollbar_h(widget["widget_id"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, align=cls.HGUIAF_TOPLEFT) + mn.x
+
+			cls.set_scroll_position(widget["widget_id"], px, py, 0)
+
+			cls.pop_widgets_container()
+			
+			# Remove Main container if root window:
+			if HarfangGUISceneGraph.get_current_container_child_depth() == 1:
+				cls.pop_widgets_container() 
+
+			cls.update_widget(widget)
+			if widget["flag_2D"]:
+				cls.update_cursor(widget)
+
+
 	@classmethod
 	def begin_window_2D(cls, widget_id, position:hg.Vec2, size:hg.Vec2, scale:float = 1, window_flags:int = 0):
 		n = len(HarfangGUISceneGraph.widgets_containers_stack)
@@ -1875,8 +2055,8 @@ class HarfangUI:
 			s.x, s.y, s.z = size.x, size.y, size.z
 			
 			thickness = 0 if flag_invisible else cls.get_property_states_value(widget, "window_box_border_thickness",["focus"] )
-			widget["default_cursor_start_line"].x = 5 + thickness
-			widget["default_cursor_start_line"].y = 5 + thickness
+			widget["default_cursor_start_line"].x = widget["margins"].x + thickness
+			widget["default_cursor_start_line"].y = widget["margins"].y + thickness
 			widget["objects_dict"]["window_title.2"]["text"] = cls.get_label_from_id(widget["widget_id"])
 		
 		else:
@@ -1885,7 +2065,7 @@ class HarfangUI:
 				widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x * rxf, rotation.y, rotation.z * rzf
 
 			if not (flag_hide_title or flag_invisible): #!!! ATTENTION if hide title or invisible change !!!
-				widget["default_cursor_start_line"].y = 5 + widget["components"]["window_title"]["size"].y
+				widget["default_cursor_start_line"].y = widget["margins"].y + widget["components"]["window_title"]["size"].y
 
 			if "mouse_move" in widget["states"]:
 				if "MLB_down" not in cls.current_signals:
@@ -2211,6 +2391,7 @@ class HarfangUI:
 		component["size"].x += component["margins"].x * 2
 		component["size"].y += component["margins"].y * 2
 
+		# If componentsize is widget size proportionnal
 		sf = component["size_factor"]
 		if sf.x > 0:
 			component["size"].x = max(component["size"].x, widget["size"].x * sf.x)
@@ -2431,6 +2612,9 @@ class HarfangUI:
 				hg.DestroyFrameBuffer(widgets_container["frame_buffer"])
 				hg.DestroyTexture(widgets_container["color_texture"])
 				hg.DestroyTexture(widgets_container["depth_texture"])
+				widgets_container["frame_buffer"] = None
+				widgets_container["color_texture"] = None
+				widgets_container["depth_texture"] = None
 			fb_size.x, fb_size.y = fb_size_x, fb_size_y
 
 		if widgets_container["frame_buffer"] is None:
@@ -2647,18 +2831,25 @@ class HarfangUI:
 			cls.focussed_containers.append(focussed_container)
 
 			pointer_position = hg.Vec2(focussed_container["pointers"]["mouse"]["pointer_local_position"])
-			
-			if focussed_container["flag_invisible"]:
-				title_height = 0
-			elif focussed_container["flag_hide_title"]:
-				title_height = cls.get_property_value(focussed_container,"window_box_border_thickness")
-			else:
-				title_height = focussed_container["components"]["window_title"]["size"].y
 
-			if pointer_position.y < title_height:
-				flag_hover_container = True # flag_hover_container: True if only container is hovered, and no container's child
-			else:
-				flag_hover_container = False
+			# Overlay components hover test (not affected by scroll position)
+			# e.g.: for widgets below a window title not to be detected as hovered.
+			flag_hover_container = False
+			hoverable_primitives = ["box", "filled_box", "rounded_box", "filled_rounded_box"]
+			for component in focussed_container["components_render_order"]:
+				if component["overlay"] and not component["hidden"]:
+					
+					for primitive in component["primitives"]:
+						if primitive["type"] in hoverable_primitives: 
+							cpos = component["position"] + component["offset"]
+							csize = component["size"]
+							if cpos.x < pointer_position.x < cpos.x + csize.x and cpos.y < pointer_position.y < cpos.y + csize.y:
+								flag_hover_container = True # flag_hover_container: True if only container is hovered, and no container's child
+							break
+					if flag_hover_container:
+						break
+			
+			# Widgets hover test (affected by scroll position)
 			
 			pointer_position.x += focussed_container["scroll_position"].x
 			pointer_position.y += focussed_container["scroll_position"].y

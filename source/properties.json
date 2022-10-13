@@ -274,7 +274,7 @@
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [0.1, 0.1, 0.1, 0.1],
+                        "value": [0.2, 0.2, 0.2, 0.2],
                         "delay": 0.2
                     }
                 }
@@ -1138,7 +1138,7 @@
                     "selected": {
                         "value": [
                             0,
-                            -10,
+                            0,
                             0
                         ],
                         "delay": 0.15
@@ -1263,6 +1263,26 @@
                     "mouse_hover": {
                         "value": 1,
                         "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "radio_image_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [0.2, 0.2, 0.2, 0.2],
+                        "delay": 0.2
                     }
                 }
             }
