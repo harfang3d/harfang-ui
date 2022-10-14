@@ -37,8 +37,6 @@ cam_rot = hg.Deg3(-7, 0, 0)
 # Setup HarfangGUI
 
 hgui.init(["default.ttf"], [20], width, height)
-pointer_vr = False
-hgui.activate_pointer_VR(pointer_vr)
 
 # Setup inputs
 
@@ -98,23 +96,17 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
         if hgui.begin_window("My window 3D", hg.Vec3(-2, 2.65, 5), hg.Vec3(0, 0, 0), hg.Vec3(500, 300, 0), 10/1280 ):
 
             hgui.info_text("info1", "Simple Window3D")
-            if pointer_vr:
-                pointer_vr_msg = "Pointer VR activated"
+            if hg.OpenVRIsHMDMounted():
+                pointer_vr_msg = "Helmet mounted : Pointer VR activated"
             else:
-                pointer_vr_msg = "Pointer VR deactivated"
+                pointer_vr_msg = "Helmet unmounted : Pointer VR deactivated"
             hgui.info_text("info2", pointer_vr_msg)
             
-            if hgui.button("Deactivate VR pointer"):
-                hgui.activate_pointer_VR(False)
-                pointer_vr = False
 
             hgui.end_window()
         
         if hgui.begin_window_2D("My window 2D", hg.Vec2(300, 10), hg.Vec2(500, 200), 1 ):
             hgui.info_text("info3", "You can switch between VR pointer and 2D screen pointer")
-            if hgui.button("Activate VR pointer"):
-                hgui.activate_pointer_VR(True)
-                pointer_vr = True
             hgui.end_window()
         
         hgui.end_frame(view_id)

@@ -996,7 +996,7 @@ class HarfangUI:
 	left_fb = None
 	right_fb = None
 
-	flag_use_pointer_VR = True
+	flag_use_mouse_VR = True
 
 	# Screen
 	window = None
@@ -1566,7 +1566,7 @@ class HarfangUI:
 		cls.controllers["mouse"]["world_intersection"] = None
 		if cls.flag_vr:
 			cls.controllers["mouse"]["ray_p0"] = hg.GetT(cls.camera3D_matrix)
-			if cls.flag_use_pointer_VR:
+			if cls.flag_use_mouse_VR:
 				MousePointer3D.update_vr(cls.vr_state, cls.mouse, cls.controllers["mouse"]["world_intersection"])
 			else:
 				MousePointer3D.update(cls.camera, cls.mouse, cls.width, cls.height)
@@ -1634,6 +1634,11 @@ class HarfangUI:
 		
 		cls.flag_vr = True
 
+		if hg.OpenVRIsHMDMounted():
+			cls.activate_mouse_VR(True)
+		else:
+			cls.activate_mouse_VR(False)
+
 		cls.window = window
 		_, cls.width, cls.height = hg.GetWindowClientSize(window)
 
@@ -1654,7 +1659,7 @@ class HarfangUI:
 		else:
 			cls.focal_distance = 1
 		
-		if cls.flag_use_pointer_VR:
+		if cls.flag_use_mouse_VR:
 			cls.focal_distance = hg.ExtractZoomFactorFromProjectionMatrix(vr_state.left.projection)
 			cls.camera3D_matrix = vr_state.head
 		else:
@@ -1709,7 +1714,7 @@ class HarfangUI:
 		vid, render_views_3D, render_views_2D = HarfangGUIRenderer.render(vid, outputs_2D, outputs_3D)
 		if cls.flag_vr:
 			VRControllersHandler.update_displays(render_views_3D)
-			if cls.flag_use_pointer_VR:
+			if cls.flag_use_mouse_VR:
 				fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(cls.vr_state.left.projection))
 				ry = cls.vr_state.height
 				view_pos =hg.GetT(cls.vr_state.head)
@@ -1800,7 +1805,7 @@ class HarfangUI:
 				height = cls.height
 				
 				if cls.flag_vr:
-					if pointer_id !="mouse" or (pointer_id == "mouse" and cls.flag_use_pointer_VR):
+					if pointer_id !="mouse" or (pointer_id == "mouse" and cls.flag_use_mouse_VR):
 						height = cls.vr_state.height
 					
 				mdt = (pointer_dt) * (hg.Len(wc_pointer["pointer_world_position"] - hg.GetT(cls.camera3D_matrix)) / cls.focal_distance ) * 2 / height
@@ -2787,8 +2792,12 @@ class HarfangUI:
 					HarfangGUISceneGraph.add_rounded_box(matrix, cpos + bar_pos, hg.Vec3(bar_width, bar_height, 0), primitive["scrollbar_color"] * opacity, primitive["corner_radius"])
 
 	@classmethod
-	def activate_pointer_VR(cls, flag: bool):
-		cls.flag_use_pointer_VR = flag
+	def activate_mouse_VR(cls, flag: bool):
+		cls.flag_use_mouse_VR = flag
+		if flag:
+			hg.DisableCursor()
+		else:
+			hg.ShowCursor()
 
 	@classmethod
 	def set_container_align_front(cls,container):
@@ -2909,7 +2918,7 @@ class HarfangUI:
 		### Voir comment gérer les widgets 2D hors VR
 		widgets_containers2D_pointer_in = []
 		for wc in HarfangGUISceneGraph.widgets_containers2D_user_order:
-			if cls.flag_vr and cls.flag_use_pointer_VR:
+			if cls.flag_vr and cls.flag_use_mouse_VR:
 				wc["pointers"]["mouse"]["pointer_world_position"] = None # deactivate mouse pointer in 2D UI ?? Encore utile avec "widgets_containers2D_pointer_in" ??
 			else:
 				cam2Dpos = hg.GetT(cls.camera2D_matrix)
