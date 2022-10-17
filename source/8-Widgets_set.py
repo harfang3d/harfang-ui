@@ -66,12 +66,12 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             hgui.same_line()
             f,it = hgui.input_text("Input text label",it)
 
-            f = hgui.button("Button")
+            f_pressed, f_down = hgui.button("Button")
             
-            f = hgui.button_image("Button image", "textures/coffee.png", hg.Vec2(20,20))
+            f_pressed, f_down = hgui.button_image("Button image", "textures/coffee.png", hg.Vec2(20,20))
             
             hgui.same_line()
-            f = hgui.button_image("label##button_image", "textures/coffee.png", hg.Vec2(20,20), show_label=True)
+            f_pressed, f_down = hgui.button_image("label##button_image", "textures/coffee.png", hg.Vec2(20,20), show_label=True)
             
             f, cb = hgui.check_box("Checkbox", cb, show_label=False)
             hgui.same_line()

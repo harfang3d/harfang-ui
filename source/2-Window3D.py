@@ -72,9 +72,11 @@ while not hg.ReadKeyboard().Key(hg.K_Escape)  and hg.IsWindowOpen(window):
             
             # You can display same widgets names, using "##" prefixe to differenciate widgets ids.
             
-            if hgui.button("Button##1"):
+            f_pressed, f_down = hgui.button("Button##1")
+            if f_pressed:
                 print("Click btn ##1")
-            if hgui.button("Button##2"):
+            f_pressed, f_down = hgui.button("Button##2")
+            if f_pressed:
                 print("Click btn ##2")
             
             _, flag_check_box0 = hgui.check_box("Check box", flag_check_box0)

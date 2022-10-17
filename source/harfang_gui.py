@@ -642,6 +642,12 @@ class HarfangUISkin:
 				"cursor_auto": False,
 				"size_factor": [1, -1, -1]
 				},
+			"window_border": {
+				"overlay": True,
+				"primitives":[{"type": "rounded_box_borders", "name":"window_border.1"}],
+				"cursor_auto": False,
+				"size_factor": [1, 1, 1]
+				},
 			
 			"widget_group_background":{
 				"primitives":[{"type": "filled_rounded_box", "name":"wg_background.box"}],
@@ -699,8 +705,8 @@ class HarfangUISkin:
 			}
 
 		cls.widgets_models = {
-			"window" : {"components": ["window_background", "window_title"],
-						"properties" : ["window_box_color", "window_box_border_thickness", "window_box_border_color", "window_rounded_radius",
+			"window" : {"components": ["window_background", "window_border", "window_title"],
+						"properties" : ["window_box_color", "window_border_color", "window_rounded_radius",
 						"window_title_margins", "window_title_background_color", "window_title_color", "window_title_rounded_radius"],
 						"margins": [40, 30, 0]
 						},
@@ -3273,7 +3279,7 @@ class HarfangUI:
 		widget["position"] = cls.get_cursor_position()
 		cls.update_widget(widget)
 		cls.update_cursor(widget)
-		return mouse_click
+		return mouse_click, "MLB_down" in widget["states"]
 
 	@classmethod
 	def button_image(cls, widget_id, texture_path, image_size: hg.Vec2, **args):

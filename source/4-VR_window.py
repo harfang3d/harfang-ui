@@ -101,7 +101,8 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 
             hgui.info_text("info1", "Simple Window3D")
             
-            if hgui.button("Button 0"):
+            f_pressed, f_down = hgui.button("Button 0")
+            if f_pressed:
                 print("Click btn 0")
             
             _, flag_check_box0 = hgui.check_box("Check box", flag_check_box0)
