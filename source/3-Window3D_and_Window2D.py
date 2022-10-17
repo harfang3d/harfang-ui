@@ -64,13 +64,14 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
     scene.Update(dt)
     view_id, pass_view = hg.SubmitSceneToPipeline(view_id, scene, hg.IntRect(0, 0, width, height), True, pipeline, res)
 
-    if hgui.begin_frame(dt, mouse, keyboard, width, height, camera):
+    if hgui.begin_frame(dt, mouse, keyboard, window, camera):
 
         if hgui.begin_window("Harfang GUI 3D Window", hg.Vec3(-2, 2.65, 5), hg.Vec3(0, 0, 0), hg.Vec3(500, 300, 0), 10/1280 ):
 
             hgui.info_text("info1", "Simple Window3D")
             
-            if hgui.button("Button 0"):
+            f_pressed, f_down = hgui.button("Button 0")
+            if f_pressed:
                 print("Click btn 0")
             
             _, flag_check_box0 = hgui.check_box("Check box", flag_check_box0)
@@ -83,7 +84,8 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             hgui.same_line()
             hgui.image("img1", "textures/logo.png", hg.Vec2(221, 190))
             
-            if hgui.button("Button 1"):
+            f_pressed, f_down = hgui.button("Button 1")
+            if f_pressed:
                 print("Click btn 1")
             
             _, flag_check_box1 = hgui.check_box("Check box 2", flag_check_box1)

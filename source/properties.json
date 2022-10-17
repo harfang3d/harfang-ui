@@ -1,188 +1,10 @@
 {
-    "scrollbar_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#666666",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#999999",
-                            100
-                        ],
-                        "delay": 0.15
-                    }
-                }
-            },
-            {
-                "operator": "add",
-                "default_state": "mouse_idle",
-                "states": {
-                    "mouse_idle": {
-                        "value": [
-                            "#0",
-                            0
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_move": {
-                        "value": [
-                            "#333333",
-                            0
-                        ],
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "scrollbar_background_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "scrollbar_thickness": {
-        "type": "float",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 8,
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": 8,
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
     "window_box_color": {
         "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "window_box_border_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "no_focus",
-                "states": {
-                    "no_focus": {
-                        "value": [
-                            "#666666",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "focus": {
-                        "value": [
-                            "#7f7f7f",
-                            100
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            },
-            {
-                "operator": "add",
-                "default_state": "mouse_idle",
-                "states": {
-                    "mouse_idle": {
-                        "value": [
-                            "#0",
-                            0
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_move": {
-                        "value": [
-                            "#33",
-                            0
-                        ],
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "window_box_border_thickness": {
-        "type": "float",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "no_focus",
-                "states": {
-                    "no_focus": {
-                        "value": 1,
-                        "delay": 0.2
-                    },
-                    "focus": {
-                        "value": 3,
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "window_title_margins": {
-        "type": "vec3",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
+            "objects": ["window_background.1"],
+            "name": "background_color",
+            "operator": "set"
         },
         "layers": [
             {
@@ -191,7 +13,174 @@
                 "states": {
                     "idle": {
                         "value": [
-                            5,
+                            "#141414",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "window_border_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["window_border.1"],
+            "name": "border_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "no_focus",
+                "states": {
+                    "no_focus": {
+                        "value": [
+                            "#2a2a2e",
+                            100
+                        ],
+                        "delay": 0.2
+                    },
+                    "focus": {
+                        "value": [
+                            "#3a3a3d",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            },
+            {
+                "operator": "add",
+                "default_state": "mouse_idle",
+                "states": {
+                    "mouse_idle": {
+                        "value": [
+                            "#0",
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_move": {
+                        "value": [
+                            "#050505",
+                            0
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    
+
+    "window_title_background_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["window_title.1"],
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "no_focus",
+                "states": {
+                    "no_focus": {
+                        "value": [
+                            "#2a2a2e",
+                            100
+                        ],
+                        "delay": 0.2
+                    },
+                    "focus": {
+                        "value": [
+                            "#3a3a3d",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            },
+            {
+                "operator": "add",
+                "default_state": "mouse_idle",
+                "states": {
+                    "mouse_idle": {
+                        "value": [
+                            "#0",
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_move": {
+                        "value": [
+                            "#050505",
+                            0
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "window_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "objects": ["window_background.1", "window_border.1"],
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [0.05, 0.05, 0.05, 0.05],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "window_title_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "objects": ["window_title.1"],
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [0.5, 0.5, 0.0, 0.0],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "window_title_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "objects": ["window_title"],
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            15,
                             5,
                             0
                         ],
@@ -203,6 +192,11 @@
     },
     "window_title_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["window_title.2"],
+            "name": "text_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -210,7 +204,7 @@
                 "states": {
                     "idle": {
                         "value": [
-                            "#e5e5ff",
+                            "#888888",
                             100
                         ],
                         "delay": 0.2
@@ -219,158 +213,13 @@
             }
         ]
     },
-    "widget_border_color": {
+
+
+    "widget_group_box_color": {
         "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#b2b2b2",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#e5e5e5",
-                            100
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "widget_border_thickness": {
-        "type": "float",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 1,
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "widget_opacity": {
-        "type": "float",
         "linked_value": {
-            "name": "opacity",
-            "factor": 1,
-            "operator": "set",
-            "parent": "widget"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 0.85,
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": 0.9,
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "button_text_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            10,
-                            10,
-                            0
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            15,
-                            15,
-                            0
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "text_size": {
-        "type": "float",
-        "linked_value": {
-            "name": "text_size",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 1,
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": 1,
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": 1,
-                        "delay": 0.05
-                    }
-                }
-            }
-        ]
-    },
-    "label_text_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            15,
-                            15,
-                            0
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "check_size": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "size",
+            "objects": ["wg_background.box"],
+            "name": "background_color",
             "operator": "set"
         },
         "layers": [
@@ -380,38 +229,42 @@
                 "states": {
                     "idle": {
                         "value": [
-                            15,
-                            15,
-                            0
+                            "#2a2a2e",
+                            100
                         ],
                         "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            15,
-                            15,
-                            0
-                        ],
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            15,
-                            15,
-                            0
-                        ],
-                        "delay": 0.05
                     }
                 }
             }
         ]
     },
-    "checkbox_margins": {
+    "widget_group_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "objects": ["wg_background.box"],
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [0.2, 0.2, 0.2, 0.2],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "widget_group_title_margins": {
         "type": "vec3",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
+            "objects": ["widget_groupe_title"],
+            "name": "margins",
+            "operator": "set"
         },
         "layers": [
             {
@@ -420,8 +273,8 @@
                 "states": {
                     "idle": {
                         "value": [
-                            15,
-                            15,
+                            5,
+                            5,
                             0
                         ],
                         "delay": 0.2
@@ -430,12 +283,38 @@
             }
         ]
     },
+    "widget_group_title_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["widget_groupe_title"],
+            "name": "text_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#fdfdfd",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+
+
+
     "info_text_margins": {
         "type": "vec3",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
+            "objects": ["info_text"],
+            "name": "margins",
+            "operator": "set"
         },
         "layers": [
             {
@@ -454,51 +333,10 @@
             }
         ]
     },
-    "button_image_margins": {
-        "type": "vec3",
+    "info_text_color": {
+        "type": "RGB24_APercent",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            2,
-                            2,
-                            0
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            2,
-                            2,
-                            0
-                        ],
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            2,
-                            2,
-                            0
-                        ],
-                        "delay": 0.05
-                    }
-                }
-            }
-        ]
-    },
-    "button_image_texture_scale": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "content_scale",
-            "factor": 1,
+            "name": "text_color",
             "operator": "set"
         },
         "layers": [
@@ -508,27 +346,10 @@
                 "states": {
                     "idle": {
                         "value": [
-                            1,
-                            1,
-                            1
+                            "#fdfdfd",
+                            100
                         ],
                         "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            1.1,
-                            1.1,
-                            1
-                        ],
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            1.2,
-                            1.2,
-                            1
-                        ],
-                        "delay": 0.05
                     }
                 }
             }
@@ -537,31 +358,8 @@
     "info_image_margins": {
         "type": "vec3",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            5,
-                            5,
-                            0
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "button_offset": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "offset",
+            "objects": ["info_image"],
+            "name": "margins",
             "operator": "set"
         },
         "layers": [
@@ -571,8 +369,8 @@
                 "states": {
                     "idle": {
                         "value": [
-                            0,
-                            0,
+                            2,
+                            2,
                             0
                         ],
                         "delay": 0.2
@@ -581,31 +379,201 @@
             }
         ]
     },
-    "info_image_offset": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "offset",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            0,
-                            0,
-                            0
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "texture_box_color": {
+    "info_image_label_text_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "text_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#fdfdfd",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "info_image_label_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "objects": ["info_image_label"],
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            10,
+                            10,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+
+    "input_text_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "objects": ["input_box"],
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            10,
+                            10,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "basic_label_text_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["basic_label.1"],
+            "name": "text_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#fdfdfd",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "basic_label_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "objects": ["basic_label"],
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            10,
+                            10,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "input_box_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["input_box.1"],
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#2a2a2e",
+                            100
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            "#2a2a2e",
+                            100
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            },
+            {
+                "operator": "multiply",
+                "default_state": "no_edit",
+                "states": {
+                    "no_edit": {
+                        "value": [
+                            "#ffffff",
+                            100
+                        ],
+                        "delay": 0.1
+                    },
+                    "edit": {
+                        "value": [
+                            "#dddddd",
+                            100
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            }
+        ]
+    },
+    "widget_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [1, 1, 1, 1],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "input_text_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["input_box.2"],
+            "name": "text_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -631,6 +599,26 @@
                             100
                         ],
                         "delay": 0.05
+                    }
+                }
+            },
+            {
+                "operator": "multiply",
+                "default_state": "no_edit",
+                "states": {
+                    "no_edit": {
+                        "value": [
+                            "#ffffff",
+                            100
+                        ],
+                        "delay": 0.1
+                    },
+                    "edit": {
+                        "value": [
+                            "#ffffff",
+                            100
+                        ],
+                        "delay": 0.1
                     }
                 }
             }
@@ -638,6 +626,10 @@
     },
     "button_box_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "background_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -645,53 +637,21 @@
                 "states": {
                     "idle": {
                         "value": [
-                            "#7f7f7f",
+                            "#2a2a2e",
                             100
                         ],
                         "delay": 0.2
                     },
                     "mouse_hover": {
                         "value": [
-                            "#bfbfbf",
+                            "#37373d",
                             100
                         ],
                         "delay": 0.15
                     },
                     "MLB_down": {
                         "value": [
-                            "#e5e5e5",
-                            100
-                        ],
-                        "delay": 0.05
-                    }
-                }
-            }
-        ]
-    },
-    "label_box_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#1f1f1f",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#3f3f3f",
-                            100
-                        ],
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            "#7f7f7f",
+                            "#44444c",
                             100
                         ],
                         "delay": 0.05
@@ -702,6 +662,10 @@
     },
     "button_text_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "text_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -732,8 +696,12 @@
             }
         ]
     },
-    "label_text_color": {
-        "type": "RGB24_APercent",
+    "button_text_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "margins",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -741,42 +709,166 @@
                 "states": {
                     "idle": {
                         "value": [
-                            "#cccccc",
+                            15,
+                            15,
+                            0
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            15,
+                            15,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },    
+    "image_button_label_space": {
+        "type": "float",
+        "linked_value": {
+            "name": "space_size",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 10,
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "image_button_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            25,
+                            15,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "image_button_label_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["image_button.3"],
+            "name": "text_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#fdfdfd",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "checkbox_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "objects":["check_box"],
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "checkbox_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "objects":["check_box"],
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [0.5, 0.5, 0.5, 0.5],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "checkbox_box_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects":["check_box"],
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#2a2a2e",
                             100
                         ],
                         "delay": 0.2
                     },
                     "mouse_hover": {
                         "value": [
-                            "#ffffff",
+                            "#37373d",
                             100
                         ],
                         "delay": 0.15
                     },
                     "MLB_down": {
                         "value": [
-                            "#ffffff",
+                            "#44444c",
                             100
                         ],
                         "delay": 0.05
-                    }
-                }
-            }
-        ]
-    },
-    "info_text_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#b2b2b2",
-                            100
-                        ],
-                        "delay": 0.2
                     }
                 }
             }
@@ -784,6 +876,11 @@
     },
     "check_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "objects":["check_box"],
+            "name": "texture_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -794,21 +891,7 @@
                             "#ffffff",
                             100
                         ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#ffff",
-                            100
-                        ],
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
-                        "delay": 0.05
+                        "delay": 0.1
                     }
                 }
             },
@@ -821,21 +904,26 @@
                             "#ffffff",
                             100
                         ],
-                        "delay": 0.2
+                        "delay": 0.1
                     },
                     "unchecked": {
                         "value": [
                             "#ffffff",
                             0
                         ],
-                        "delay": 0.2
+                        "delay": 0.1
                     }
                 }
             }
         ]
     },
-    "input_box_color": {
-        "type": "RGB24_APercent",
+    "toggle_image_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "objects": ["toggle_image"],
+            "name": "margins",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -843,141 +931,163 @@
                 "states": {
                     "idle": {
                         "value": [
-                            "#3f3f3f",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#5f5f5f",
-                            100
-                        ],
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            "#7f7f7f",
-                            100
-                        ],
-                        "delay": 0.05
-                    }
-                }
-            },
-            {
-                "operator": "multiply",
-                "default_state": "no_edit",
-                "states": {
-                    "no_edit": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
-                        "delay": 0.1
-                    },
-                    "edit": {
-                        "value": [
-                            "#193333",
-                            100
-                        ],
-                        "delay": 0.1
-                    }
-                }
-            }
-        ]
-    },
-    "input_text_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
-                        "delay": 0.05
-                    }
-                }
-            },
-            {
-                "operator": "multiply",
-                "default_state": "no_edit",
-                "states": {
-                    "no_edit": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
-                        "delay": 0.1
-                    },
-                    "edit": {
-                        "value": [
-                            "#7fffff",
-                            100
-                        ],
-                        "delay": 0.1
-                    }
-                }
-            }
-        ]
-    },
-    "radio_button_box_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#333333",
+                            15,
+                            15,
                             0
                         ],
                         "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },    
+    "toggle_image_box_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["toggle_image"],
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#2a2a2e",
+                            100
+                        ],
+                        "delay": 0.2
                     },
                     "mouse_hover": {
                         "value": [
-                            "#333333",
-                            49
+                            "#37373d",
+                            100
                         ],
                         "delay": 0.15
+                    },
+                    "MLB_down": {
+                        "value": [
+                            "#44444c",
+                            100
+                        ],
+                        "delay": 0.05
+                    }
+                }
+            }
+        ]
+    },
+
+    "scrollbar_thickness": {
+        "type": "float",
+        "linked_value": {
+            "name": "scrollbar_thickness",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 8,
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": 8,
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "scrollbar_background_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#141414",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "scrollbar_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "scrollbar_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#2a2a2e",
+                            100
+                        ],
+                        "delay": 0.2
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            "#3a3a3d",
+                            100
+                        ],
+                        "delay": 0.2
                     }
                 }
             },
             {
                 "operator": "add",
-                "default_state": "unselected",
+                "default_state": "mouse_idle",
                 "states": {
-                    "unselected": {
+                    "mouse_idle": {
                         "value": [
                             "#0",
                             0
                         ],
-                        "delay": 0.15
+                        "delay": 0.2
                     },
-                    "selected": {
+                    "mouse_move": {
                         "value": [
                             "#333333",
                             0
                         ],
-                        "delay": 0.05
+                        "delay": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    "scrollbar_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [1, 1, 1, 1],
+                        "delay": 0.2
                     }
                 }
             }
@@ -986,6 +1096,7 @@
     "radio_image_offset": {
         "type": "vec3",
         "linked_value": {
+            "objects":["radio_image_button"],
             "name": "offset",
             "operator": "set"
         },
@@ -1005,7 +1116,7 @@
                     "selected": {
                         "value": [
                             0,
-                            -10,
+                            0,
                             0
                         ],
                         "delay": 0.15
@@ -1014,12 +1125,11 @@
             }
         ]
     },
-    "radio_button_image_margins": {
-        "type": "vec3",
+    "radio_button_box_color": {
+        "type": "RGB24_APercent",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
+            "name": "background_color",
+            "operator": "set"
         },
         "layers": [
             {
@@ -1028,25 +1138,35 @@
                 "states": {
                     "idle": {
                         "value": [
-                            5,
-                            5,
-                            0
+                            "#333333",
+                            100
                         ],
                         "delay": 0.2
                     },
                     "mouse_hover": {
                         "value": [
-                            5,
-                            5,
-                            0
+                            "#333333",
+                            100
+                        ],
+                        "delay": 0.15
+                    }
+                }
+            },
+            {
+                "operator": "max",
+                "default_state": "unselected",
+                "states": {
+                    "unselected": {
+                        "value": [
+                            "#333333",
+                            100
                         ],
                         "delay": 0.15
                     },
-                    "MLB_down": {
+                    "selected": {
                         "value": [
-                            5,
-                            5,
-                            0
+                            "#888888",
+                            100
                         ],
                         "delay": 0.05
                     }
@@ -1056,6 +1176,10 @@
     },
     "radio_image_border_color": {
         "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "border_color",
+            "operator": "set"
+        },
         "layers": [
             {
                 "operator": "set",
@@ -1063,7 +1187,7 @@
                 "states": {
                     "idle": {
                         "value": [
-                            "#333333",
+                            "#7f7f7f",
                             100
                         ],
                         "delay": 0.2
@@ -1078,22 +1202,68 @@
                 }
             },
             {
-                "operator": "add",
+                "operator": "max",
                 "default_state": "unselected",
                 "states": {
                     "unselected": {
                         "value": [
-                            "#0",
-                            0
+                            "#7f7f7f",
+                            100
                         ],
                         "delay": 0.2
                     },
                     "selected": {
                         "value": [
-                            "#4c4c4c",
-                            0
+                            "#fdfdfd",
+                            100
                         ],
                         "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "radio_image_bg_size": {
+        "type": "vec3",
+        "linked_value": {
+            "objects": ["radio_image_button"],
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            2, 2, 0
+                        ],
+                        "delay": 0.1
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            4, 4, 0
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            },
+            {
+                "operator": "max",
+                "default_state": "unselected",
+                "states": {
+                    "unselected": {
+                        "value": [
+                            2, 2, 0
+                        ],
+                        "delay": 0.1
+                    },
+                    "selected": {
+                        "value": [
+                            5, 5, 0
+                        ],
+                        "delay": 0.1
                     }
                 }
             }
@@ -1101,105 +1271,33 @@
     },
     "radio_image_border_thickness": {
         "type": "float",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 1,
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": 1,
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "toggle_image_button_box_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#333333",
-                            0
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#333333",
-                            49
-                        ],
-                        "delay": 0.15
-                    }
-                }
-            },
-            {
-                "operator": "add",
-                "default_state": "unselected",
-                "states": {
-                    "unselected": {
-                        "value": [
-                            "#0",
-                            0
-                        ],
-                        "delay": 0.15
-                    },
-                    "selected": {
-                        "value": [
-                            "#333333",
-                            0
-                        ],
-                        "delay": 0.05
-                    }
-                }
-            }
-        ]
-    },
-    "toggle_image_button_offset": {
-        "type": "vec3",
         "linked_value": {
-            "name": "offset",
+            "name": "border_thickness",
             "operator": "set"
         },
         "layers": [
             {
                 "operator": "set",
-                "default_state": "unselected",
+                "default_state": "idle",
                 "states": {
-                    "unselected": {
-                        "value": [
-                            0,
-                            0,
-                            0
-                        ],
+                    "idle": {
+                        "value": 2,
                         "delay": 0.2
                     },
-                    "selected": {
-                        "value": [
-                            0,
-                            -10,
-                            0
-                        ],
+                    "mouse_hover": {
+                        "value": 2,
                         "delay": 0.15
                     }
                 }
             }
         ]
     },
-    "toggle_image_button_margins": {
-        "type": "vec3",
+    "radio_image_rounded_radius":
+    {
+        "type": "vec4",
         "linked_value": {
-            "name": "size",
-            "factor": 2,
-            "operator": "add"
+            "name": "corner_radius",
+            "operator": "set"
         },
         "layers": [
             {
@@ -1207,127 +1305,12 @@
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [
-                            5,
-                            5,
-                            0
-                        ],
+                        "value": [0.25, 0.25, 0.25, 0.25],
                         "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            5,
-                            5,
-                            0
-                        ],
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            5,
-                            5,
-                            0
-                        ],
-                        "delay": 0.05
-                    }
-                }
-            }
-        ]
-    },
-    "toggle_image_button_border_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#333333",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#7f7f7f",
-                            100
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            },
-            {
-                "operator": "add",
-                "default_state": "unselected",
-                "states": {
-                    "unselected": {
-                        "value": [
-                            "#0",
-                            0
-                        ],
-                        "delay": 0.2
-                    },
-                    "selected": {
-                        "value": [
-                            "#4c4c4c",
-                            0
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "toggle_image_button_border_thickness": {
-        "type": "float",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 1,
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": 1,
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "toggle_image_button_texture_box_color": {
-        "type": "RGB24_APercent",
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
-                        "delay": 0.15
-                    },
-                    "MLB_down": {
-                        "value": [
-                            "#ffffff",
-                            100
-                        ],
-                        "delay": 0.05
                     }
                 }
             }
         ]
     }
 }
+    
