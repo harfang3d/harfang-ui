@@ -14,59 +14,9 @@
                     "idle": {
                         "value": [
                             "#141414",
-                            100
+                            50
                         ],
                         "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "window_box_border_color": {
-        "type": "RGB24_APercent",
-        "linked_value": {
-            "objects": ["window_borders.1"],
-            "name": "border_color",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "no_focus",
-                "states": {
-                    "no_focus": {
-                        "value": [
-                            "#2a2a2e",
-                            100
-                        ],
-                        "delay": 0.2
-                    },
-                    "focus": {
-                        "value": [
-                            "#3a3a3d",
-                            100
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            },
-            {
-                "operator": "add",
-                "default_state": "mouse_idle",
-                "states": {
-                    "mouse_idle": {
-                        "value": [
-                            "#0",
-                            0
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_move": {
-                        "value": [
-                            "#050505",
-                            0
-                        ],
-                        "delay": 0.15
                     }
                 }
             }
@@ -87,14 +37,14 @@
                     "no_focus": {
                         "value": [
                             "#2a2a2e",
-                            100
+                            80
                         ],
                         "delay": 0.2
                     },
                     "focus": {
                         "value": [
                             "#3a3a3d",
-                            100
+                            80
                         ],
                         "delay": 0.2
                     }
@@ -136,7 +86,7 @@
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [0.05, 0.05, 0.05, 0.05],
+                        "value": [0.1, 0.1, 0.1, 0.1],
                         "delay": 0.2
                     }
                 }
@@ -157,32 +107,8 @@
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [0.2, 0.2, 0.0, 0.0],
+                        "value": [1, 1, 0.0, 0.0],
                         "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "window_box_border_thickness": {
-        "type": "float",
-        "linked_value": {
-            "objects": ["window_borders.1"],
-            "name": "border_thickness",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "no_focus",
-                "states": {
-                    "no_focus": {
-                        "value": 1,
-                        "delay": 0.2
-                    },
-                    "focus": {
-                        "value": 2,
-                        "delay": 0.15
                     }
                 }
             }
@@ -202,7 +128,7 @@
                 "states": {
                     "idle": {
                         "value": [
-                            5,
+                            15,
                             5,
                             0
                         ],
@@ -252,7 +178,7 @@
                     "idle": {
                         "value": [
                             "#2a2a2e",
-                            100
+                            80
                         ],
                         "delay": 0.2
                     }
@@ -534,14 +460,14 @@
                     "idle": {
                         "value": [
                             "#2a2a2e",
-                            100
+                            80
                         ],
                         "delay": 0.2
                     },
                     "mouse_hover": {
                         "value": [
-                            "#37373d",
-                            100
+                            "#2a2a2e",
+                            80
                         ],
                         "delay": 0.15
                     }
@@ -637,7 +563,7 @@
                     },
                     "edit": {
                         "value": [
-                            "#7fffff",
+                            "#ffffff",
                             100
                         ],
                         "delay": 0.1
@@ -660,21 +586,21 @@
                     "idle": {
                         "value": [
                             "#2a2a2e",
-                            100
+                            80
                         ],
                         "delay": 0.2
                     },
                     "mouse_hover": {
                         "value": [
                             "#37373d",
-                            100
+                            80
                         ],
                         "delay": 0.15
                     },
                     "MLB_down": {
                         "value": [
                             "#44444c",
-                            100
+                            80
                         ],
                         "delay": 0.05
                     }
@@ -1161,34 +1087,34 @@
                     "idle": {
                         "value": [
                             "#333333",
-                            0
+                            80
                         ],
                         "delay": 0.2
                     },
                     "mouse_hover": {
                         "value": [
                             "#333333",
-                            49
+                            80
                         ],
                         "delay": 0.15
                     }
                 }
             },
             {
-                "operator": "add",
+                "operator": "max",
                 "default_state": "unselected",
                 "states": {
                     "unselected": {
                         "value": [
-                            "#0",
-                            0
+                            "#333333",
+                            80
                         ],
                         "delay": 0.15
                     },
                     "selected": {
                         "value": [
-                            "#333333",
-                            0
+                            "#888888",
+                            80
                         ],
                         "delay": 0.05
                     }
@@ -1209,7 +1135,7 @@
                 "states": {
                     "idle": {
                         "value": [
-                            "#333333",
+                            "#7f7f7f",
                             100
                         ],
                         "delay": 0.2
@@ -1224,22 +1150,68 @@
                 }
             },
             {
-                "operator": "add",
+                "operator": "max",
                 "default_state": "unselected",
                 "states": {
                     "unselected": {
                         "value": [
-                            "#0",
-                            0
+                            "#7f7f7f",
+                            100
                         ],
                         "delay": 0.2
                     },
                     "selected": {
                         "value": [
-                            "#4c4c4c",
-                            0
+                            "#fdfdfd",
+                            100
                         ],
                         "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "radio_image_bg_size": {
+        "type": "vec3",
+        "linked_value": {
+            "objects": ["radio_image_button"],
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            2, 2, 0
+                        ],
+                        "delay": 0.1
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            4, 4, 0
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            },
+            {
+                "operator": "max",
+                "default_state": "unselected",
+                "states": {
+                    "unselected": {
+                        "value": [
+                            2, 2, 0
+                        ],
+                        "delay": 0.1
+                    },
+                    "selected": {
+                        "value": [
+                            5, 5, 0
+                        ],
+                        "delay": 0.1
                     }
                 }
             }
@@ -1257,11 +1229,11 @@
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": 1,
+                        "value": 2,
                         "delay": 0.2
                     },
                     "mouse_hover": {
-                        "value": 1,
+                        "value": 2,
                         "delay": 0.15
                     }
                 }
@@ -1281,7 +1253,7 @@
                 "default_state": "idle",
                 "states": {
                     "idle": {
-                        "value": [0.2, 0.2, 0.2, 0.2],
+                        "value": [0.25, 0.25, 0.25, 0.25],
                         "delay": 0.2
                     }
                 }

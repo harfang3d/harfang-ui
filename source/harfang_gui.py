@@ -6,6 +6,29 @@ import json
 import copy
 from vr_controllers import VRControllersHandler
 
+def min_type(a, b):
+	if a.__class__ == hg.Vec2:
+		return hg.Vec2(min(a.x, b.x), min(a.y, b.y))
+	elif a.__class__ == hg.Vec3:
+		return hg.Vec3(min(a.x, b.x), min(a.y, b.y), min(a.z, b.z))
+	elif a.__class__ == hg.Vec4:
+		return hg.Vec4(min(a.x, b.x), min(a.y, b.y), min(a.z, b.z), min(a.w, b.w))
+	elif a.__class__ == hg.Color:
+		return hg.Color(min(a.r, b.r), min(a.g, b.g), min(a.b, b.b), min(a.a, b.a))
+	else:
+		return min(a, b)
+
+def max_type(a, b):
+	if a.__class__ == hg.Vec2:
+		return hg.Vec2(max(a.x, b.x), max(a.y, b.y))
+	elif a.__class__ == hg.Vec3:
+		return hg.Vec3(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z))
+	elif a.__class__ == hg.Vec4:
+		return hg.Vec4(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z), max(a.w, b.w))
+	elif a.__class__ == hg.Color:
+		return hg.Color(max(a.r, b.r), max(a.g, b.g), max(a.b, b.b), max(a.a, b.a))
+	else:
+		return max(a, b)
 
 def on_key_press(text: str):
 	HarfangUI.ascii_code = text
@@ -26,7 +49,7 @@ class HarfangGUIRenderer:
 
 	box_render_state = None
 
-	frame_buffers_scale = 2 # For AA
+	frame_buffers_scale = 3 # For AA
 
 	# sprites
 	textures = {}
@@ -612,15 +635,9 @@ class HarfangUISkin:
 				"cursor_auto": False,
 				"size_factor": [1, 1, 1]
 				},
-			"window_borders": {
-				"overlay": True,
-				"primitives":[{"type": "rounded_box_borders", "name":"window_borders.1"}],
-				"cursor_auto": False,
-				"size_factor": [1, 1, 1]
-				},
 			"window_title": {
 				"overlay": True,
-				"align": HarfangUI.HGUIAF_CENTER,
+				"align": HarfangUI.HGUIAF_LEFT,
 				"primitives":[{"type": "filled_rounded_box", "name":"window_title.1"}, {"type": "text", "name":"window_title.2"}],
 				"cursor_auto": False,
 				"size_factor": [1, -1, -1]
@@ -682,9 +699,10 @@ class HarfangUISkin:
 			}
 
 		cls.widgets_models = {
-			"window" : {"components": ["window_background", "window_borders", "window_title"],
+			"window" : {"components": ["window_background", "window_title"],
 						"properties" : ["window_box_color", "window_box_border_thickness", "window_box_border_color", "window_rounded_radius",
-						"window_title_margins", "window_title_background_color", "window_title_color", "window_title_rounded_radius"]
+						"window_title_margins", "window_title_background_color", "window_title_color", "window_title_rounded_radius"],
+						"margins": [40, 30, 0]
 						},
 
 			"widget_group" : {"components": ["widget_group_background", "widget_group_title"],
@@ -734,7 +752,7 @@ class HarfangUISkin:
 						},
 			
 			"radio_image_button": {"components": ["radio_image_button"], "radio_idx": 0,
-								"properties": ["radio_image_offset", "radio_button_box_color",
+								"properties": ["radio_image_offset", "radio_button_box_color","radio_image_bg_size",
 								"radio_image_rounded_radius", "radio_image_border_color", "radio_image_border_thickness"
 								]
 						},
@@ -1313,6 +1331,7 @@ class HarfangUI:
 			"cursor": hg.Vec3(0, 0, 0),
 			"cursor_start_line": hg.Vec3(0, 0, 0),
 			"default_cursor_start_line": hg.Vec3(0, 0, 0),
+			"space_size": 10, #distance between components
 			"opacity": 1,
 			"widget_id": "",
 			"max_size": hg.Vec3(0, 0, 0), # Used for window worksapce computation (scroll bars...)
@@ -1461,6 +1480,10 @@ class HarfangUI:
 								default_final_value += default_value
 							elif class_layer["operator"] == "multiply":
 								default_final_value *= default_value
+							elif class_layer["operator"] == "min":
+								default_final_value = min_type(default_value, default_final_value)
+							elif class_layer["operator"] == "max":
+								default_final_value = max_type(default_value, default_final_value)
 
 						property_layer = {"operator": class_layer["operator"], "current_state":default_state_name, "current_state_t0":0, "value":default_value, "value_start":default_value, "value_end":default_value, "states":property_layer_states}
 						property_layers.append(property_layer)
@@ -1505,6 +1528,10 @@ class HarfangUI:
 								obj[w_lv["name"]] += v
 							elif o == "multiply":
 								obj[w_lv["name"]] *= v
+							elif o == "min":
+								obj[w_lv["name"]] = min_type(v, obj[w_lv["name"]])
+							elif o == "max":
+								obj[w_lv["name"]] = max_type(v, obj[w_lv["name"]])
 
 						widget_property["linked_value"] = w_lv
 
@@ -1919,6 +1946,8 @@ class HarfangUI:
 			ws_size = widget["workspace_size"]
 			
 			w_size.x, w_size.y = ws_size.x, ws_size.y
+			if widget["flag_new"] or widget["flag_update_rest_size"]:
+				widget["rest_size"].x, widget["rest_size"].y, widget["rest_size"].z = w_size.x, w_size.y, w_size.z
 		
 			# Scroll bars
 
@@ -2059,7 +2088,7 @@ class HarfangUI:
 			s = widget["size"]
 			s.x, s.y, s.z = size.x, size.y, size.z
 			
-			thickness = 0 if flag_invisible else cls.get_property_states_value(widget, "window_box_border_thickness",["focus"] )
+			thickness = 0 #if flag_invisible else cls.get_property_states_value(widget, "window_box_border_thickness",["focus"] )
 			widget["default_cursor_start_line"].x = widget["margins"].x + thickness
 			widget["default_cursor_start_line"].y = widget["margins"].y + thickness
 			widget["objects_dict"]["window_title.2"]["text"] = cls.get_label_from_id(widget["widget_id"])
@@ -2143,7 +2172,7 @@ class HarfangUI:
 			spos.y = min(mx.y - w_size.y, max(spos.y, mn.y))
 			spos.z = min(mx.z - w_size.z, max(spos.z, mn.z))
 
-			bt = 0 if widget["flag_invisible"] else widget["objects_dict"]["window_borders.1"]["border_thickness"]
+			bt = 0 #if widget["flag_invisible"] else widget["objects_dict"]["window_borders.1"]["border_thickness"]
 			
 			# Add scroll bars if necessary
 
@@ -2487,6 +2516,10 @@ class HarfangUI:
 						property["value"] *= layer["value"]
 					elif layer["operator"] == "add":
 						property["value"] += layer["value"]
+					elif layer["operator"] == "max":
+						property["value"] = max_type(layer["value"], property["value"])
+					elif layer["operator"] == "min":
+						property["value"] = min_type(layer["value"], property["value"])
 		
 				if "linked_value" in property:
 					lv = property["linked_value"]
@@ -2500,6 +2533,10 @@ class HarfangUI:
 							obj[lv["name"]] += v
 						elif o == "multiply":
 							obj[lv["name"]] += v
+						elif o == "max":
+							obj[lv["name"]] = max_type(v, obj[lv["name"]])
+						elif o == "min":
+							obj[lv["name"]] = min_type(v, obj[lv["name"]])
 
 	@classmethod
 	def update_widget(cls, widget):
@@ -2543,9 +2580,9 @@ class HarfangUI:
 			#Cursor stacking:
 			if component["cursor_auto"]:
 				if widget["stacking"] == cls.HGUI_STACK_HORIZONTAL:
-					cp.x += component["size"].x + component["offset"].x
+					cp.x += component["size"].x + component["offset"].x + widget["space_size"]
 				elif widget["stacking"] == cls.HGUI_STACK_VERTICAL:
-					cp.y += component["size"].y + component["offset"].y
+					cp.y += component["size"].y + component["offset"].y + widget["space_size"]
 
 		ws = mx - mn
 		widget["size"] = ws
@@ -3205,6 +3242,7 @@ class HarfangUI:
 			obj_text["forced_text_width"] = 150
 		if text != obj_text["text"]:
 			widget["flag_update_rest_size"] = True
+			obj_text["display_text"] = text
 		if text is not None:
 			obj_text["text"] = text
 		
@@ -3235,7 +3273,7 @@ class HarfangUI:
 		widget["position"] = cls.get_cursor_position()
 		cls.update_widget(widget)
 		cls.update_cursor(widget)
-		return mouse_click	
+		return mouse_click
 
 	@classmethod
 	def button_image(cls, widget_id, texture_path, image_size: hg.Vec2, **args):
@@ -3257,7 +3295,7 @@ class HarfangUI:
 		
 		cls.update_widget(widget)
 		cls.update_cursor(widget)
-		return mouse_click
+		return mouse_click, "MLB_down" in widget["states"]
 	
 
 	@classmethod
