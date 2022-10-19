@@ -49,7 +49,7 @@ class HarfangGUIRenderer:
 
 	box_render_state = None
 
-	frame_buffers_scale = 3 # For AA
+	frame_buffers_scale = 2 # For AA
 
 	# sprites
 	textures = {}
@@ -73,8 +73,8 @@ class HarfangGUIRenderer:
 		cls.uniforms_values_list = hg.UniformSetValueList()
 		cls.uniforms_textures_list = hg.UniformSetTextureList()
 
-		cls.box_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_LessEqual, hg.FC_Disabled, False)
-		cls.box_overlay_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_Disabled, hg.FC_Disabled, False)
+		cls.box_render_state = hg.ComputeRenderState(hg.BM_AlphaRGB_AddAlpha, hg.DT_LessEqual, hg.FC_Disabled, False)
+		cls.box_overlay_render_state = hg.ComputeRenderState(hg.BM_AlphaRGB_AddAlpha, hg.DT_Disabled, hg.FC_Disabled, False)
 		cls.box_render_state_opaque = hg.ComputeRenderState(hg.BM_Opaque, hg.DT_LessEqual, hg.FC_Disabled, True)
 
 		cls.fonts_sizes = fonts_sizes
@@ -87,7 +87,7 @@ class HarfangGUIRenderer:
 		# text uniforms and render state
 		cls.text_uniform_values = [hg.MakeUniformSetValue('u_color', hg.Vec4(1, 1, 0))]
 		w_z, w_r, w_g, w_b, w_a = False, True, True, True, True
-		cls.text_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_Disabled, hg.FC_Disabled, w_z, w_r, w_g, w_b, w_a)
+		cls.text_render_state = hg.ComputeRenderState(hg.BM_AlphaRGB_AddAlpha, hg.DT_Disabled, hg.FC_Disabled, w_z, w_r, w_g, w_b, w_a)
 
 	@classmethod
 	def get_texture(cls, texture_path):
@@ -3204,7 +3204,7 @@ class HarfangUI:
 							cls.ascii_code = None
 							flag_move_cursor = True
 
-		if flag_move_cursor or widget["flag_new"]:
+		if flag_move_cursor or widget["flag_new"] or widget["flag_update_rest_size"]:
 			cls.clip_input_text(widget, primitive)
 		return False #String unchanged
 

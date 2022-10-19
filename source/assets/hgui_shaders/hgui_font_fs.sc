@@ -8,6 +8,5 @@ SAMPLER2D(u_tex, 0);
 
 void main() {
 	float opacity = texture2D(u_tex, v_texcoord0).a * u_color.a;
-	opacity = (1.0 - opacity) * 1.0 - pow(opacity - 1.0, 4.0) + opacity * (1.0 - pow(opacity - 1.0, 2.0));
 	gl_FragColor = vec4(u_color.rgb, opacity); 
 }
