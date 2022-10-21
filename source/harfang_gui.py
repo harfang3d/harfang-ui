@@ -626,7 +626,7 @@ class HarfangUISkin:
 					"type": "vec4",
 					"value": [1, 1, 1, 1]
 					}
-			}		
+			}
 		}
 		# Références par noms pour le script, à transformer en références par indices dans une list globale d'objets.
 		cls.components = {
@@ -701,7 +701,14 @@ class HarfangUISkin:
 				},
 			"toggle_button_box": {
 				"primitives": [{"type": "filled_rounded_box", "name": "toggle_button.box"}, {"type": "text_toggle_fading", "name": "toggle_button.texts"}]
-				}
+				},
+			"text_select":{
+				"primitives": [{"type": "filled_box", "name": "text_select.background"}, {"type": "text", "name": "text_select.text"}]
+			},
+			"list_box": {
+				"primitives": [{"type": "filled_rounded_box", "name": "list_box.background"}],
+				"selected_idx": 0, "items_list": [], "line_space_factor": 1, "margins": [5, 5, 0],
+			}
 			}
 
 		cls.widgets_models = {
@@ -765,7 +772,18 @@ class HarfangUISkin:
 			
 			"toggle_button": {"components": ["basic_label", "toggle_button_box"], "toggle_idx": 0,
 								"properties": ["basic_label_margins", "basic_label_text_color", "button_box_color", "button_text_color", "button_text_margins", "widget_rounded_radius"]
-								}
+								},
+			
+			"text_select":{"components": ["text_select"],
+							"properties": ["text_select_box_color", "text_select_margins", "text_select_text_color"]},
+
+			"list_box": {"components": ["basic_label", "list_box"], "current_idx": 0,
+						"properties": ["basic_label_margins", "basic_label_text_color","listbox_background_color", "listbox_rounded_radius"]
+						}
+			
+			#"dropdown": {"components": ["basic_label", "toggle_button_box", "list_box"], "current_idx":0,
+			#			"properties": ["basic_label_margins", "basic_label_text_color", "button_box_color", "button_text_color", "button_text_margins", "widget_rounded_radius"]}
+			
 		}
 
 
@@ -1218,7 +1236,8 @@ class HarfangUI:
 			"rotation": hg.Vec3(0, 0, 0),
 			"scale": hg.Vec3(1, 1, 1),	#Global scale, used to compute final render matrix
 			"offset": hg.Vec3(0, 0, 0),
-			"size": hg.Vec3(0, 0, 0)
+			"size": hg.Vec3(0, 0, 0),
+			"cursor_auto": True	#False if cursor is not incremented in object rendering
 		}
 
 	@classmethod
@@ -1235,7 +1254,6 @@ class HarfangUI:
 				"space_size": 10, #distance between primitives
 				"margins": hg.Vec3(0, 0, 0),
 				"overlay": False, #Used for widgets containers. If True: component is rendered over children widgets
-				"cursor_auto": True,	#False if cursor is not incremented in widget rendering
 				"content_size": hg.Vec3(0, 0, 0), #Stacked primitives size, out of margins or component auto-sizing
 				"size_factor": hg.Vec3(-1, -1, -1) # Size linked to container size. factor <= 0 : no proportional size correction. factor > 0 : size = max(component_size * factor, container_size) 
 			}
@@ -2720,20 +2738,20 @@ class HarfangUI:
 			if not primitive["hidden"]:
 				primitive_id = primitive["type"]
 				if primitive_id == "box":
-					HarfangGUISceneGraph.add_box(matrix, cpos, primitive["size"], primitive["background_color"])
-					HarfangGUISceneGraph.add_box_border(matrix, cpos, primitive["size"], primitive["border_thickness"], primitive["border_color"])
+					HarfangGUISceneGraph.add_box(matrix, cpos, primitive["size"], primitive["background_color"] * opacity)
+					HarfangGUISceneGraph.add_box_border(matrix, cpos, primitive["size"], primitive["border_thickness"], primitive["border_color"] * opacity)
 				elif primitive_id == "filled_box":
-					HarfangGUISceneGraph.add_box(matrix, cpos, primitive["size"],primitive["background_color"])
+					HarfangGUISceneGraph.add_box(matrix, cpos, primitive["size"],primitive["background_color"] * opacity)
 				elif primitive_id == "box_borders":
-					HarfangGUISceneGraph.add_box_border(matrix, cpos, primitive["size"], primitive["border_thickness"], primitive["border_color"])
+					HarfangGUISceneGraph.add_box_border(matrix, cpos, primitive["size"], primitive["border_thickness"], primitive["border_color"] * opacity)
 
 				elif primitive_id == "rounded_box":
-					HarfangGUISceneGraph.add_rounded_box(matrix, cpos, primitive["size"],primitive["background_color"], primitive["corner_radius"])
-					HarfangGUISceneGraph.add_rounded_border(matrix, cpos, primitive["size"], primitive["border_thickness"], primitive["border_color"], primitive["corner_radius"])
+					HarfangGUISceneGraph.add_rounded_box(matrix, cpos, primitive["size"],primitive["background_color"] * opacity, primitive["corner_radius"])
+					HarfangGUISceneGraph.add_rounded_border(matrix, cpos, primitive["size"], primitive["border_thickness"], primitive["border_color"] * opacity, primitive["corner_radius"])
 				elif primitive_id == "filled_rounded_box":
-					HarfangGUISceneGraph.add_rounded_box(matrix, cpos, primitive["size"],primitive["background_color"], primitive["corner_radius"])
+					HarfangGUISceneGraph.add_rounded_box(matrix, cpos, primitive["size"],primitive["background_color"] * opacity, primitive["corner_radius"])
 				elif primitive_id == "rounded_box_borders":
-					HarfangGUISceneGraph.add_rounded_border(matrix, cpos, primitive["size"], primitive["border_thickness"], primitive["border_color"], primitive["corner_radius"])
+					HarfangGUISceneGraph.add_rounded_border(matrix, cpos, primitive["size"], primitive["border_thickness"], primitive["border_color"] * opacity, primitive["corner_radius"])
 
 				elif primitive_id == "text":
 					if primitive["text"] is not None:
@@ -3121,6 +3139,7 @@ class HarfangUI:
 					t1 = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][strt:cls.kb_cursor_pos])).x
 				primitive["display_text_start_idx"] = strt
 			
+			"""
 			l_disp = len(primitive["text"])
 			t_disp = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][primitive["display_text_start_idx"]:l_disp])).x
 			while t_disp > primitive["forced_text_width"]:
@@ -3128,11 +3147,24 @@ class HarfangUI:
 				t_disp = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][primitive["display_text_start_idx"]:l_disp])).x
 
 			primitive["display_text"] = primitive["text"][primitive["display_text_start_idx"]:l_disp]
+			"""
+			primitive["display_text"] = cls.clip_text(primitive["text"], primitive["display_text_start_idx"], primitive["forced_text_width"])
 
 		else:
 			primitive["display_text"] = primitive["text"]
 			primitive["display_text_start_idx"] = 0
-		
+	
+	@classmethod
+	def clip_text(cls, text, start_idx, max_width):
+		l_disp = len(text)
+		t_disp = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, text[start_idx:l_disp])).x
+		if t_disp <= max_width:
+			return text[start_idx:l_disp]
+		while t_disp > max_width:
+			l_disp -= 1
+			t_disp = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, text[start_idx:l_disp]+"..." )).x
+
+		return text[start_idx:l_disp] + "..."
 
 	@classmethod
 	def update_edit_string(cls, widget, primitive_id):
@@ -3494,4 +3526,84 @@ class HarfangUI:
 		cls.update_widget(widget)
 		cls.update_cursor(widget)
 		return mouse_click, current_idx
+	
+	@classmethod
+	def text_select(cls, widget_id, text:str, selected: bool, **args):
+		widget = cls.get_widget("text_select", widget_id, args)
+		obj_text = widget["objects_dict"]["text_select.text"]
+		mouse_click = False
+		
+		if "forced_text_width" in args:
+			obj_text["forced_text_width"] = args["forced_text_width"]
+		else:
+			obj_text["forced_text_width"] = 150
+
+		if "mouse_click" in cls.current_signals and widget_id in cls.current_signals["mouse_click"]:
+			selected = True
+			mouse_click = True
+		
+		if selected:
+			cls.set_widget_state(widget, "selected")
+		else:
+			cls.set_widget_state(widget,"unselected")
+
+		obj_text["text"] = cls.clip_text(text, 0, obj_text["forced_text_width"])
+		if widget["cursor_auto"]:
+			widget["position"] = cls.get_cursor_position()
+		
+		cls.update_widget(widget)
+
+		if widget["cursor_auto"]:
+			cls.update_cursor(widget)
+
+		return mouse_click, selected
+
+
+	@classmethod
+	def list_box(cls, widget_id, current_idx: int, items_list: list, **args):
+		widget = cls.get_widget("list_box", widget_id, args)
+		widget["position"] = cls.get_cursor_position()
+		lb_component = widget["components"]["list_box"]
+		obj_label = widget["objects_dict"]["basic_label.1"]
+		obj_label["text"] = cls.get_label_from_id(widget_id)
+		if "show_label" in args:
+			widget["components"]["basic_label"]["hidden"] = not args["show_label"]
+		else:
+			widget["components"]["basic_label"]["hidden"] = False
+
+		mouse_click = False
+		
+		if "forced_text_width" in args:
+			forced_ts_width = args["forced_text_width"]
+		else:
+			forced_ts_width = 150
+		#Update text_select widgets:
+		lb_component["text_select_list"] = []
+		n = 0
+		y_pos = 0
+		for item_name in items_list:
+			ts_id = widget_id + ".ts##" + str(n)
+			mc, _ = cls.text_select(ts_id, item_name, n == current_idx, cursor_auto = False, forced_text_width = forced_ts_width)
+			if mc:
+				mouse_click = True
+				current_idx = n
+			ts = cls.widgets[ts_id]
+			ts["opacity"] = widget["opacity"]
+			ts["position"].x = widget["position"].x + lb_component["position"].x + lb_component["margins"].x
+			ts["position"].y = widget["position"].y + lb_component["position"].y + lb_component["margins"].y + y_pos
+			ts["position"].z = widget["position"].z
+			y_pos += ts["size"].y * lb_component["line_space_factor"]
+			n += 1
+		lb_component["items_list"] = items_list
+		lb_component["size"].x = ts["size"].x
+		lb_component["size"].y = y_pos
+		lb_component["selected_idx"] = current_idx
+		cls.update_widget(widget)
+		cls.update_cursor(widget)
+
+		return mouse_click, current_idx
+
+	@classmethod
+	def dropdown(cls, widget_id, current_idx:int, items_list:list, **args):
+		return False, current_idx
 
