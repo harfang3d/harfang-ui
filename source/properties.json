@@ -1480,6 +1480,120 @@
                 }
             }
         ]
+    },
+
+    "sliderbar_bg_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["sliderbar.background"],
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#2a2a2e",
+                            100
+                        ],
+                        "delay": 0.1
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            "#34343a",
+                            100
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            },
+            {
+                "operator": "max",
+                "default_state": "mouse_idle",
+                "states": {
+                    "mouse_idle": {
+                        "value": [
+                            "#000000",
+                            0
+                        ],
+                        "delay": 0.1
+                    },
+                    "mouse_move": {
+                        "value": [
+                            "#44444a",
+                            100
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            }
+        ]
+    },
+    "sliderbar_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["sliderbar.bar"],
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#ffffff",
+                            100
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            }
+        ]
+    },
+    "sliderbar_plot_radius": {
+        "type": "float",
+        "linked_value": {
+            "objects": ["sliderbar.plot"],
+            "name": "radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 8,
+                        "delay": 0.1
+                    }
+                }
+            }
+        ]
+    },
+    "sliderbar_thickness": {
+        "type": "float",
+        "linked_value": {
+            "objects": ["sliderbar"],
+            "name": "bar_thickness",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 2,
+                        "delay": 0.1
+                    }
+                }
+            }
+        ]
     }
 }
     
