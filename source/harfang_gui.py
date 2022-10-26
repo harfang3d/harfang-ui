@@ -223,7 +223,7 @@ class HarfangGUIRenderer:
 
 	@classmethod
 	def render_widget_container(cls, view_id, container):
-		draw_list = HarfangGUISceneGraph.widgets_containers_displays_lists[container["widget_id"]]
+		draw_list = HarfangGUISceneGraph.widgets_containers_displays_lists[container["name"]]
 		hg.SetViewFrameBuffer(view_id, container["frame_buffer"].handle)
 	
 		hg.SetViewMode(view_id, hg.VM_Sequential)
@@ -360,7 +360,7 @@ class HarfangGUIRenderer:
 				view_id = cls.render_widget_container(view_id, container)
 				
 				# Display 3D widgets containers
-				if container["parent_id"] == "MainContainer2D":
+				if container["parent"]["name"] == "MainContainer2D":
 					# Render widgets container to texture:
 					c = hg.Color(1, 1, 1, container["opacity"])
 					matrix = container["world_matrix"]
@@ -724,7 +724,8 @@ class HarfangUISkin:
 				"primitives": [{"type": "filled_rounded_box", "name": "toggle_button.box"}, {"type": "text_toggle_fading", "name": "toggle_button.texts"}]
 				},
 			"text_select":{
-				"primitives": [{"type": "filled_box", "name": "text_select.background"}, {"type": "text", "name": "text_select.text"}]
+				"primitives": [{"type": "filled_box", "name": "text_select.background"}, {"type": "text", "name": "text_select.text"}],
+				"align": HarfangUI.HGUIAF_LEFT
 			},
 			"list_box": {
 				"primitives": [{"type": "filled_rounded_box", "name": "list_box.background"}],
@@ -735,13 +736,17 @@ class HarfangUISkin:
 				"bar_thickness": 2, "value_start": 0, "value_end": 10, "inertial_value": 0, "value_dest": 0, "bar_inertia": 0.25, "flag_horizontal": True,
 				"margins": [10, 10, 0]
 				},
+			"number_display": {
+				"primitives": [{"type": "filled_rounded_box", "name": "number_display.background", "corner_radius": [1, 1, 1, 1], "background_color": ["#2a2a2e", 100]}, {"type": "text", "name": "number_display.text"}],
+				"num_digits": 2, "margins": [5, 5, 0]
+			}
 			}
 
 		cls.widgets_models = {
 			"window" : {"components": ["window_background", "window_border", "window_title"],
 						"properties" : ["window_box_color", "window_border_color", "window_rounded_radius",
 						"window_title_margins", "window_title_background_color", "window_title_color", "window_title_rounded_radius"],
-						"margins": [40, 30, 0]
+						"margins": [10, 10, 0]
 						},
 
 			"widget_group" : {"components": ["widget_group_background", "widget_group_title"],
@@ -807,8 +812,9 @@ class HarfangUISkin:
 						"properties": ["basic_label_margins", "basic_label_text_color","listbox_background_color", "listbox_rounded_radius"]
 						},
 			
-			"slider_float": {"components":["basic_label", "sliderbar"],
-						"properties":["basic_label_margins", "basic_label_text_color", "sliderbar_bg_color", "sliderbar_color", "sliderbar_plot_radius", "sliderbar_thickness"]}
+			"slider_float": {"components":["basic_label", "sliderbar", "number_display"],
+						"properties":["basic_label_margins", "basic_label_text_color", "sliderbar_bg_color", "sliderbar_color", "sliderbar_plot_radius", "sliderbar_thickness"],
+						"forced_number_width": 40, "number_size": 1}
 
 			#"dropdown": {"components": ["basic_label", "toggle_button_box", "list_box"], "current_idx":0,
 			#			"properties": ["basic_label_margins", "basic_label_text_color", "button_box_color", "button_text_color", "button_text_margins", "widget_rounded_radius"]}
@@ -912,7 +918,7 @@ class HarfangGUISceneGraph:
 			cls.widgets_containers2D_user_order.append(widgets_container)
 		else:
 			cls.widgets_containers3D_user_order.append(widgets_container)
-		cls.widgets_containers_displays_lists[widgets_container["widget_id"]] = [] # Intégrer les display lists aux conteners ?
+		cls.widgets_containers_displays_lists[widgets_container["name"]] = [] # Intégrer les display lists aux containers ?
 	
 
 	@classmethod
@@ -1182,7 +1188,7 @@ class HarfangUI:
 
 		pos, rot,scale = hg.Vec3(0, 0, 0), hg.Deg3(0, 0, 0), hg.Vec3(1, -1, 1)
 		cls.main_widgets_container_3D = cls.new_widgets_container("Main_container")
-		cls.main_widgets_container_3D["widget_id"] = "MainContainer3D"
+		cls.main_widgets_container_3D["name"] = "MainContainer3D"
 		cls.main_widgets_container_3D["scale"] = scale
 		cls.main_widgets_container_3D["size"] = hg.Vec3(width, height, 0)
 		cls.main_widgets_container_3D["position"] = pos
@@ -1196,7 +1202,7 @@ class HarfangUI:
 
 		pos, rot,scale = hg.Vec3(0, 0, 100), hg.Deg3(0, 0, 0), hg.Vec3(1, -1, 1)
 		cls.main_widgets_container_2D = cls.new_widgets_container("Main_container")
-		cls.main_widgets_container_2D["widget_id"] = "MainContainer2D"
+		cls.main_widgets_container_2D["name"] = "MainContainer2D"
 		cls.main_widgets_container_2D["scale"] = scale
 		cls.main_widgets_container_2D["size"] = hg.Vec3(width, height, 0)
 		cls.main_widgets_container_2D["position"] = pos
@@ -1260,9 +1266,11 @@ class HarfangUI:
 	def new_gui_object(cls, type):
 		return {
 			"type": type,
+			"name": "",
 			"classe":"gui_object",
 			"hidden": False,
 			"enable": True,
+			"parent": None, # Parent container ID
 			"local_matrix": None,
 			"world_matrix": None,
 			"position": hg.Vec3(0, 0, 0),
@@ -1294,6 +1302,7 @@ class HarfangUI:
 		)
 		for primitive_def in HarfangUISkin.components[type]["primitives"]:
 			primitive = cls.new_primitive(primitive_def)
+			primitive["parent"] = component
 			component["primitives"].append(primitive)
 			component["objects_dict"][primitive["name"]] = primitive
 		return component
@@ -1316,14 +1325,11 @@ class HarfangUI:
 
 	@classmethod
 	def new_primitive(cls, primitive_def):
-		new_primitive = {
+		new_primitive = cls.new_gui_object(primitive_def["type"])
+		new_primitive .update ({
 			"classe": "primitive",
-			"type": primitive_def["type"],
-			"name": primitive_def["name"],
-			"size": hg.Vec3(0, 0, 0),
-			"hidden": False,
-			"position": hg.Vec3(0, 0, 0)
-		}
+			"name": primitive_def["name"]
+		})
 		# Create basic occurence
 		primitive_model = HarfangUISkin.primitives[primitive_def["type"]]
 		for variable_name, vd in primitive_model.items():
@@ -1375,7 +1381,7 @@ class HarfangUI:
 							value *= state["value"]
 						break # One state by layer
 			return value
-		print("!!! ERROR - Unknown property: " + property_name + " - Widget: " + widget["widget_id"])
+		print("!!! ERROR - Unknown property: " + property_name + " - Widget: " + widget["name"])
 		return None
 
 	@classmethod
@@ -1393,12 +1399,10 @@ class HarfangUI:
 			"default_cursor_start_line": hg.Vec3(0, 0, 0),
 			"space_size": 10, #distance between components
 			"opacity": 1,
-			"widget_id": "",
 			"max_size": hg.Vec3(0, 0, 0), # Used for window worksapce computation (scroll bars...)
 			"components": {},
 			"components_render_order": [],
 			"components_order": cls.HGUI_ORDER_DEFAULT,
-			"parent_id": None, # Parent container ID
 			"objects_dict": {}, #Components & primitives in same dict to optimize properties links referencement
 			"properties": {},
 			"pointers": {"mouse": cls.new_pointer("mouse")},
@@ -1454,6 +1458,7 @@ class HarfangUI:
 			
 			#Basic component occurence
 			component = cls.new_component(component_type)
+			component["name"] = component_type						### ! Define a real name when components will be defined with a JSON script
 			component_model = HarfangUISkin.components[component_type]
 			
 			#Overwrites and create vars
@@ -1486,6 +1491,7 @@ class HarfangUI:
 			widget_model = HarfangUISkin.widgets_models[widget_type]
 			for component_type in widget_model["components"]:
 				component = cls.create_component(component_type, widget)
+				component["parent"] = widget
 				components_order.append(component)
 
 			#Creation of a dictionnary to facilitate access to components
@@ -1496,7 +1502,7 @@ class HarfangUI:
 				for primitive in component["primitives"]:
 					primitives_dict[primitive["name"]] = primitive
 
-			widget["widget_id"] = widget_id
+			widget["name"] = widget_id
 			widget["components"] = components_dict
 			widget["components_render_order"] = components_order
 			widget["objects_dict"].update(components_dict)
@@ -1621,7 +1627,7 @@ class HarfangUI:
 	def add_widget_to_render_list(cls, widget):
 		container = HarfangGUISceneGraph.get_current_container()
 		container["children_order"].append(widget)
-		widget["parent_id"] = container["widget_id"]
+		widget["parent"] = container
 
 	@classmethod
 	def update_camera2D(cls):
@@ -1831,14 +1837,6 @@ class HarfangUI:
 		cls.new_signals = {}
 
 # ------------ Widgets containers system (windows are particular widgets containers)
-	@classmethod
-	def get_parent_container(cls, container):
-		parent_id = container["parent_id"]
-		if parent_id == "MainContainer3D":
-			return cls.main_widgets_container_3D
-		elif parent_id == "MainContainer2D":
-			return cls.main_widgets_container_2D
-		return cls.widgets[parent_id]
 
 	@classmethod
 	def push_widgets_container(cls, w_container):
@@ -1847,11 +1845,10 @@ class HarfangUI:
 		w_container["children_order"] = []
 		w_container["child_depth"] = len(HarfangGUISceneGraph.widgets_containers_stack) - 1 # First child depth = 1, 0 is Main Widget container
 		if w_container["flag_new"]:
-			parent = cls.get_parent_container(w_container)
 			if w_container["flag_2D"]:
-				parent["containers_2D_children_align_order"].insert(0, w_container)	# !!! Even if they are no longer displayed by user, the containers remain in this list. !!!
+				w_container["parent"]["containers_2D_children_align_order"].insert(0, w_container)	# !!! Even if they are no longer displayed by user, the containers remain in this list. !!!
 			else:
-				parent["containers_3D_children_align_order"].insert(0, w_container)	# !!! Even if they are no longer displayed by user, the containers remain in this list. !!!
+				w_container["parent"]["containers_3D_children_align_order"].insert(0, w_container)	# !!! Even if they are no longer displayed by user, the containers remain in this list. !!!
 		cls.set_cursor_start_line(w_container["default_cursor_start_line"])
 		cls.set_cursor_pos(w_container["default_cursor_start_line"])
 		p = w_container["workspace_min"] 
@@ -1878,12 +1875,12 @@ class HarfangUI:
 	
 	@classmethod
 	def move_widgets_container(cls, widgets_container, pointer_id):
-		parent = cls.get_parent_container(widgets_container)
+		parent = widgets_container["parent"]
 		wc_pointer = widgets_container["pointers"][pointer_id]
 		p_pointer = parent["pointers"][pointer_id]
 		pointer_dt = p_pointer["pointer_local_dt"]
 		
-		if parent["widget_id"] == "MainContainer3D":
+		if parent["name"] == "MainContainer3D":
 			if wc_pointer["pointer_world_position"] is not None:
 				rotmat = hg.GetRotationMatrix(cls.camera3D_matrix)
 				ax = hg.GetX(rotmat)
@@ -1974,7 +1971,7 @@ class HarfangUI:
 			
 			widget["default_cursor_start_line"].x = widget["margins"].x
 			widget["default_cursor_start_line"].y = widget["margins"].y
-			widget["objects_dict"]["widget_group_title.text"]["text"] = cls.get_label_from_id(widget["widget_id"])
+			widget["objects_dict"]["widget_group_title.text"]["text"] = cls.get_label_from_id(widget["name"])
 		
 		else:
 			if not flag_hide_title:
@@ -2060,7 +2057,7 @@ class HarfangUI:
 				cursor.y += title_height
 				cls.set_cursor_pos(cursor)
 				height = w_size.y - (bt + title_height)
-				py = cls.scrollbar_v(widget["widget_id"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, align=cls.HGUIAF_TOPLEFT) + mn.y
+				py = cls.scrollbar_v(widget["name"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, align=cls.HGUIAF_TOPLEFT) + mn.y
 			
 			if widget["flag_scrollbar_h"]:
 				cursor = hg.Vec3(spos)
@@ -2068,9 +2065,9 @@ class HarfangUI:
 				cursor.x += bt
 				cls.set_cursor_pos(cursor)
 				width = w_size.x - 2 * bt if ws_size.y <= w_size.y else w_size.x - 2 * bt - scrollbar_size
-				px = cls.scrollbar_h(widget["widget_id"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, align=cls.HGUIAF_TOPLEFT) + mn.x
+				px = cls.scrollbar_h(widget["name"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, align=cls.HGUIAF_TOPLEFT) + mn.x
 
-			cls.set_scroll_position(widget["widget_id"], px, py, 0)
+			cls.set_scroll_position(widget["name"], px, py, 0)
 
 			cls.pop_widgets_container()
 			
@@ -2151,7 +2148,7 @@ class HarfangUI:
 			thickness = 0 #if flag_invisible else cls.get_property_states_value(widget, "window_box_border_thickness",["focus"] )
 			widget["default_cursor_start_line"].x = widget["margins"].x + thickness
 			widget["default_cursor_start_line"].y = widget["margins"].y + thickness
-			widget["objects_dict"]["window_title.2"]["text"] = cls.get_label_from_id(widget["widget_id"])
+			widget["objects_dict"]["window_title.2"]["text"] = cls.get_label_from_id(widget["name"])
 		
 		else:
 			if not flag_move:
@@ -2169,7 +2166,7 @@ class HarfangUI:
 					cls.move_widgets_container(widget, "mouse")
 					
 			else:		
-				if widget["flag_move"] and "MLB_pressed" in cls.current_signals and widget["widget_id"] in cls.current_signals["MLB_pressed"]:
+				if widget["flag_move"] and "MLB_pressed" in cls.current_signals and widget["name"] in cls.current_signals["MLB_pressed"]:
 					cls.set_widget_state(widget, "mouse_move")
 					cls.set_ui_state(cls.UI_STATE_WIDGET_MOUSE_FOCUS)
 		
@@ -2245,7 +2242,7 @@ class HarfangUI:
 				cursor.y += title_height
 				cls.set_cursor_pos(cursor)
 				height = w_size.y - (bt + title_height)
-				py = cls.scrollbar_v(widget["widget_id"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, align=cls.HGUIAF_TOPLEFT) + mn.y
+				py = cls.scrollbar_v(widget["name"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, align=cls.HGUIAF_TOPLEFT) + mn.y
 			
 			if widget["flag_scrollbar_h"]:
 				cursor = hg.Vec3(spos)
@@ -2253,9 +2250,9 @@ class HarfangUI:
 				cursor.x += bt
 				cls.set_cursor_pos(cursor)
 				width = w_size.x - 2 * bt if ws_size.y <= w_size.y else w_size.x - 2 * bt - scrollbar_size
-				px = cls.scrollbar_h(widget["widget_id"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, align=cls.HGUIAF_TOPLEFT) + mn.x
+				px = cls.scrollbar_h(widget["name"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, align=cls.HGUIAF_TOPLEFT) + mn.x
 
-			cls.set_scroll_position(widget["widget_id"], px, py, 0)
+			cls.set_scroll_position(widget["name"], px, py, 0)
 
 			cls.pop_widgets_container()
 			
@@ -2357,10 +2354,10 @@ class HarfangUI:
 	def mouse_hover(cls, widget, pointer_id, pointer_pos):
 		if cls.ui_state is not cls.UI_STATE_WIDGET_MOUSE_FOCUS:
 			if widget["position"].x < pointer_pos.x < widget["position"].x + widget["size"].x + widget["offset"].x and widget["position"].y < pointer_pos.y < widget["position"].y + widget["size"].y + widget["offset"].y:
-				if not ("mouse_hover" in cls.current_signals and widget["widget_id"] in cls.current_signals["mouse_hover"]):
+				if not ("mouse_hover" in cls.current_signals and widget["name"] in cls.current_signals["mouse_hover"]):
 					if not "edit" in widget["states"]:
 						cls.set_widget_state(widget, "mouse_hover")
-				cls.send_signal("mouse_hover", widget["widget_id"])
+				cls.send_signal("mouse_hover", widget["name"])
 				return True
 			else:
 				cls.set_widget_state(widget, "idle")
@@ -2378,16 +2375,16 @@ class HarfangUI:
 	
 	@classmethod
 	def update_mouse_click(cls, widget):
-		if "mouse_hover" in cls.current_signals and widget["widget_id"] in cls.current_signals["mouse_hover"]:
+		if "mouse_hover" in cls.current_signals and widget["name"] in cls.current_signals["mouse_hover"]:
 			if cls.mouse.Down(hg.MB_0):
 				if not "edit" in widget["states"]:
 					cls.set_widget_state(widget, "MLB_down")
-				cls.send_signal("MLB_down", widget["widget_id"])
+				cls.send_signal("MLB_down", widget["name"])
 			
-			elif "MLB_down" in cls.current_signals and widget["widget_id"] in cls.current_signals["MLB_down"]:
+			elif "MLB_down" in cls.current_signals and widget["name"] in cls.current_signals["MLB_down"]:
 				if not "edit" in widget["states"]:
 					cls.set_widget_state(widget, "mouse_hover")
-				cls.send_signal("mouse_click", widget["widget_id"])
+				cls.send_signal("mouse_click", widget["name"])
 
 	@classmethod
 	def update_component(cls, widget, component):
@@ -2414,9 +2411,9 @@ class HarfangUI:
 				obj_bar["size"].y = obj_bg["size"].y = component["bar_thickness"]
 				tx = t * component["size"].x
 				
-				obj_bg["position"].x = tx
+				obj_bg["position"].x = 0
 				obj_bg["position"].y = obj_plot["radius"] - obj_bg["size"].y / 2
-				obj_bg["size"].x = component["size"].x - tx
+				obj_bg["size"].x = component["size"].x
 				
 				obj_bar["position"].x = 0
 				obj_bar["position"].y = obj_bg["position"].y
@@ -2434,7 +2431,7 @@ class HarfangUI:
 				
 				obj_bg["position"].y = 0
 				obj_bg["position"].x = obj_plot["radius"] - obj_bg["size"].x / 2
-				obj_bg["size"].y = ty
+				obj_bg["size"].y = component["size"].y
 				
 				obj_bar["position"].y = ty
 				obj_bar["position"].x = obj_bg["position"].x
@@ -2448,9 +2445,8 @@ class HarfangUI:
 			
 
 			component["content_size"].x, component["content_size"].y = sx, sy
-			component["size"].x, component["size"].y = sx, sy
-			component["size"].x += component["margins"].x * 2
-			component["size"].y += component["margins"].y * 2
+			component["size"].x = sx + component["margins"].x * 2
+			component["size"].y = sy + component["margins"].y * 2
 			for obj in [obj_bar, obj_bg, obj_plot]:
 				obj["position"].x += component["margins"].x
 				obj["position"].y += component["margins"].y
@@ -2481,6 +2477,8 @@ class HarfangUI:
 							txt_size = HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"])
 							tsx, tsy = txt_size.x, txt_size.y
 							if primitive["forced_text_width"] is not None:
+								if component["align"] == cls.HGUIAF_CENTER:
+									primitive["position"].x += (primitive["forced_text_width"] - tsx) / 2
 								tsx = primitive["forced_text_width"]
 							tsx *= primitive["text_size"]
 							tsy *= primitive["text_size"]
@@ -2763,7 +2761,7 @@ class HarfangUI:
 				cls.build_widget(widgets_container, widget["local_matrix"], widget)
 
 		if widgets_container["type"] != "Main_container":
-			HarfangGUISceneGraph.set_container_display_list(widgets_container["widget_id"])
+			HarfangGUISceneGraph.set_container_display_list(widgets_container["name"])
 			if len(widgets_container["containers_2D_children_align_order"]) > 0:
 				cls.build_widgets_container_2Dcontainers(widgets_container, widgets_container["containers_2D_children_align_order"])
 			if not widgets_container["flag_invisible"]:
@@ -2785,16 +2783,16 @@ class HarfangUI:
 
 		if widgets_container["frame_buffer"] is None:
 			
-			widgets_container["color_texture"] = hg.CreateTexture(int(fb_size.x * HarfangGUIRenderer.frame_buffers_scale), int(fb_size.y* HarfangGUIRenderer.frame_buffers_scale), widgets_container["widget_id"] + "_ctex", hg.TF_RenderTarget | hg.TF_SamplerMinAnisotropic, hg.TF_RGBA8)
-			widgets_container["depth_texture"] =  hg.CreateTexture(int(fb_size.x* HarfangGUIRenderer.frame_buffers_scale), int(fb_size.y* HarfangGUIRenderer.frame_buffers_scale), widgets_container["widget_id"] + "_dtex", hg.TF_RenderTarget, hg.TF_D32F)
-			widgets_container["frame_buffer"] = hg.CreateFrameBuffer(widgets_container["color_texture"], widgets_container["depth_texture"], widgets_container["widget_id"] + "_fb")
+			widgets_container["color_texture"] = hg.CreateTexture(int(fb_size.x * HarfangGUIRenderer.frame_buffers_scale), int(fb_size.y* HarfangGUIRenderer.frame_buffers_scale), widgets_container["name"] + "_ctex", hg.TF_RenderTarget | hg.TF_SamplerMinAnisotropic, hg.TF_RGBA8)
+			widgets_container["depth_texture"] =  hg.CreateTexture(int(fb_size.x* HarfangGUIRenderer.frame_buffers_scale), int(fb_size.y* HarfangGUIRenderer.frame_buffers_scale), widgets_container["name"] + "_dtex", hg.TF_RenderTarget, hg.TF_D32F)
+			widgets_container["frame_buffer"] = hg.CreateFrameBuffer(widgets_container["color_texture"], widgets_container["depth_texture"], widgets_container["name"] + "_fb")
 	
 	@classmethod
 	def build_widgets_container_2Dcontainers(cls, widgets_container, containers_2D_children):
 		#call AFTER build_widget(), and BEFORE build_widgets_container_overlays()
 		#widget states already updated
 		for container in reversed(containers_2D_children):
-			if container["widget_id"] in cls.widgets: #Controls if container updated by user in this frame
+			if container["name"] in cls.widgets: #Controls if container updated by user in this frame
 				color = hg.Color(1, 1, 1, container["opacity"])
 				HarfangGUISceneGraph.add_texture_box(container["local_matrix"], hg.Vec3(0, 0, 0), container["size"], color, container["color_texture"], "rendered_texture_box")
 
@@ -2815,7 +2813,7 @@ class HarfangUI:
 	@classmethod
 	def build_widget(cls, widgets_container, matrix, widget):
 
-		HarfangGUISceneGraph.set_container_display_list(widgets_container["widget_id"])
+		HarfangGUISceneGraph.set_container_display_list(widgets_container["name"])
 		cls.update_widget_states(widget)
 		
 		opacity = hg.Color(1, 1, 1, 1 if widget["classe"] == "widgets_container" else widget["opacity"])
@@ -2970,7 +2968,7 @@ class HarfangUI:
 	def set_container_align_front(cls,container):
 		#For the moment, only 2D container are aligned to front
 		if container["flag_2D"]:
-			parent = cls.get_parent_container(container)
+			parent = container["parent"]
 			if parent["type"] != "Main_container":
 						cls.set_container_align_front(parent)
 			for i, w in enumerate(parent["containers_2D_children_align_order"]):
@@ -3043,7 +3041,7 @@ class HarfangUI:
 
 			if cls.ui_state is not cls.UI_STATE_WIDGET_MOUSE_FOCUS:
 				cls.set_widget_state(focussed_container, "mouse_hover")
-				cls.send_signal("mouse_hover", focussed_container["widget_id"])
+				cls.send_signal("mouse_hover", focussed_container["name"])
 				if flag_hover_container:
 					cls.update_mouse_click(focussed_container)
 			
@@ -3136,7 +3134,7 @@ class HarfangUI:
 
 		# Window2D have same pointer3D world position as its parent container
 		if widgets_container["flag_2D"]:
-			parent = cls.widgets[widgets_container["parent_id"]]
+			parent = widgets_container["parent"]
 			p_pointer = parent["pointers"][controller_id]
 			if p_pointer["pointer_world_position"] is not None:
 				impact_2Dpos = window_inv * p_pointer["pointer_world_position"]
@@ -3184,11 +3182,10 @@ class HarfangUI:
 
 		local_pointer = window_inv * hg.Vec3(pointer_pos2D.x, pointer_pos2D.y, hg.GetT(widgets_container["world_matrix"]).z)
 		wc = widgets_container
-		while wc["parent_id"] != "MainContainer2D": #Find a way to resolve this hierarchy with matrix
-			parent = cls.widgets[wc["parent_id"]]
-			local_pointer.x += parent["scroll_position"].x
-			local_pointer.y += parent["scroll_position"].y
-			wc = parent
+		while wc["parent"]["name"] != "MainContainer2D": #Find a way to resolve this hierarchy with matrix
+			local_pointer.x +=  wc["parent"]["scroll_position"].x
+			local_pointer.y +=  wc["parent"]["scroll_position"].y
+			wc =  wc["parent"]
 		
 		impact_2Dpos = hg.Vec2(local_pointer.x, local_pointer.y)
 		if 0 < local_pointer.x < widgets_container["size"].x and 0 < local_pointer.y < widgets_container["size"].y:
@@ -3279,11 +3276,11 @@ class HarfangUI:
 		flag_move_cursor = False
 		
 		if not "edit" in widget["states"]:
-			if "mouse_click" in cls.current_signals and widget["widget_id"] in cls.current_signals["mouse_click"]:
+			if "mouse_click" in cls.current_signals and widget["name"] in cls.current_signals["mouse_click"]:
 				cls.start_edit_string(widget, primitive)
 
 		else:
-			if "MLB_pressed" in cls.current_signals and not widget["widget_id"] in cls.current_signals["MLB_pressed"]:
+			if "MLB_pressed" in cls.current_signals and not widget["name"] in cls.current_signals["MLB_pressed"]:
 				cls.stop_edit_string(widget, primitive)
 			
 			elif cls.ui_state == cls.UI_STATE_WIDGET_KEYBOARD_FOCUS:
@@ -3521,12 +3518,12 @@ class HarfangUI:
 				scroll_step = pointer_dt.x if flag_horizontal else pointer_dt.y
 				scroll_position += scroll_step * s
 		else:
-			if "MLB_pressed" in cls.current_signals and widget["widget_id"] in cls.current_signals["MLB_pressed"]:
+			if "MLB_pressed" in cls.current_signals and widget["name"] in cls.current_signals["MLB_pressed"]:
 				cls.set_widget_state(widget, "mouse_move")
 				cls.set_ui_state(cls.UI_STATE_WIDGET_MOUSE_FOCUS)
 
 		if cls.current_focused_widget is not None:
-			if cls.current_focused_widget["widget_id"] == widget["parent_id"]:
+			if cls.current_focused_widget == widget["parent"]:
 				mw = cls.mouse.Wheel()
 				if not cls.keyboard.Down(hg.K_LShift) and not flag_horizontal:
 					s = total_size / widget["components"]["scrollbar"]["size"].y
@@ -3709,11 +3706,21 @@ class HarfangUI:
 
 		return mouse_click, current_idx
 
+	@staticmethod
+	def compute_primitive_matrix_relative_to_widget(primitive):
+		if primitive["classe"] == "primitive":
+			mat_primitive = hg.TransformationMat4(primitive["position"] + primitive["offset"], primitive["rotation"], primitive["scale"])
+			component = primitive["parent"]
+			mat_component = hg.TransformationMat4(component["position"] + component["offset"], component["rotation"], component["scale"])
+			return mat_component * mat_primitive
+		return None
+
 	@classmethod
 	def slider_float(cls, widget_id, value_start, value_end, value, **args):
 		widget = cls.get_widget("slider_float", widget_id, args)
 		obj_slider = widget["components"]["sliderbar"]
 		obj_label = widget["objects_dict"]["basic_label.1"]
+		
 		flag_change = False
 		
 		if "forced_size" in args:
@@ -3747,29 +3754,23 @@ class HarfangUI:
 				cls.set_widget_state(widget, "mouse_idle")
 				cls.set_ui_state(cls.UI_STATE_MAIN)
 			elif cls.ui_state == cls.UI_STATE_WIDGET_MOUSE_FOCUS:
-				p = widget["pointers"]["mouse"]["pointer_local_position"]
-				print(str(p.x))
-				pointer_dt = HarfangGUISceneGraph.get_current_container()["pointers"]["mouse"]["pointer_local_dt"]
+				obj_bar = widget["objects_dict"]["sliderbar.background"]
+				mat = cls.compute_primitive_matrix_relative_to_widget(obj_bar)
+				bar_pos = hg.GetT(mat)
+				pointer_pos = widget["pointers"]["mouse"]["pointer_local_position"]
 				s = total_size / slider_size
-				scroll_step = pointer_dt.x if flag_horizontal else (pointer_dt.y * -1)
-				value += scroll_step * s
+				if flag_horizontal:
+					pointer_v = pointer_pos.x - bar_pos.x
+				else:
+					pointer_v = slider_size - pointer_pos.y + bar_pos.y
+
+				if 0 < pointer_v < slider_size:
+					value =  pointer_v * s + value_start
 		else:
-			if "MLB_pressed" in cls.current_signals and widget["widget_id"] in cls.current_signals["MLB_pressed"]:
+			if "MLB_pressed" in cls.current_signals and widget["name"] in cls.current_signals["MLB_pressed"]:
 				cls.set_widget_state(widget, "mouse_move")
 				cls.set_ui_state(cls.UI_STATE_WIDGET_MOUSE_FOCUS)
 
-		# Wheel:
-		"""
-		if cls.current_focused_widget is not None:
-			if cls.current_focused_widget["widget_id"] == widget["parent_id"]:
-				mw = cls.mouse.Wheel()
-				if not cls.keyboard.Down(hg.K_LShift) and not flag_horizontal:
-					s = total_size / slider_size
-					scroll_position -= mw * s * 20
-				elif cls.keyboard.Down(hg.K_LShift) and flag_horizontal:
-					s = total_size / slider_size
-					inertial_value += mw * s * 20
-		"""
 		
 		obj_slider["value_start"] = value_start
 		obj_slider["value_end"] = value_end
@@ -3779,12 +3780,25 @@ class HarfangUI:
 			flag_change = True
 		
 		widget["position"] = cls.get_cursor_position()
-		cls.update_widget(widget)
-		cls.update_cursor(widget)
+
 		if widget["flag_new"]:
 			obj_slider["inertial_value"] = obj_slider["value_dest"]
 		else:
 			obj_slider["inertial_value"] += (obj_slider["value_dest"] - obj_slider["inertial_value"]) * obj_slider["bar_inertia"]
+		
+		obj_num = widget["objects_dict"]["number_display"]
+		if "num_digits" in args:
+			obj_num["num_digits"] = args["num_digits"]
+		obj_num_t = widget["objects_dict"]["number_display.text"]
+		obj_num_t["forced_text_width"] = widget["forced_number_width"]
+		obj_num_t["text_size"] = widget["number_size"]
+		fmt = "%."+str(obj_num["num_digits"])+"f"
+		n =  fmt % obj_slider["inertial_value"]
+		obj_num_t["text"] = n # cls.clip_text(n, 0, obj_num_t["forced_text_width"])
+
+		cls.update_widget(widget)
+		cls.update_cursor(widget)
+		
 		return flag_change, obj_slider["value_dest"]
 
 

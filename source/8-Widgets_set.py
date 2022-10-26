@@ -42,6 +42,10 @@ toggle_btn_idx = 0
 current_item = 0
 items_list = ["Item 0", "Item 1", "Item 2sdfzrzerzrzrzerzrzerz", "Item 3"]
 slider_float_value = 0
+slider_float_value_1 = 0
+slider_float_value_2 = 0
+slider_float_value_3 = 0
+slider_float_value_4 = 0
 
 while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window): 
 	
@@ -122,16 +126,15 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
                 hgui.end_widget_group()
             hgui.set_inner_line_space_size(200)
             
-            f, slider_float_value = hgui.slider_float("horizontal slider float##1", 0, 3, slider_float_value, show_label = False)
+            f, slider_float_value_1 = hgui.slider_float("horizontal slider float##1", 0, 10, slider_float_value_1, show_label = False, num_digits = 0)
+            
             hgui.same_line()
-            f, slider_float_value = hgui.slider_float("horizontal slider float##2", 0, 3, slider_float_value)
+            f, slider_float_value_2 = hgui.slider_float("horizontal slider float##2", -1, 1, slider_float_value_2, num_digits = 1)
             
-            f, slider_float_value = hgui.slider_float("vertical slider float##1", 0, 3, slider_float_value, show_label = False, flag_horizontal = False )
+            f, slider_float_value_3 = hgui.slider_float("vertical slider float##1", -100, 100, slider_float_value_3, show_label = False, flag_horizontal = False, num_digits = 0 )
             hgui.same_line()
-            f, slider_float_value = hgui.slider_float("vertical slider float##2", 0, 3, slider_float_value, flag_horizontal = False )
+            f, slider_float_value_4 = hgui.slider_float("vertical slider float##2", 30, -5, slider_float_value_4, flag_horizontal = False, num_digits = 0 )
             
-            
-            hgui.info_text("Slider value", "%.2f" % slider_float_value)
             
             hgui.end_window()
         
