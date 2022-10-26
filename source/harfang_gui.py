@@ -3771,7 +3771,6 @@ class HarfangUI:
 				cls.set_widget_state(widget, "mouse_move")
 				cls.set_ui_state(cls.UI_STATE_WIDGET_MOUSE_FOCUS)
 
-		
 		obj_slider["value_start"] = value_start
 		obj_slider["value_end"] = value_end
 		value_dest = max(min(value_start,value_end), min(max(value_start,value_end), value))
@@ -3794,7 +3793,7 @@ class HarfangUI:
 		obj_num_t["text_size"] = widget["number_size"]
 		fmt = "%."+str(obj_num["num_digits"])+"f"
 		n =  fmt % obj_slider["inertial_value"]
-		obj_num_t["text"] = n # cls.clip_text(n, 0, obj_num_t["forced_text_width"])
+		obj_num_t["text"] = n
 
 		cls.update_widget(widget)
 		cls.update_cursor(widget)

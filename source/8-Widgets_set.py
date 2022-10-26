@@ -126,7 +126,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
                 hgui.end_widget_group()
             hgui.set_inner_line_space_size(200)
             
-            f, slider_float_value_1 = hgui.slider_float("horizontal slider float##1", 0, 10, slider_float_value_1, show_label = False, num_digits = 0)
+            f, slider_float_value_1 = hgui.slider_float("horizontal slider float##1", 0, 10, slider_float_value_1, forced_size =500, show_label = False, num_digits = 0)
             
             hgui.same_line()
             f, slider_float_value_2 = hgui.slider_float("horizontal slider float##2", -1, 1, slider_float_value_2, num_digits = 1)
