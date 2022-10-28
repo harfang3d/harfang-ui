@@ -22,11 +22,6 @@ hgui.set_line_space_size(5)
 hgui.set_inner_line_space_size(5)
 
 
-imgui_prg = hg.LoadProgramFromAssets('core/shader/imgui')
-imgui_img_prg = hg.LoadProgramFromAssets('core/shader/imgui_image')
-
-hg.ImGuiInit(10, imgui_prg, imgui_img_prg)
-
 # Setup inputs
 
 keyboard = hg.Keyboard()
@@ -147,15 +142,6 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
     
     hg.SetView2D(view_id, 0, 0, width, height, -1, 1, hg.CF_Depth, hg.Color.Black, 1, 0)
     
-    hg.ImGuiBeginFrame(width, height, hg.TickClock(), hg.ReadMouse(), hg.ReadKeyboard())
-    
-    if hg.ImGuiBegin('Window'):
-        _, current_item = hg.ImGuiCombo("ComboBox", current_item, items_list)
-        _, slider_float_value = hg.ImGuiSliderFloat("Slider float", slider_float_value, 0, 3, "%.1f")
-
-    hg.ImGuiEnd()
-    
-    hg.ImGuiEndFrame(view_id)
     hg.Frame()
 
     hg.UpdateWindow(window)
