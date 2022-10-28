@@ -306,33 +306,6 @@
             }
         ]
     },
-
-
-
-    "info_text_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "objects": ["info_text"],
-            "name": "margins",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            15,
-                            15,
-                            0
-                        ],
-                        "delay": 0
-                    }
-                }
-            }
-        ]
-    },
     "info_text_color": {
         "type": "RGB24_APercent",
         "linked_value": {
@@ -691,79 +664,6 @@
                             100
                         ],
                         "delay": 0.05
-                    }
-                }
-            }
-        ]
-    },
-    "button_text_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "margins",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            15,
-                            15,
-                            0
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            15,
-                            15,
-                            0
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },    
-    "image_button_label_space": {
-        "type": "float",
-        "linked_value": {
-            "name": "space_size",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 10,
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "image_button_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "margins",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            25,
-                            15,
-                            0
-                        ],
-                        "delay": 0.2
                     }
                 }
             }

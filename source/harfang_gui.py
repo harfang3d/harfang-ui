@@ -685,7 +685,8 @@ class HarfangUISkin:
 				},
 
 			"info_text": {
-				"primitives":[{"type": "text", "name": "info_text.1"}]
+				"primitives":[{"type": "text", "name": "info_text.1"}],
+				"margins":[15, 0, 0]
 				},
 			"info_image": {
 				"primitives":[{"type":"texture", "name": "info_image.1"}]
@@ -702,10 +703,12 @@ class HarfangUISkin:
 				"align": HarfangUI.HGUIAF_LEFT
 				},
 			"button_component": {
-				"primitives":[{"type": "filled_rounded_box", "name": "button_component.1"}, {"type": "text", "name": "button_component.2"}]
+				"primitives":[{"type": "filled_rounded_box", "name": "button_component.1"}, {"type": "text", "name": "button_component.2"}],
+				"margins": [15, 5, 0]
 				},
 			"image_button": {
-				"primitives": [{"type": "filled_rounded_box", "name": "image_button.1"}, {"type": "texture", "name": "image_button.2"}, {"type": "text", "name": "image_button.3"}]
+				"primitives": [{"type": "filled_rounded_box", "name": "image_button.1"}, {"type": "texture", "name": "image_button.2"}, {"type": "text", "name": "image_button.3"}],
+				"margins": [50, 15, 0], "space_size": 20
 				},
 			"check_box":{
 				"primitives": [{"type": "filled_rounded_box", "name": "check_box.1"}, {"type": "texture","name": "check_box.2", "texture": "hgui_textures/Icon_Check.png", "texture_size": [15, 15]}],
@@ -721,7 +724,8 @@ class HarfangUISkin:
 				"margins": [5, 5, 0],
 				},
 			"toggle_button_box": {
-				"primitives": [{"type": "filled_rounded_box", "name": "toggle_button.box"}, {"type": "text_toggle_fading", "name": "toggle_button.texts"}]
+				"primitives": [{"type": "filled_rounded_box", "name": "toggle_button.box"}, {"type": "text_toggle_fading", "name": "toggle_button.texts"}],
+				"margins": [15, 10, 0]
 				},
 			"text_select":{
 				"primitives": [{"type": "filled_box", "name": "text_select.background"}, {"type": "text", "name": "text_select.text"}],
@@ -746,7 +750,7 @@ class HarfangUISkin:
 			"window" : {"components": ["window_background", "window_border", "window_title"],
 						"properties" : ["window_box_color", "window_border_color", "window_rounded_radius",
 						"window_title_margins", "window_title_background_color", "window_title_color", "window_title_rounded_radius"],
-						"margins": [10, 10, 0]
+						"margins": [15, 15, 0], "align": HarfangUI.HGUIAF_LEFT
 						},
 
 			"widget_group" : {"components": ["widget_group_background", "widget_group_title"],
@@ -756,7 +760,7 @@ class HarfangUISkin:
 							},
 
 			"info_text" : {"components": ["info_text"],
-							"properties": ["info_text_color", "info_text_margins"]
+							"properties": ["info_text_color"]
 						},
 			
 			"info_image" : {"components": ["info_image", "info_image_label"], "stacking": HarfangUI.HGUI_STACK_VERTICAL,
@@ -769,11 +773,11 @@ class HarfangUISkin:
 							},
 	
 			"button": {"components": ["button_component"],
-						"properties": ["button_box_color", "button_text_color", "button_text_margins", "widget_rounded_radius"]
+						"properties": ["button_box_color", "button_text_color", "widget_rounded_radius"]
 						},
 	
 			"image_button": {"components": ["image_button"],
-						"properties": ["image_button_label_space", "image_button_margins", "button_box_color", "widget_rounded_radius", "image_button_label_color"]
+						"properties": ["button_box_color", "widget_rounded_radius", "image_button_label_color"]
 						},
 	
 			"check_box": {"components": ["basic_label", "check_box"],
@@ -802,7 +806,7 @@ class HarfangUISkin:
 						},
 			
 			"toggle_button": {"components": ["basic_label", "toggle_button_box"], "toggle_idx": 0,
-								"properties": ["basic_label_margins", "basic_label_text_color", "button_box_color", "button_text_color", "button_text_margins", "widget_rounded_radius"]
+								"properties": ["basic_label_margins", "basic_label_text_color", "button_box_color", "button_text_color", "widget_rounded_radius"]
 								},
 			
 			"text_select":{"components": ["text_select"],
@@ -1131,7 +1135,10 @@ class HarfangUI:
 	# Frame datas (updated on each frame)
 
 	flag_same_line = False
+	flag_set_cursor_pos = False
+	widgets_same_line = []
 	line_max_y_size = 0 #Used for auto-positionning with same_line(): the biggest widget Ysize in the line
+	line_widgets_width = 0
 	line_space_size = 3 # Space between lines in pixels
 	inner_line_space_size = 3 # space between widgets in same line
 	current_font_id = 0
@@ -1393,6 +1400,7 @@ class HarfangUI:
 			"flag_update_rest_size": True, #True if widget rest size must be updated (e.g.: input strings)
 			"rest_size": hg.Vec3(0, 0, 0), #widget reference size used for positionning (center)
 			"align": cls.HGUIAF_CENTER,
+			"v_align": cls.HGUIAF_CENTER,
 			"stacking": cls.HGUI_STACK_HORIZONTAL,
 			"cursor": hg.Vec3(0, 0, 0),
 			"cursor_start_line": hg.Vec3(0, 0, 0),
@@ -1406,6 +1414,7 @@ class HarfangUI:
 			"objects_dict": {}, #Components & primitives in same dict to optimize properties links referencement
 			"properties": {},
 			"pointers": {"mouse": cls.new_pointer("mouse")},
+			"sub_widgets": [], # Sub-widgets are widgets générated by the widget (e.g: listbox, generates text_select widgets)
 			"states": []
 		})
 		return widget
@@ -1434,6 +1443,7 @@ class HarfangUI:
 			"flag_scrollbar_h": False,
 			"flag_hide_scrollbars": False,
 			"children_order": [],
+			"widgets_stack": [], # list of rows lists, to compute children widgets stacking and alignment at end_[container]() function
 			"sort_weight": 0,		# Sort weight = distance to camera-pointer ray for 3D windows. Sort weight = align position for 2D windows
 			"child_depth": 0,
 			"containers_2D_children_align_order": [],	#2D Overlays order are user-focus dependant for 2D containers - Used for final rendering order
@@ -1850,7 +1860,11 @@ class HarfangUI:
 			else:
 				w_container["parent"]["containers_3D_children_align_order"].insert(0, w_container)	# !!! Even if they are no longer displayed by user, the containers remain in this list. !!!
 		cls.set_cursor_start_line(w_container["default_cursor_start_line"])
-		cls.set_cursor_pos(w_container["default_cursor_start_line"])
+		
+		cp = w_container["cursor"]
+		p = w_container["default_cursor_start_line"]
+		cp.x, cp.y, cp.z = p.x, p.y, p.z
+		
 		p = w_container["workspace_min"] 
 		p.x, p.y, p.z = 0, 0, 0 #min(0, p.x), min(0, p.y), min(0, p.z)
 		p = w_container["workspace_max"]
@@ -1906,7 +1920,28 @@ class HarfangUI:
 			if parent["scroll_position"].y < p_pointer["pointer_local_position"].y < parent["size"].y + parent["scroll_position"].y :
 				wpos.y = wpos.y + pointer_dt.y
 	
-
+	@classmethod
+	def update_widgets_stacking(cls, container):
+		w_stacking = container["widgets_stack"]
+		workspace_width = container["workspace_max"].x - container["workspace_min"].x
+		v = hg.Vec3(0, 0, 0)
+		for row in w_stacking:
+			v.x = 0
+			if not row["fixed_position"]:
+				if row["align"] == cls.HGUIAF_CENTER:
+					margin = (workspace_width - row["width"]) / 2
+					v.x = margin - (row["widgets"][0]["position"].x - container["workspace_min"].x) + container["workspace_min"].x
+				elif row["align"] == cls.HGUIAF_RIGHT:
+					w = row["widgets"][-1]
+					v.x = (container["workspace_max"].x - container["margins"].x) - (w["position"].x + w["rest_size"].x)
+			for widget in row["widgets"]:
+				v.y = 0
+				if row["v_align"] == cls.HGUIAF_CENTER:
+					v.y = (row["max_height"] - widget["rest_size"].y) / 2
+				elif row["v_align"] == cls.HGUIAF_BOTTOM:
+					v.y = row["max_height"] - widget["rest_size"].y
+				cls.move_widget(widget, v)
+			
 	@classmethod
 	def begin_widget_group_2D(cls, widget_id):
 		n = len(HarfangGUISceneGraph.widgets_containers_stack)
@@ -1946,6 +1981,8 @@ class HarfangUI:
 		
 		widget = cls.get_widget("widget_group", widget_id)
 		
+		widget["widgets_stack"] = []
+
 		widget["flag_2D"] = flag_2D
 		widget["flag_move"] = False
 		widget["flag_hide_title"] = flag_hide_title
@@ -2057,7 +2094,7 @@ class HarfangUI:
 				cursor.y += title_height
 				cls.set_cursor_pos(cursor)
 				height = w_size.y - (bt + title_height)
-				py = cls.scrollbar_v(widget["name"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, align=cls.HGUIAF_TOPLEFT) + mn.y
+				py = cls.scrollbar_v(widget["name"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, cursor_auto = False, align=cls.HGUIAF_TOPLEFT) + mn.y
 			
 			if widget["flag_scrollbar_h"]:
 				cursor = hg.Vec3(spos)
@@ -2065,7 +2102,7 @@ class HarfangUI:
 				cursor.x += bt
 				cls.set_cursor_pos(cursor)
 				width = w_size.x - 2 * bt if ws_size.y <= w_size.y else w_size.x - 2 * bt - scrollbar_size
-				px = cls.scrollbar_h(widget["name"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, align=cls.HGUIAF_TOPLEFT) + mn.x
+				px = cls.scrollbar_h(widget["name"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, cursor_auto = False, align=cls.HGUIAF_TOPLEFT) + mn.x
 
 			cls.set_scroll_position(widget["name"], px, py, 0)
 
@@ -2075,33 +2112,36 @@ class HarfangUI:
 			if HarfangGUISceneGraph.get_current_container_child_depth() == 1:
 				cls.pop_widgets_container() 
 
+
+			cls.update_widgets_stacking(widget)
 			cls.update_widget(widget)
 			if widget["flag_2D"]:
 				cls.update_cursor(widget)
 
 
 	@classmethod
-	def begin_window_2D(cls, widget_id, position:hg.Vec2, size:hg.Vec2, scale:float = 1, window_flags:int = 0):
+	def begin_window_2D(cls, widget_id, position:hg.Vec2, size:hg.Vec2, scale:float = 1, window_flags:int = 0, **args):
 		n = len(HarfangGUISceneGraph.widgets_containers_stack)
 		if  n==0 or (n > 0 and HarfangGUISceneGraph.widgets_containers_stack[0] == cls.main_widgets_container_2D):
 			# HDPI scaling, only for 2D windows in Main 2D container:
 			scale_hdpi = hg.GetWindowContentScale(cls.window).x
 		else:
 			scale_hdpi = 1 
-		return cls.begin_window(widget_id, hg.Vec3(position.x, position.y, 0), hg.Vec3(0, 0, 0), hg.Vec3(size.x, size.y, 0), scale * scale_hdpi, window_flags | cls.HGUIWF_2D)	# size: in pixels
+		return cls.begin_window(widget_id, hg.Vec3(position.x, position.y, 0), hg.Vec3(0, 0, 0), hg.Vec3(size.x, size.y, 0), scale * scale_hdpi, window_flags | cls.HGUIWF_2D, **args)	# size: in pixels
 	
 	# scale: pixel size
 	@classmethod
-	def begin_window(cls, widget_id, position:hg.Vec3 , rotation:hg.Vec3, size:hg.Vec3, scale:float = 1, window_flags:int = 0):
+	def begin_window(cls, widget_id, position:hg.Vec3 , rotation:hg.Vec3, size:hg.Vec3, scale:float = 1, window_flags:int = 0, **args):
 		
+		cls.flag_same_line = False
+		cls.flag_set_cursor_pos = False
+
 		flag_2D = False if (window_flags & cls.HGUIWF_2D) == 0 else True
 		flag_move = True if (window_flags & cls.HGUIWF_NoPointerMove) == 0 else False
 		flag_hide_title = False if (window_flags & cls.HGUIWF_HideTitle) == 0 else True
 		flag_invisible = False if (window_flags & cls.HGUIWF_Invisible) == 0 else True
 		flag_hide_scrollbars = False if (window_flags & cls.HGUIWF_HideScrollbars) == 0 else True
 		flag_overlay = False if (window_flags & cls.HGUIWF_Overlay) == 0 else True
-
-		
 
 		# If first parent window is 3D, Y is space relative, Y-increment is upside. Else, Y-increment is downside
 		pyf, rxf, rzf = 1, 1, 1
@@ -2120,7 +2160,9 @@ class HarfangUI:
 			if HarfangGUISceneGraph.get_current_container_child_depth() == 0:
 				HarfangGUISceneGraph.widgets_containers_stack.append(cls.main_widgets_container_2D)
 		
-		widget = cls.get_widget("window", widget_id)
+		widget = cls.get_widget("window", widget_id, args)
+
+		widget["widgets_stack"] = []
 		
 		widget["flag_2D"] = flag_2D
 		widget["flag_move"] = flag_move
@@ -2242,7 +2284,7 @@ class HarfangUI:
 				cursor.y += title_height
 				cls.set_cursor_pos(cursor)
 				height = w_size.y - (bt + title_height)
-				py = cls.scrollbar_v(widget["name"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, align=cls.HGUIAF_TOPLEFT) + mn.y
+				py = cls.scrollbar_v(widget["name"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, align=cls.HGUIAF_TOPLEFT, cursor_auto = False) + mn.y
 			
 			if widget["flag_scrollbar_h"]:
 				cursor = hg.Vec3(spos)
@@ -2250,7 +2292,7 @@ class HarfangUI:
 				cursor.x += bt
 				cls.set_cursor_pos(cursor)
 				width = w_size.x - 2 * bt if ws_size.y <= w_size.y else w_size.x - 2 * bt - scrollbar_size
-				px = cls.scrollbar_h(widget["name"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, align=cls.HGUIAF_TOPLEFT) + mn.x
+				px = cls.scrollbar_h(widget["name"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, align=cls.HGUIAF_TOPLEFT,cursor_auto = False) + mn.x
 
 			cls.set_scroll_position(widget["name"], px, py, 0)
 
@@ -2260,19 +2302,35 @@ class HarfangUI:
 			if HarfangGUISceneGraph.get_current_container_child_depth() == 1:
 				cls.pop_widgets_container() 
 
+			cls.update_widgets_stacking(widget)
 			cls.update_widget(widget)
 
 
 # ------------ Widgets system
+	@classmethod
+	def move_widget(cls, widget, v:hg.Vec3):
+		widget["position"].x += v.x
+		widget["position"].y += v.y
+		widget["position"].z += v.z
+		for w in widget["sub_widgets"]:
+			w["position"].x += v.x
+			w["position"].y += v.y
+			w["position"].z += v.z
 
 	@classmethod
 	def same_line(cls):
 		cls.flag_same_line= True
+		cls.flag_set_cursor_pos = False
 		cursor = HarfangGUISceneGraph.get_current_container()["cursor"]
 		cursor.x = cls.last_widget["position"].x + cls.last_widget["rest_size"].x + cls.inner_line_space_size
 		cursor.y = cls.last_widget["position"].y
 		cursor.z = cls.last_widget["position"].z
 	
+	@classmethod
+	def set_align(cls, align:int):
+		container = HarfangGUISceneGraph.get_current_container()
+		container["align"] = align
+
 	@classmethod
 	def set_line_space_size(cls,line_space_size:float):
 		cls.line_space_size = line_space_size
@@ -2288,8 +2346,10 @@ class HarfangUI:
 
 	@classmethod
 	def set_cursor_pos(cls, position: hg.Vec3):
+		cls.flag_set_cursor_pos = True
 		cursor = HarfangGUISceneGraph.get_current_container()["cursor"]
 		cursor.x, cursor.y, cursor.z = position.x, position.y, position.z
+		cls.flag_same_line = False
 	
 	@classmethod
 	def set_cursor_start_line(cls, position: hg.Vec3):
@@ -2297,31 +2357,55 @@ class HarfangUI:
 		csl.x, csl.y, csl.z = position.x, position.y, position.z
 
 	@classmethod
+	def new_widgets_row(cls,widget):
+		return {"widgets":[widget],
+				"max_height": widget["rest_size"].y,
+				"width": widget["rest_size"].x,
+				"align":cls.HGUIAF_LEFT,
+				"v_align":cls.HGUIAF_CENTER,
+				"fixed_position": False #If row is positionned by user with set_cursor_pos
+				}
+
+	@classmethod
 	def update_cursor(cls, widget):
-		w_container = HarfangGUISceneGraph.get_current_container()
-		cursor = w_container["cursor"]
-		csl = w_container["cursor_start_line"]
-		cursor.x = csl.x
-		if not cls.flag_same_line:
-			cls.line_max_y_size = 0
+		if widget["cursor_auto"]:
+			w_container = HarfangGUISceneGraph.get_current_container()
+			cursor = w_container["cursor"]
+			csl = w_container["cursor_start_line"]
+			cursor.x = csl.x
+			
+			if not cls.flag_same_line:
+				row = cls.new_widgets_row(widget)
+				row["align"] = w_container["align"]
+				row["v_align"] = w_container["v_align"]
+				row["fixed_position"] = cls.flag_set_cursor_pos
+				w_container["widgets_stack"].append(row)
+				cls.flag_set_cursor_pos = False
+			else:
+				row = w_container["widgets_stack"][-1]
+				row["widgets"].append(widget)
+				row["width"] += cls.inner_line_space_size + widget["rest_size"].x
+				row["max_height"] = max(row["max_height"], widget["rest_size"].y)
+				cls.flag_same_line = False
+			
+			cursor.y = widget["position"].y + row["max_height"] + cls.line_space_size
+			cursor.z = csl.z
+
+			wpos_s = widget["position"]
+			wpos_e = wpos_s + widget["rest_size"]
+			wss, wse = w_container["workspace_min"], w_container["workspace_max"]
+			wss.x = min(wss.x, wpos_s.x)
+			wss.y = min(wss.y, wpos_s.y)
+			wss.z = min(wss.z, wpos_s.z)
+			
+			wse.x = max(wse.x, wpos_e.x)
+			wse.y = max(wse.y, wpos_e.y)
+			wse.z = max(wse.z, wpos_e.z)
+
+			cls.last_widget = widget
 		else:
 			cls.flag_same_line = False
-		cls.line_max_y_size = max(cls.line_max_y_size, widget["rest_size"].y)
-		cursor.y = widget["position"].y + cls.line_max_y_size + cls.line_space_size
-		cursor.z = csl.z
-
-		wpos_s = widget["position"]
-		wpos_e = wpos_s + widget["rest_size"]
-		wss, wse = w_container["workspace_min"], w_container["workspace_max"]
-		wss.x = min(wss.x, wpos_s.x)
-		wss.y = min(wss.y, wpos_s.y)
-		wss.z = min(wss.z, wpos_s.z)
-		
-		wse.x = max(wse.x, wpos_e.x)
-		wse.y = max(wse.y, wpos_e.y)
-		wse.z = max(wse.z, wpos_e.z)
-
-		cls.last_widget = widget
+			cls.flag_set_cursor_pos = False
 
 	@classmethod
 	def update_widget_states(cls, widget):
@@ -3684,6 +3768,7 @@ class HarfangUI:
 		lb_component["text_select_list"] = []
 		n = 0
 		y_pos = 0
+		widget["sub_widgets"] = []
 		for item_name in items_list:
 			ts_id = widget_id + ".ts##" + str(n)
 			mc, _ = cls.text_select(ts_id, item_name, n == current_idx, cursor_auto = False, forced_text_width = forced_ts_width)
@@ -3691,6 +3776,7 @@ class HarfangUI:
 				mouse_click = True
 				current_idx = n
 			ts = cls.widgets[ts_id]
+			widget["sub_widgets"].append(ts)
 			ts["opacity"] = widget["opacity"]
 			ts["position"].x = widget["position"].x + lb_component["position"].x + lb_component["margins"].x
 			ts["position"].y = widget["position"].y + lb_component["position"].y + lb_component["margins"].y + y_pos
@@ -3720,6 +3806,8 @@ class HarfangUI:
 		widget = cls.get_widget("slider_float", widget_id, args)
 		obj_slider = widget["components"]["sliderbar"]
 		obj_label = widget["objects_dict"]["basic_label.1"]
+		obj_num = widget["objects_dict"]["number_display"]
+		obj_num_t = widget["objects_dict"]["number_display.text"]
 		
 		flag_change = False
 		
@@ -3747,6 +3835,12 @@ class HarfangUI:
 		else:
 			obj_slider["size"].y = slider_size
 		
+		if "forced_label_width" in args:
+			obj_label["forced_text_width"] = args["forced_label_width"]
+		
+		if "num_digits" in args:
+			obj_num["num_digits"] = args["num_digits"]
+
 		total_size = value_end - value_start
 
 		if "mouse_move" in widget["states"]:
@@ -3785,10 +3879,7 @@ class HarfangUI:
 		else:
 			obj_slider["inertial_value"] += (obj_slider["value_dest"] - obj_slider["inertial_value"]) * obj_slider["bar_inertia"]
 		
-		obj_num = widget["objects_dict"]["number_display"]
-		if "num_digits" in args:
-			obj_num["num_digits"] = args["num_digits"]
-		obj_num_t = widget["objects_dict"]["number_display.text"]
+		
 		obj_num_t["forced_text_width"] = widget["forced_number_width"]
 		obj_num_t["text_size"] = widget["number_size"]
 		fmt = "%."+str(obj_num["num_digits"])+"f"
@@ -3798,7 +3889,7 @@ class HarfangUI:
 		cls.update_widget(widget)
 		cls.update_cursor(widget)
 		
-		return flag_change, obj_slider["value_dest"]
+		return flag_change, obj_slider["value_dest"], obj_slider["inertial_value"]
 
 
 	@classmethod
