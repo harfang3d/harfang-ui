@@ -1,9 +1,7 @@
-from tkinter import Scrollbar
 import harfang as hg
 from math import sin, cos, inf, pi, floor
 from mouse_pointer_3d import MousePointer3D
 import json
-import copy
 from vr_controllers import VRControllersHandler
 
 def min_type(a, b): # Issue

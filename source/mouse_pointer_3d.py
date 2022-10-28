@@ -102,7 +102,7 @@ class MousePointer3D:
         cls.pointer_world_matrix = camera_matrix * hg.TransformationMat4(pointer_pos,hg.Vec3(0,0,0), hg.Vec3(1, -1, 1))
         
     @classmethod
-    def draw_pointer(cls, views_ids: list[int], resolution_y: int, user_position: hg.Vec3, fov: float, mouse_world_intersection: hg.Vec3 = None):
+    def draw_pointer(cls, views_ids: list, resolution_y: int, user_position: hg.Vec3, fov: float, mouse_world_intersection: hg.Vec3 = None):
         
         if mouse_world_intersection is None:
             pixel_size = cls.pixel_size
