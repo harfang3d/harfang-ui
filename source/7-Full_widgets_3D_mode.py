@@ -85,7 +85,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
 	
     if hgui.begin_frame(dt, mouse, keyboard, window, camera):
 
-        if hgui.begin_window("my_window", hg.Vec3(-5, 5.65, 10), hg.Vec3(0, 0, 0), hg.Vec3(1280, 720, 0), 10/1280 ):
+        if hgui.begin_window("my_window", hg.Vec3(-5, 5.65, 10), hg.Vec3(0, 0, 0), hg.Vec3(1280, 720, 0), 10/1280,0):
             
             hgui.set_line_space_size(10)
 
@@ -143,6 +143,11 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             
             if hgui.button_image("image_1", "textures/logo.png", hg.Vec2(221, 190) / 4, show_label = True, stacking = hgui.HGUI_STACK_HORIZONTAL, align = hgui.HGUIAF_CENTER, components_order = hgui.HGUI_ORDER_REVERSE)[0]:
                 print("click image button")
+            
+            hgui.same_line()
+
+            if hgui.button("Test cursor")[0]:
+                print("Test cursor")
             
             if hgui.begin_window("my_window_2", hg.Vec3(700, 100, -100), hg.Deg3(0, 0, 0), hg.Vec3(400, 600, 0), 1, hgui.HGUIWF_Overlay):
                 hgui.info_text("info_win_2", "This window is in OVERLAY mode")

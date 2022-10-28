@@ -306,33 +306,6 @@
             }
         ]
     },
-
-
-
-    "info_text_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "objects": ["info_text"],
-            "name": "margins",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            15,
-                            15,
-                            0
-                        ],
-                        "delay": 0
-                    }
-                }
-            }
-        ]
-    },
     "info_text_color": {
         "type": "RGB24_APercent",
         "linked_value": {
@@ -691,79 +664,6 @@
                             100
                         ],
                         "delay": 0.05
-                    }
-                }
-            }
-        ]
-    },
-    "button_text_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "margins",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            15,
-                            15,
-                            0
-                        ],
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": [
-                            15,
-                            15,
-                            0
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },    
-    "image_button_label_space": {
-        "type": "float",
-        "linked_value": {
-            "name": "space_size",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 10,
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
-    "image_button_margins": {
-        "type": "vec3",
-        "linked_value": {
-            "name": "margins",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            25,
-                            15,
-                            0
-                        ],
-                        "delay": 0.2
                     }
                 }
             }
@@ -1307,6 +1207,289 @@
                     "idle": {
                         "value": [0.25, 0.25, 0.25, 0.25],
                         "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+
+    "text_select_box_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["text_select.background"],
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#888888",
+                            0
+                        ],
+                        "delay": 0.1
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            "#888888",
+                            20
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            },
+            {
+                "operator": "max",
+                "default_state": "unselected",
+                "states": {
+                    "unselected": {
+                        "value": [
+                            "#000000",
+                            0
+                        ],
+                        "delay": 0.1
+                    },
+                    "selected": {
+                        "value": [
+                            "#888888",
+                            50
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            }
+        ]
+    },
+
+    "text_select_margins": {
+        "type": "vec3",
+        "linked_value": {
+            "objects": ["text_select"],
+            "name": "margins",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            5,
+                            5,
+                            0
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+
+    "text_select_text_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["text_select.text"],
+            "name": "text_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#ffffff",
+                            80
+                        ],
+                        "delay": 0.1
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            "#ffffff",
+                            90
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            },
+            {
+                "operator": "max",
+                "default_state": "unselected",
+                "states": {
+                    "unselected": {
+                        "value": [
+                            "#000000",
+                            0
+                        ],
+                        "delay": 0.1
+                    },
+                    "selected": {
+                        "value": [
+                            "#ffffff",
+                            100
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            }
+        ]
+    },
+    "listbox_background_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#2a2a2e",
+                            100
+                        ],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+    "listbox_rounded_radius":
+    {
+        "type": "vec4",
+        "linked_value": {
+            "name": "corner_radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [0.2, 0.2, 0.2, 0.2],
+                        "delay": 0.2
+                    }
+                }
+            }
+        ]
+    },
+
+    "sliderbar_bg_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["sliderbar.background"],
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#2a2a2e",
+                            100
+                        ],
+                        "delay": 0.1
+                    },
+                    "mouse_hover": {
+                        "value": [
+                            "#34343a",
+                            100
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            },
+            {
+                "operator": "max",
+                "default_state": "mouse_idle",
+                "states": {
+                    "mouse_idle": {
+                        "value": [
+                            "#000000",
+                            0
+                        ],
+                        "delay": 0.1
+                    },
+                    "mouse_move": {
+                        "value": [
+                            "#44444a",
+                            100
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            }
+        ]
+    },
+    "sliderbar_color": {
+        "type": "RGB24_APercent",
+        "linked_value": {
+            "objects": ["sliderbar.bar"],
+            "name": "background_color",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": [
+                            "#ffffff",
+                            100
+                        ],
+                        "delay": 0.1
+                    }
+                }
+            }
+        ]
+    },
+    "sliderbar_plot_radius": {
+        "type": "float",
+        "linked_value": {
+            "objects": ["sliderbar.plot"],
+            "name": "radius",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 8,
+                        "delay": 0.1
+                    }
+                }
+            }
+        ]
+    },
+    "sliderbar_thickness": {
+        "type": "float",
+        "linked_value": {
+            "objects": ["sliderbar"],
+            "name": "bar_thickness",
+            "operator": "set"
+        },
+        "layers": [
+            {
+                "operator": "set",
+                "default_state": "idle",
+                "states": {
+                    "idle": {
+                        "value": 2,
+                        "delay": 0.1
                     }
                 }
             }
