@@ -1,4 +1,4 @@
-# Run in standalone mode
+# Run the Dogfight in standalone mode
 
 ## Content of bin\assetc
 
