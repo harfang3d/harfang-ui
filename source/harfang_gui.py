@@ -71,8 +71,8 @@ class HarfangGUIRenderer:
 		cls.uniforms_values_list = hg.UniformSetValueList()
 		cls.uniforms_textures_list = hg.UniformSetTextureList()
 
-		cls.box_render_state = hg.ComputeRenderState(hg.BM_AlphaRGB_AddAlpha, hg.DT_LessEqual, hg.FC_Disabled, False)
-		cls.box_overlay_render_state = hg.ComputeRenderState(hg.BM_AlphaRGB_AddAlpha, hg.DT_Disabled, hg.FC_Disabled, False)
+		cls.box_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_LessEqual, hg.FC_Disabled, False)
+		cls.box_overlay_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_Disabled, hg.FC_Disabled, False)
 		cls.box_render_state_opaque = hg.ComputeRenderState(hg.BM_Opaque, hg.DT_LessEqual, hg.FC_Disabled, True)
 
 		cls.fonts_sizes = fonts_sizes
@@ -85,7 +85,7 @@ class HarfangGUIRenderer:
 		# text uniforms and render state
 		cls.text_uniform_values = [hg.MakeUniformSetValue('u_color', hg.Vec4(1, 1, 0))]
 		w_z, w_r, w_g, w_b, w_a = False, True, True, True, True
-		cls.text_render_state = hg.ComputeRenderState(hg.BM_AlphaRGB_AddAlpha, hg.DT_Disabled, hg.FC_Disabled, w_z, w_r, w_g, w_b, w_a)
+		cls.text_render_state = hg.ComputeRenderState(hg.BM_Alpha, hg.DT_Disabled, hg.FC_Disabled, w_z, w_r, w_g, w_b, w_a)
 
 	@classmethod
 	def get_texture(cls, texture_path):
@@ -1711,7 +1711,7 @@ class HarfangUI:
 		
 		cls.flag_vr = True
 
-		if hg.OpenVRIsHMDMounted():
+		if True: #hg.OpenVRIsHMDMounted():
 			cls.activate_mouse_VR(True)
 		else:
 			cls.activate_mouse_VR(False)
@@ -1737,7 +1737,7 @@ class HarfangUI:
 			cls.focal_distance = 1
 		
 		if cls.flag_use_mouse_VR:
-			cls.focal_distance = hg.ExtractZoomFactorFromProjectionMatrix(vr_state.left.projection, hg.Vec2(cls.vr_state.width/cls.vr_state.height, 1))
+			cls.focal_distance = hg.ExtractZoomFactorFromProjectionMatrix(vr_state.left.projection)
 			cls.camera3D_matrix = vr_state.head
 		else:
 			cls.camera3D_matrix = screenview_camera.GetTransform().GetWorld()
@@ -1792,7 +1792,7 @@ class HarfangUI:
 		if cls.flag_vr:
 			VRControllersHandler.update_displays(render_views_3D)
 			if cls.flag_use_mouse_VR:
-				fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(cls.vr_state.left.projection, hg.Vec2(cls.vr_state.width/cls.vr_state.height, 1)))
+				fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(cls.vr_state.left.projection))
 				ry = cls.vr_state.height
 				view_pos =hg.GetT(cls.vr_state.head)
 				MousePointer3D.draw_pointer(render_views_3D, ry, view_pos, fov, cls.controllers["mouse"]["world_intersection"])
@@ -3016,7 +3016,7 @@ class HarfangUI:
 	def activate_mouse_VR(cls, flag: bool):
 		cls.flag_use_mouse_VR = flag
 		if flag:
-			hg.DisableCursor()
+			pass #hg.DisableCursor()
 		else:
 			hg.ShowCursor()
 
