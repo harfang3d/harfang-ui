@@ -715,7 +715,8 @@ class HarfangUISkin:
 				"primitives": [{"type": "filled_rounded_box", "name": "toggle_image.box"}, {"type": "texture_toggle_fading", "name": "toggle_image.textures"}]
 				},
 			"scrollbar": {
-				"primitives":[{"type": "rounded_scrollbar", "name": "scrollbar.1"}]
+				"primitives":[{"type": "filled_box", "name": "scrollbar.background","background_color": ["#141414", 100]}, {"type": "filled_rounded_box", "name": "scrollbar.bar", "corner_radius": [1, 1, 1, 1]}],
+				"scrollbar_thickness": 8, "flag_horizontal": False, "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25
 				},
 			"radio_image_button": {
 				"primitives": [{"type": "rounded_box", "name": "radio_image_button.1"}, {"type": "texture", "name": "radio_image_button.2"}],
@@ -788,13 +789,8 @@ class HarfangUISkin:
 												"toggle_image_margins","widget_rounded_radius", "toggle_image_box_color"]
 									},
 			
-			
-			
-			"scrollbar_v": {"components": ["scrollbar"], "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25,
-							"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_rounded_radius"]
-						},
-			"scrollbar_h": {"components": ["scrollbar"], "part_size": 1, "total_size": 3, "scrollbar_position":0, "scrollbar_position_dest": 0, "bar_inertia": 0.25,
-							"properties": ["scrollbar_thickness", "scrollbar_background_color", "scrollbar_color", "scrollbar_rounded_radius"]
+			"scrollbar": {"components": ["scrollbar"],
+							"properties": ["scrollbar_color"]
 						},
 			
 			"radio_image_button": {"components": ["radio_image_button"], "radio_idx": 0,
@@ -1761,7 +1757,7 @@ class HarfangUI:
 			cls.focal_distance = 1
 		
 		if cls.flag_use_mouse_VR:
-			cls.focal_distance = hg.ExtractZoomFactorFromProjectionMatrix(vr_state.left.projection)
+			cls.focal_distance = hg.ExtractZoomFactorFromProjectionMatrix(vr_state.left.projection, hg.Vec2(cls.vr_state.width/cls.vr_state.height, 1))
 			cls.camera3D_matrix = vr_state.head
 		else:
 			cls.camera3D_matrix = screenview_camera.GetTransform().GetWorld()
@@ -1816,7 +1812,7 @@ class HarfangUI:
 		if cls.flag_vr:
 			VRControllersHandler.update_displays(render_views_3D)
 			if cls.flag_use_mouse_VR:
-				fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(cls.vr_state.left.projection))
+				fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(cls.vr_state.left.projection, hg.Vec2(cls.vr_state.width/cls.vr_state.height, 1)))
 				ry = cls.vr_state.height
 				view_pos =hg.GetT(cls.vr_state.head)
 				MousePointer3D.draw_pointer(render_views_3D, ry, view_pos, fov, cls.controllers["mouse"]["world_intersection"])
@@ -2092,7 +2088,7 @@ class HarfangUI:
 				cursor.y += title_height
 				cls.set_cursor_pos(cursor)
 				height = w_size.y - (bt + title_height)
-				py = cls.scrollbar_v(widget["name"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, cursor_auto = False, align=cls.HGUIAF_TOPLEFT) + mn.y
+				py = cls.scrollbar(widget["name"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, cursor_auto = False, align=cls.HGUIAF_TOPLEFT, flag_horizontal = False) + mn.y
 			
 			if widget["flag_scrollbar_h"]:
 				cursor = hg.Vec3(spos)
@@ -2100,7 +2096,7 @@ class HarfangUI:
 				cursor.x += bt
 				cls.set_cursor_pos(cursor)
 				width = w_size.x - 2 * bt if ws_size.y <= w_size.y else w_size.x - 2 * bt - scrollbar_size
-				px = cls.scrollbar_h(widget["name"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, cursor_auto = False, align=cls.HGUIAF_TOPLEFT) + mn.x
+				px = cls.scrollbar(widget["name"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, cursor_auto = False, align=cls.HGUIAF_TOPLEFT, flag_vertical = True) + mn.x
 
 			cls.set_scroll_position(widget["name"], px, py, 0)
 
@@ -2282,7 +2278,7 @@ class HarfangUI:
 				cursor.y += title_height
 				cls.set_cursor_pos(cursor)
 				height = w_size.y - (bt + title_height)
-				py = cls.scrollbar_v(widget["name"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, align=cls.HGUIAF_TOPLEFT, cursor_auto = False) + mn.y
+				py = cls.scrollbar(widget["name"] + ".scoll_v", scrollbar_size, height, w_size.y, ws_size.y, spy, flag_reset_bar_v, align=cls.HGUIAF_TOPLEFT, cursor_auto = False, flag_horizontal = False) + mn.y
 			
 			if widget["flag_scrollbar_h"]:
 				cursor = hg.Vec3(spos)
@@ -2290,7 +2286,7 @@ class HarfangUI:
 				cursor.x += bt
 				cls.set_cursor_pos(cursor)
 				width = w_size.x - 2 * bt if ws_size.y <= w_size.y else w_size.x - 2 * bt - scrollbar_size
-				px = cls.scrollbar_h(widget["name"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, align=cls.HGUIAF_TOPLEFT,cursor_auto = False) + mn.x
+				px = cls.scrollbar(widget["name"] + ".scoll_h", width, scrollbar_size, w_size.x, ws_size.x, spx, flag_reset_bar_h, align=cls.HGUIAF_TOPLEFT, cursor_auto = False, flag_horizontal = True) + mn.x
 
 			cls.set_scroll_position(widget["name"], px, py, 0)
 
@@ -2533,6 +2529,26 @@ class HarfangUI:
 				obj["position"].x += component["margins"].x
 				obj["position"].y += component["margins"].y
 		
+		elif component["type"] == "scrollbar":
+			obj_bg = component["objects_dict"]["scrollbar.background"]
+			obj_bar = component["objects_dict"]["scrollbar.bar"]
+			if component["flag_horizontal"]:
+				bar_height = component["scrollbar_thickness"]
+				margin = max(0, component["size"].y - bar_height)
+				s = component["size"].x - margin
+				bar_width = component["part_size"] / component["total_size"] * s
+				bar_pos = hg.Vec3(margin / 2 + component["scrollbar_position"] / component["total_size"] * s, margin / 2, 0)
+			else:
+				bar_width = component["scrollbar_thickness"]
+				margin = max(0, component["size"].x - bar_width)
+				s = component["size"].y - margin
+				bar_height = component["part_size"] / component["total_size"] * s
+				bar_pos = hg.Vec3(margin / 2, margin / 2 + component["scrollbar_position"] / component["total_size"] * s, 0)
+						
+			obj_bar["position"].x, obj_bar["position"].y = bar_pos.x, bar_pos.y
+			obj_bar["size"].x, obj_bar["size"].y = bar_width, bar_height
+			obj_bg["size"].x, obj_bg["size"].y = component["size"].x, component["size"].y
+
 		else:
 			for primitive in component["primitives"]:
 				
@@ -3016,7 +3032,7 @@ class HarfangUI:
 							else:
 								HarfangGUISceneGraph.add_text(matrix, p, primitive["text_size"], text, cls.current_font_id, primitive["text_color"] * opacity)
 
-
+				"""
 				elif primitive_id == "rounded_scrollbar":
 					if widget["type"] == "scrollbar_v":
 						bar_width = primitive["scrollbar_thickness"]
@@ -3036,7 +3052,7 @@ class HarfangUI:
 					#margins = hg.Vec2(margin, margin)
 					HarfangGUISceneGraph.add_box(matrix, cpos, primitive["size"], primitive["background_color"] * opacity)
 					HarfangGUISceneGraph.add_rounded_box(matrix, cpos + bar_pos, hg.Vec3(bar_width, bar_height, 0), primitive["scrollbar_color"] * opacity, primitive["corner_radius"])
-
+				"""
 
 	@classmethod
 	def activate_mouse_VR(cls, flag: bool):
@@ -3581,22 +3597,28 @@ class HarfangUI:
 		return mouse_click, current_idx
 	
 	@classmethod
-	def scrollbar(cls, widget_id, width, height, part_size, total_size, scroll_position, flag_reset, flag_horizontal, args):
-		widget = cls.get_widget("scrollbar_h" if flag_horizontal else "scrollbar_v", widget_id, args)
-		obj_sb = widget["objects_dict"]["scrollbar.1"]
-		widget["components"]["scrollbar"]["size"].x = width if flag_horizontal else max(obj_sb["scrollbar_thickness"], width)
-		widget["components"]["scrollbar"]["size"].y = max(obj_sb["scrollbar_thickness"], height) if flag_horizontal else height
+	def scrollbar(cls, widget_id, width, height, part_size, total_size, scroll_position, flag_reset, **args):
+		widget = cls.get_widget("scrollbar", widget_id, args)
+		comp_sb = widget["objects_dict"]["scrollbar"]
+		
+		if "flag_horizontal" in args:
+			comp_sb["flag_horizontal"] = args["flag_horizontal"]
+		flag_horizontal = comp_sb["flag_horizontal"]
+		
+		comp_sb["size"].x = width if flag_horizontal else max(comp_sb["scrollbar_thickness"], width)
+		comp_sb["size"].y = max(comp_sb["scrollbar_thickness"], height) if flag_horizontal else height
 
 		if scroll_position is None:
-					scroll_position = widget["scrollbar_position_dest"]
+					scroll_position = comp_sb["scrollbar_position_dest"]
 
+		# Scroll using pointer
 		if "mouse_move" in widget["states"]:
 			if "MLB_down" not in cls.current_signals:
 				cls.set_widget_state(widget, "mouse_idle")
 				cls.set_ui_state(cls.UI_STATE_MAIN)
 			elif cls.ui_state == cls.UI_STATE_WIDGET_MOUSE_FOCUS:
 				pointer_dt = HarfangGUISceneGraph.get_current_container()["pointers"]["mouse"]["pointer_local_dt"]
-				s = total_size / (widget["components"]["scrollbar"]["size"].x if flag_horizontal else widget["components"]["scrollbar"]["size"].y)
+				s = total_size / (comp_sb["size"].x if flag_horizontal else comp_sb["size"].y)
 				scroll_step = pointer_dt.x if flag_horizontal else pointer_dt.y
 				scroll_position += scroll_step * s
 		else:
@@ -3604,39 +3626,31 @@ class HarfangUI:
 				cls.set_widget_state(widget, "mouse_move")
 				cls.set_ui_state(cls.UI_STATE_WIDGET_MOUSE_FOCUS)
 
+		# Scroll with mouse wheel
 		if cls.current_focused_widget is not None:
 			if cls.current_focused_widget == widget["parent"]:
 				mw = cls.mouse.Wheel()
 				if not cls.keyboard.Down(hg.K_LShift) and not flag_horizontal:
-					s = total_size / widget["components"]["scrollbar"]["size"].y
+					s = total_size / comp_sb["size"].y
 					scroll_position -= mw * s * 20
 				elif cls.keyboard.Down(hg.K_LShift) and flag_horizontal:
-					s = total_size / widget["components"]["scrollbar"]["size"].x
+					s = total_size / comp_sb["size"].x
 					scroll_position += mw * s * 20
 		
-		widget["part_size"] = part_size
-		widget["total_size"] = total_size
-		widget["scrollbar_position_dest"] = max(0, min(total_size - part_size, scroll_position))
+		comp_sb["part_size"] = part_size
+		comp_sb["total_size"] = total_size
+		comp_sb["scrollbar_position_dest"] = max(0, min(total_size - part_size, scroll_position))
 
 		widget["position"] = cls.get_cursor_position()
 		cls.update_widget(widget)
 		cls.update_cursor(widget)
 		if flag_reset:
-			widget["scrollbar_position"] = widget["scrollbar_position_dest"]
+			comp_sb["scrollbar_position"] = comp_sb["scrollbar_position_dest"]
 		else:
-			widget["scrollbar_position"] += (widget["scrollbar_position_dest"] - widget["scrollbar_position"]) * widget["bar_inertia"]
-		return widget["scrollbar_position"]
+			comp_sb["scrollbar_position"] += (comp_sb["scrollbar_position_dest"] - comp_sb["scrollbar_position"]) * comp_sb["bar_inertia"]
+		return comp_sb["scrollbar_position"]
 
 
-	@classmethod
-	def scrollbar_v(cls, widget_id, width, height, part_size, total_size, scroll_position = None, flag_reset = False, **args):
-		return cls.scrollbar(widget_id, width, height, part_size, total_size, scroll_position, flag_reset, False, args)
-
-
-	@classmethod
-	def scrollbar_h(cls, widget_id, width, height, part_size, total_size, scroll_position = None, flag_reset = False, **args):
-		return cls.scrollbar(widget_id, width, height, part_size, total_size, scroll_position, flag_reset, True, args)
-		
 	@classmethod
 	def radio_image_button(cls, widget_id, texture_path, current_idx, radio_idx, image_size: hg.Vec2 = None, **args):
 		widget = cls.get_widget("radio_image_button", widget_id, args)

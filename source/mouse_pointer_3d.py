@@ -65,7 +65,7 @@ class MousePointer3D:
             cls.flag_update_vr_head_offset = False
 
         resolution = hg.Vec2(vr_state.width, vr_state.height)
-        fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(vr_state.left.projection))
+        fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(vr_state.left.projection, hg.Vec2(resolution.x/resolution.y, 1)))
 
         if mouse_pointer_intersection is None:
             new_mouse_pointer_distance = cls.mouse_pointer_default_distance
@@ -94,7 +94,7 @@ class MousePointer3D:
 
     @classmethod
     def update_low_level(cls, view_state:hg.ViewState, resolution: hg.Vec2, camera_matrix: hg.Mat4, mouse_screen_pos: hg.Vec2):
-        fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(view_state.proj))
+        fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(view_state.proj, hg.Vec2(resolution.x / resolution.y, 1)))
         screen_height = tan(fov/2) * cls.mouse_pointer_distance * 2
         cls.pixel_size = screen_height / resolution.y
         mouse_pos = (mouse_screen_pos - resolution / 2) * cls.pixel_size

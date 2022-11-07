@@ -879,51 +879,6 @@
         ]
     },
 
-    "scrollbar_thickness": {
-        "type": "float",
-        "linked_value": {
-            "name": "scrollbar_thickness",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": 8,
-                        "delay": 0.2
-                    },
-                    "mouse_hover": {
-                        "value": 8,
-                        "delay": 0.15
-                    }
-                }
-            }
-        ]
-    },
-    "scrollbar_background_color": {
-        "type": "RGB24_APercent",
-        "linked_value": {
-            "name": "background_color",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [
-                            "#141414",
-                            100
-                        ],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
     "scrollbar_color": {
         "type": "RGB24_APercent",
         "linked_value": {
@@ -973,26 +928,7 @@
             }
         ]
     },
-    "scrollbar_rounded_radius":
-    {
-        "type": "vec4",
-        "linked_value": {
-            "name": "corner_radius",
-            "operator": "set"
-        },
-        "layers": [
-            {
-                "operator": "set",
-                "default_state": "idle",
-                "states": {
-                    "idle": {
-                        "value": [1, 1, 1, 1],
-                        "delay": 0.2
-                    }
-                }
-            }
-        ]
-    },
+
     "radio_image_offset": {
         "type": "vec3",
         "linked_value": {

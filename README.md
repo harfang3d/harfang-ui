@@ -34,6 +34,11 @@ The current version of the Harfang GUI API provides the following widgets:
 - Input text  
 - Scrollbar (vertical & horizontal)  
 - Radio image button
+- Toggle button
+- Toggle image
+- ListBox
+- Slider float
+- Widgets group
 
 ## How to use Harfang GUI?
 
