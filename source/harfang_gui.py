@@ -607,26 +607,6 @@ class HarfangUISkin:
 					"value": 0.2
 					}
 				},
-
-
-			"rounded_scrollbar":{
-				"background_color":{
-					"type": "RGB24_APercent",
-					"value": ["#555555", 100]
-					},
-				"scrollbar_color":{
-					"type": "RGB24_APercent",
-					"value": ["#aaaaaa", 100]
-					},
-				"scrollbar_thickness":{
-					"type": "float",
-					"value": 1
-					}, 
-				"corner_radius":{
-					"type": "vec4",
-					"value": [1, 1, 1, 1]
-					}
-				},
 			
 			"circle":{
 				"background_color":{
@@ -3032,28 +3012,6 @@ class HarfangUI:
 							else:
 								HarfangGUISceneGraph.add_text(matrix, p, primitive["text_size"], text, cls.current_font_id, primitive["text_color"] * opacity)
 
-				"""
-				elif primitive_id == "rounded_scrollbar":
-					if widget["type"] == "scrollbar_v":
-						bar_width = primitive["scrollbar_thickness"]
-						margin = max(0, primitive["size"].x - bar_width)
-						s = primitive["size"].y - margin
-						bar_height = widget["part_size"] / widget["total_size"] * s
-						bar_pos = hg.Vec3(margin / 2, margin / 2 + widget["scrollbar_position"] / widget["total_size"] * s, 0)
-						
-					elif widget["type"] == "scrollbar_h":
-						bar_height = primitive["scrollbar_thickness"]
-						margin = max(0, primitive["size"].y - bar_height)
-						s = primitive["size"].x - margin
-						bar_width = widget["part_size"] / widget["total_size"] * s
-						bar_pos = hg.Vec3(margin / 2 + widget["scrollbar_position"] / widget["total_size"] * s, margin / 2, 0)
-					else:
-						margin = 0
-					#margins = hg.Vec2(margin, margin)
-					HarfangGUISceneGraph.add_box(matrix, cpos, primitive["size"], primitive["background_color"] * opacity)
-					HarfangGUISceneGraph.add_rounded_box(matrix, cpos + bar_pos, hg.Vec3(bar_width, bar_height, 0), primitive["scrollbar_color"] * opacity, primitive["corner_radius"])
-				"""
-
 	@classmethod
 	def activate_mouse_VR(cls, flag: bool):
 		cls.flag_use_mouse_VR = flag
@@ -3340,15 +3298,6 @@ class HarfangUI:
 					t1 = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][strt:cls.kb_cursor_pos])).x
 				primitive["display_text_start_idx"] = strt
 			
-			"""
-			l_disp = len(primitive["text"])
-			t_disp = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][primitive["display_text_start_idx"]:l_disp])).x
-			while t_disp > primitive["forced_text_width"]:
-				l_disp -= 1
-				t_disp = (HarfangGUIRenderer.compute_text_size(cls.current_font_id, primitive["text"][primitive["display_text_start_idx"]:l_disp])).x
-
-			primitive["display_text"] = primitive["text"][primitive["display_text_start_idx"]:l_disp]
-			"""
 			primitive["display_text"] = cls.clip_text(primitive["text"], primitive["display_text_start_idx"], primitive["forced_text_width"])
 
 		else:
