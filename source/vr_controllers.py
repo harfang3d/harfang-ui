@@ -60,7 +60,7 @@ class VRControllersHandler:
         return False
 
     @classmethod
-    def update_displays(cls, views_ids: list):
+    def update_displays(cls, views_ids: list ):
         i = 0
         for n in cls.connected_controllers:
             mat = cls.controllers[n]["world"]

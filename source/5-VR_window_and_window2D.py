@@ -96,11 +96,13 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
         if hgui.begin_window("My window 3D", hg.Vec3(-2, 2.65, 5), hg.Vec3(0, 0, 0), hg.Vec3(500, 300, 0), 10/1280 ):
 
             hgui.info_text("info1", "Simple Window3D")
+            """
             if hg.OpenVRIsHMDMounted():
                 pointer_vr_msg = "Helmet mounted : Pointer VR activated"
             else:
                 pointer_vr_msg = "Helmet unmounted : Pointer VR deactivated"
-            hgui.info_text("info2", pointer_vr_msg)
+            """
+            hgui.info_text("info2", "VR pointer is WIP - Soon in next official HARFANG build")
             
 
             hgui.end_window()
