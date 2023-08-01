@@ -1,2 +1,2 @@
-bin\assetc\assetc.exe source\assets\
+python -m harfang.bin assetc source\assets\
 pause

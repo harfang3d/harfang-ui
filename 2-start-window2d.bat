@@ -1,3 +1,3 @@
 cd source
-..\bin\python\python.exe 1-Window2D.py
+python 1-Window2D.py
 pause
