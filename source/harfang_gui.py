@@ -221,6 +221,13 @@ class HarfangGUIRenderer:
 
 	@classmethod
 	def render_widget_container(cls, view_id, container):
+		"""
+		Renders a widget container.
+		It first retrieves the draw list for the container and sets up the view with the appropriate frame buffer, 
+		mode, rectangle, and orthographic settings. It then loops through each draw element in the draw list and calls
+		the appropriate draw function based on the type of the draw element. Finally, it sets the view id of the container
+		and returns the next view id.
+		"""
 		draw_list = HarfangGUISceneGraph.widgets_containers_displays_lists[container["name"]]
 		hg.SetViewFrameBuffer(view_id, container["frame_buffer"].handle)
 	
@@ -259,6 +266,13 @@ class HarfangGUIRenderer:
 
 	@classmethod
 	def render(cls, view_id, outputs2D: list, outputs3D: list):
+		"""
+		Sets up and renders 2D and 3D views for given outputs. 
+		It first sets up the 3D and 2D views based on the provided outputs. 
+		Then, it renders the widget containers to textures and displays them to frame buffers or the screen. 
+		It handles both 3D and 2D containers, rendering each to a texture and then displaying it. 
+		Finally, it returns the view_id, render_views_3D, and render_views_2D.
+		"""
 		
 		# Setup 3D views
 		render_views_3D = []
@@ -1460,7 +1474,14 @@ class HarfangUI:
 
 	@classmethod
 	def create_widget(cls, widget_type, widget_id):
-		
+		"""
+		Creates a new widget of a given type and id. 
+		It first checks if the widget type is valid and then creates either a container or a single widget. 
+		It then creates the components and properties of the widget based on the widget model. 
+		It also handles the creation of linked values, which are values that are linked to other objects in the widget. 
+		Finally, it returns the created widget or None if the widget type is not valid.
+		"""
+
 		# Widgets types of "widgets_container" classe:
 		widgets_type_containers = ["window", "widget_group"]
 
@@ -1824,7 +1845,13 @@ class HarfangUI:
 
 	@classmethod
 	def push_widgets_container(cls, w_container):
-		
+		"""
+		This function adds a widget container to the stack and sets its child depth. 
+		It also updates the parent's children order list and sets the cursor start line and workspace boundaries. 
+		It handles both 2D and 3D containers and ensures that even if they are no longer displayed by the user, 
+		the containers remain in the parent's children order list.
+		"""
+
 		HarfangGUISceneGraph.widgets_containers_stack.append(w_container)
 		w_container["children_order"] = []
 		w_container["child_depth"] = len(HarfangGUISceneGraph.widgets_containers_stack) - 1 # First child depth = 1, 0 is Main Widget container
@@ -1896,6 +1923,12 @@ class HarfangUI:
 	
 	@classmethod
 	def update_widgets_stacking(cls, container):
+		"""
+		Updates the stacking of widgets within a container. 
+		It iterates over each row of widgets in the container's stack and adjusts their positions based on alignment settings. 
+		It handles both horizontal and vertical alignment, allowing widgets to be centered, right-aligned, or bottom-aligned within their row.
+		"""
+
 		w_stacking = container["widgets_stack"]
 		workspace_width = container["workspace_max"].x - container["workspace_min"].x
 		v = hg.Vec3(0, 0, 0)
@@ -1996,6 +2029,14 @@ class HarfangUI:
 
 	@classmethod
 	def end_widget_group(cls):
+		"""
+		Finalizes a widget group by updating its workspace, handling scrollbars, and adjusting scroll position. 
+		It first checks if the workspace size exceeds the widget size and adds scrollbars if necessary. 
+		It then clamps the scroll position to ensure it's within the workspace boundaries. 
+		If the widget group has vertical or horizontal scrollbars, it adjusts the scroll position accordingly. 
+		Finally, it pops the widget container from the stack, updates the widgets stacking, and updates the widget and cursor.
+		"""
+
 		if len(HarfangGUISceneGraph.widgets_containers_stack) <= 1:
 			print("HarfangGUI ERROR - Widgets containers stack is empty !")
 		else:
@@ -2446,7 +2487,17 @@ class HarfangUI:
 
 	@classmethod
 	def update_component(cls, widget, component):
-		
+		"""
+		Updates a component of a widget.
+		It first calculates the size of the component based on its type and the sizes of its primitives. 
+		It then adjusts the position and size of each primitive within the component. 
+		The function handles different types of components, including 'sliderbar', 'scrollbar', and others. 
+		For each type, it adjusts the positions and sizes of the component's primitives accordingly. 
+		The function also handles the stacking of primitives within the component, either horizontally or vertically, 
+		and adjusts the size of the component based on its content size. 
+		Finally, it aligns the stackable primitives and updates the position and size of responsive primitives.
+		"""
+
 		# Component display vars
 		sx, sy = 0, 0
 		flag_compute_size = False # "text", "input_text" and "texture" primitives affects component size. 
