@@ -420,7 +420,7 @@ class HarfangUISkin:
 
 		cls.keyboard_cursor_color = hg.Color(1, 1, 1, 0.75)
 
-		cls.properties = cls.load_properties("properties.json")
+		cls.properties = cls.load_properties("source/properties.json")
 
 		cls.primitives = {
 			"box":{
@@ -1737,7 +1737,7 @@ class HarfangUI:
 			cls.focal_distance = 1
 		
 		if cls.flag_use_mouse_VR:
-			cls.focal_distance = hg.ExtractZoomFactorFromProjectionMatrix(vr_state.left.projection)
+			cls.focal_distance = hg.ExtractZoomFactorFromProjectionMatrix(vr_state.left.projection, hg.ComputeAspectRatioX(cls.width, cls.height))
 			cls.camera3D_matrix = vr_state.head
 		else:
 			cls.camera3D_matrix = screenview_camera.GetTransform().GetWorld()
@@ -1792,7 +1792,7 @@ class HarfangUI:
 		if cls.flag_vr:
 			VRControllersHandler.update_displays(render_views_3D)
 			if cls.flag_use_mouse_VR:
-				fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(cls.vr_state.left.projection))
+				fov = hg.ZoomFactorToFov(hg.ExtractZoomFactorFromProjectionMatrix(cls.vr_state.left.projection, hg.ComputeAspectRatioX(cls.width, cls.height)))
 				ry = cls.vr_state.height
 				view_pos =hg.GetT(cls.vr_state.head)
 				MousePointer3D.draw_pointer(render_views_3D, ry, view_pos, fov, cls.controllers["mouse"]["world_intersection"])

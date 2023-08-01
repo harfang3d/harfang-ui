@@ -6,10 +6,10 @@ from harfang_gui import HarfangUI as hgui
 hg.InputInit()
 hg.WindowSystemInit()
 
-width, height = 1920, 1080 
+width, height = 1600, 900 
 window = hg.RenderInit('Harfang - GUI', width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
-hg.AddAssetsFolder("assets_compiled")
+hg.AddAssetsFolder("source/assets_compiled")
 
 res = hg.PipelineResources()
 pipeline = hg.CreateForwardPipeline()

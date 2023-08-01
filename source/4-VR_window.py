@@ -10,7 +10,7 @@ hg.WindowSystemInit()
 width, height = 1280, 720
 window = hg.RenderInit('Harfang GUI - VR 3D window', width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
-hg.AddAssetsFolder("assets_compiled")
+hg.AddAssetsFolder("source/assets_compiled")
 
 res = hg.PipelineResources()
 pipeline = hg.CreateForwardPipeline()

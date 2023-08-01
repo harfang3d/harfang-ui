@@ -1,5 +1,6 @@
 import harfang as hg
 from harfang_gui import HarfangUI as hgui
+from os import getcwd
 
 # Init Harfang
 
@@ -9,7 +10,7 @@ hg.WindowSystemInit()
 width, height = 1280, 720 
 window = hg.RenderInit('Harfang GUI - 2D window', width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
-hg.AddAssetsFolder("assets_compiled")
+hg.AddAssetsFolder("source/assets_compiled")
 
 # Setup HarfangGUI
 
