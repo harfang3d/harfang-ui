@@ -7,14 +7,14 @@ from harfang_gui import HarfangUISkin
 hg.InputInit()
 hg.WindowSystemInit()
 
-width, height = 1920, 1080
+width, height = 1280, 720
 window = hg.RenderInit('Harfang GUI - 3D window', width, height, hg.RF_VSync | hg.RF_MSAA4X)
 
 #
 pipeline = hg.CreateForwardPipeline()
 res = hg.PipelineResources()
 
-hg.AddAssetsFolder("assets_compiled")
+hg.AddAssetsFolder("source/assets_compiled")
 
 # load scene
 scene = hg.Scene()

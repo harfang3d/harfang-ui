@@ -13,7 +13,7 @@ window = hg.RenderInit('Harfang GUI - 2D & 3D windows', width, height, hg.RF_VSy
 pipeline = hg.CreateForwardPipeline()
 res = hg.PipelineResources()
 
-hg.AddAssetsFolder("assets_compiled")
+hg.AddAssetsFolder("source/assets_compiled")
 
 # load scene
 scene = hg.Scene()

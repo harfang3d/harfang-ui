@@ -9,7 +9,7 @@ hg.WindowSystemInit()
 width, height = 1280, 720
 window = hg.RenderInit('Harfang GUI - 2D & 3D windows', width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
-hg.AddAssetsFolder("assets_compiled")
+hg.AddAssetsFolder("source/assets_compiled")
 
 res = hg.PipelineResources()
 pipeline = hg.CreateForwardPipeline()
@@ -102,7 +102,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             else:
                 pointer_vr_msg = "Helmet unmounted : Pointer VR deactivated"
             """
-            hgui.info_text("info2", "VR pointer is WIP - Soon in next official HARFANG build")
+            hgui.info_text("info2", "VR pointer is Work In Progress :)")
             
 
             hgui.end_window()
