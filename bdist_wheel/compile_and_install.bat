@@ -6,3 +6,5 @@ for /f %%f in ('dir /ad /b HarfangGUI.egg-info\') do rd /s /q HarfangGUI.egg-inf
 python setup.py bdist_wheel
 @REM pip uninstall -y HarfangGUI
 @REM pip install .\dist\HarfangGUI-2.0.0-py3-none-win_amd64.whl
+
+pause
