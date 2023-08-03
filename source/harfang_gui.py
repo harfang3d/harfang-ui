@@ -407,6 +407,14 @@ class HarfangGUIRenderer:
 		return view_id, render_views_3D, render_views_2D
 
 class HarfangUISkin:
+	"""
+	The HarfangUISkin class manages the visual appearance of a UI in the Harfang 3D engine.
+	It provides methods for:
+	- Initializing class variables such as textures, colors, and properties of UI components and widgets.
+	- Interpolating between values for smooth transitions.
+	- Loading and saving UI properties from/to JSON files.
+	- Converting color properties between different formats and to hg.Color objects.
+	"""
 
 	check_texture = None
 	check_texture_info = None
@@ -876,6 +884,14 @@ class HarfangUISkin:
 		
 
 class HarfangGUISceneGraph:
+	"""
+	The HarfangGUISceneGraph class manages the graphical representation of widgets in a UI scene. It provides methods for:
+	- Initializing and clearing the scene graph.
+	- Adding, sorting, and retrieving widget containers.
+	- Setting the current container and its display list.
+	- Adding various graphical elements to the scene, such as boxes, rounded boxes, borders, circles, and text.
+	- Computing the vertices for rounded rectangles.
+	"""
 
 	widgets_containers_stack = [] #Used for matrices computations
 	
@@ -1059,6 +1075,17 @@ class HarfangGUISceneGraph:
 
 
 class HarfangUI:
+	"""
+	The HarfangUI class manages the user interface (UI) for both 2D and VR environments. It provides methods for:
+	- Initializing the UI with specified fonts, screen width, and height.
+	- Handling various UI states such as main, widget keyboard focus, widget mouse focus, and mouse down out.
+	- Managing widgets, their containers, and the cursor.
+	- Handling signals for UI events.
+	- Managing controllers for user input.
+	- Handling keyboard input for text editing.
+	- Setting up main containers for 3D and 2D UIs.
+	- Handling VR-specific features such as VR state and framebuffers.
+	"""
 
 	# VR
 	flag_vr = False
@@ -1125,7 +1152,7 @@ class HarfangUI:
 	flag_same_line = False
 	flag_set_cursor_pos = False
 	widgets_same_line = []
-	line_max_y_size = 0 #Used for auto-positionning with same_line(): the biggest widget Ysize in the line
+	line_max_y_size = 0 # Used for auto-positionning with same_line(): the biggest widget Ysize in the line
 	line_widgets_width = 0
 	line_space_size = 3 # Space between lines in pixels
 	inner_line_space_size = 3 # space between widgets in same line
@@ -1135,7 +1162,7 @@ class HarfangUI:
 	dt = 0
 	timestamp = 0
 
-	new_signals = {} #Signals sended in frame
+	new_signals = {} # Signals sended in frame
 	current_signals = {} # Prec. frame signals, read in current frame
 	
 	UI_STATE_MAIN = 0 # Widgets mouse hovering / mouse click / keyboard shortcuts
@@ -1251,10 +1278,10 @@ class HarfangUI:
 		return {
 			"id": id,
 			"enabled": True,
-			"ray_p0": None, #Vec3, position
-			"ray_p1": None, #vec3, direction
-			"world_intersection": None, #Vec3
-			"focused_container": None #widgets_container
+			"ray_p0": None, # Vec3, position
+			"ray_p1": None, # Vec3, direction
+			"world_intersection": None, # Vec3
+			"focused_container": None # widgets_container
 		}
 
 	@classmethod
@@ -1270,10 +1297,10 @@ class HarfangUI:
 			"world_matrix": None,
 			"position": hg.Vec3(0, 0, 0),
 			"rotation": hg.Vec3(0, 0, 0),
-			"scale": hg.Vec3(1, 1, 1),	#Global scale, used to compute final render matrix
+			"scale": hg.Vec3(1, 1, 1),	# Global scale, used to compute final render matrix
 			"offset": hg.Vec3(0, 0, 0),
 			"size": hg.Vec3(0, 0, 0),
-			"cursor_auto": True	#False if cursor is not incremented in object rendering
+			"cursor_auto": True	# False if cursor is not incremented in object rendering
 		}
 
 	@classmethod
@@ -1283,15 +1310,15 @@ class HarfangUI:
 		
 		component.update(
 			{
-				"primitives": [], #Render shapes
+				"primitives": [], # Render shapes
 				"objects_dict": {},
 				"stacking": cls.HGUI_STACK_HORIZONTAL, # Text & textures primitives stacking
 				"align": cls.HGUIAF_CENTER,
 				"cursor_position": hg.Vec3(0, 0, 0),
-				"space_size": 10, #distance between primitives
+				"space_size": 10, # Distance between primitives
 				"margins": hg.Vec3(0, 0, 0),
-				"overlay": False, #Used for widgets containers. If True: component is rendered over children widgets
-				"content_size": hg.Vec3(0, 0, 0), #Stacked primitives size, out of margins or component auto-sizing
+				"overlay": False, # Used for widgets containers. If True: component is rendered over children widgets
+				"content_size": hg.Vec3(0, 0, 0), # Stacked primitives size, out of margins or component auto-sizing
 				"size_factor": hg.Vec3(-1, -1, -1) # Size linked to container size. factor <= 0 : no proportional size correction. factor > 0 : size = max(component_size * factor, container_size) 
 			}
 		)
@@ -1381,25 +1408,31 @@ class HarfangUI:
 
 	@classmethod
 	def new_single_widget(cls, type):
+		"""
+		Creates a new widget of a specified type, including properties for  alignment, stacking, cursor position,
+		size, opacity, components, rendering order, pointers, and states. 
+		It also includes flags for indicating whether the widget is new or if its size needs to be updated.
+		"""
+
 		widget = cls.new_gui_object(type)
 		widget["classe"] = "widget"
 		widget.update({
-			"flag_new": True,	#True at widget creation, else False (see get_widget())
-			"flag_update_rest_size": True, #True if widget rest size must be updated (e.g.: input strings)
-			"rest_size": hg.Vec3(0, 0, 0), #widget reference size used for positionning (center)
+			"flag_new": True,	# True at widget creation, else False (see get_widget())
+			"flag_update_rest_size": True, # True if widget rest size must be updated (e.g.: input strings)
+			"rest_size": hg.Vec3(0, 0, 0), # Widget reference size used for positionning (center)
 			"align": cls.HGUIAF_CENTER,
 			"v_align": cls.HGUIAF_CENTER,
 			"stacking": cls.HGUI_STACK_HORIZONTAL,
 			"cursor": hg.Vec3(0, 0, 0),
 			"cursor_start_line": hg.Vec3(0, 0, 0),
 			"default_cursor_start_line": hg.Vec3(0, 0, 0),
-			"space_size": 10, #distance between components
+			"space_size": 10, # Distance between components
 			"opacity": 1,
 			"max_size": hg.Vec3(0, 0, 0), # Used for window worksapce computation (scroll bars...)
 			"components": {},
 			"components_render_order": [],
 			"components_order": cls.HGUI_ORDER_DEFAULT,
-			"objects_dict": {}, #Components & primitives in same dict to optimize properties links referencement
+			"objects_dict": {}, # Components & primitives in same dict to optimize properties links referencement
 			"properties": {},
 			"pointers": {"mouse": cls.new_pointer("mouse")},
 			"sub_widgets": [], # Sub-widgets are widgets générated by the widget (e.g: listbox, generates text_select widgets)
@@ -1419,6 +1452,13 @@ class HarfangUI:
 
 	@classmethod
 	def new_widgets_container(cls, type):
+		"""
+		Creates a new widget container, which is a special type of widget designed to hold and manage other widgets. 
+		The container has properties for layout (margins, stacking direction), visibility and rendering (frame buffer, view ID), 
+		as well as workspace properties defining the area where widgets can be placed. 
+		This method is used when a new group of widgets needs to be created and managed together in the user interface.
+		"""
+
 		container = cls.new_single_widget(type)
 		container["classe"] = "widgets_container"
 		container.update({
@@ -1431,22 +1471,22 @@ class HarfangUI:
 			"flag_scrollbar_h": False,
 			"flag_hide_scrollbars": False,
 			"children_order": [],
-			"widgets_stack": [], # list of rows lists, to compute children widgets stacking and alignment at end_[container]() function
+			"widgets_stack": [],	# List of rows lists, to compute children widgets stacking and alignment at end_[container]() function
 			"sort_weight": 0,		# Sort weight = distance to camera-pointer ray for 3D windows. Sort weight = align position for 2D windows
 			"child_depth": 0,
-			"containers_2D_children_align_order": [],	#2D Overlays order are user-focus dependant for 2D containers - Used for final rendering order
-			"containers_3D_children_align_order": [],	#for the moment, 3D Overlays order are user-order dependant for 3D containers
-			"align_position": 0, #Index in parent["containers_2D_children_align_order"] - Used in sorting to find pointer focus
-			"workspace_min": hg.Vec3(0, 0, 0), #Where workspace begins (could be < 0)
+			"containers_2D_children_align_order": [],	# 2D Overlays order are user-focus dependant for 2D containers - Used for final rendering order
+			"containers_3D_children_align_order": [],	# for the moment, 3D Overlays order are user-order dependant for 3D containers
+			"align_position": 0, # Index in parent["containers_2D_children_align_order"] - Used in sorting to find pointer focus
+			"workspace_min": hg.Vec3(0, 0, 0), # Where workspace begins (could be < 0)
 			"workspace_max": hg.Vec3(0, 0, 0),
 			"workspace_size": hg.Vec3(0, 0, 0),
 			"frame_buffer_size": hg.iVec2(0, 0),
-			"scroll_position": hg.Vec3(0, 0, 0),	#Set with new_scroll_position at frame beginning
-			"new_scroll_position": hg.Vec3(0, 0, 0), #Next frame scroll position
+			"scroll_position": hg.Vec3(0, 0, 0),	# Set with new_scroll_position at frame beginning
+			"new_scroll_position": hg.Vec3(0, 0, 0), # Next frame scroll position
 			"color_texture": None,
 			"depth_texture": None,
-			"frame_buffer": None,	#Widgets rendering frame buffer
-			"view_id": -1 #Container rendering view_id
+			"frame_buffer": None,	# Widgets rendering frame buffer
+			"view_id": -1 # Container rendering view_id
 		})
 		return container
 
@@ -1691,7 +1731,15 @@ class HarfangUI:
 
 	@classmethod
 	def begin_frame(cls, dt, mouse: hg.Mouse, keyboard: hg.Keyboard, window, camera: hg.Node = None):
-		
+		"""
+		Sets up the initial state for a new frame in the GUI. It updates the class variables with the 
+		current mouse, keyboard, window, and camera states. It also calculates the window size and the camera's 3D 
+		transformation matrix and focal distance if a camera is provided. 
+		Then, it updates the state of the controllers and the 2D camera, and processes any signals, such as a mouse click. 
+		If the mouse button is down, it sends a signal indicating this. If the mouse button is down outside of a widget, 
+		it resets the UI state to the main state. Finally, it resets the main containers and clears the scene graph.
+		"""
+
 		cls.flag_vr = False
 
 		cls.camera = camera
@@ -1716,8 +1764,12 @@ class HarfangUI:
 		cls.update_camera2D()
 		
 		cls.update_signals()
-		# Pourquoi passer par les signaux internes pour indiquer que le bouton souris est down:
-		# - Permet de déterminer le state en fonction de la localisation du pointeur (DOWN sur un widget != DOWN hors widget)
+		# We use internal signals to indicate a mouse button press because:
+		# - It allows us to differentiate the state based on the pointer's location. 
+		#   For instance, a mouse button press on a widget is not the same as a mouse button press outside of a widget.
+		# If the mouse button is pressed, we send a "MLB_down" signal.
+		# If the UI state indicates a mouse button press outside of a widget, we reset the UI state to the main state.
+		# Finally, we reset the main containers and clear the scene graph.
 		if cls.mouse.Down(hg.MB_0):
 			cls.send_signal("MLB_down")
 		elif cls.ui_state == cls.UI_STATE_MOUSE_DOWN_OUT:
@@ -1768,8 +1820,12 @@ class HarfangUI:
 		cls.update_camera2D()
 		
 		cls.update_signals()
-		# Pourquoi passer par les signaux internes pour indiquer que le bouton souris est down:
-		# - Permet de déterminer le state en fonction de la localisation du pointeur (DOWN sur un widget != DOWN hors widget)
+		# We use internal signals to indicate a mouse button press because:
+		# - It allows us to differentiate the state based on the pointer's location. 
+		#   For instance, a mouse button press on a widget is not the same as a mouse button press outside of a widget.
+		# If the mouse button is pressed, we send a "MLB_down" signal.
+		# If the UI state indicates a mouse button press outside of a widget, we reset the UI state to the main state.
+		# Finally, we reset the main containers and clear the scene graph.
 		if cls.mouse.Down(hg.MB_0):
 			cls.send_signal("MLB_down")
 		elif cls.ui_state == cls.UI_STATE_MOUSE_DOWN_OUT:
@@ -1873,6 +1929,12 @@ class HarfangUI:
 	
 	@classmethod
 	def pop_widgets_container(cls):
+		"""
+		The pop_widgets_container method is part of a common pattern used in IMGUIs,
+		often referred to as "push-pop". This pattern is used to manage the hierarchical structure
+		of the UI elements (also known as widgets).
+		"""
+
 		if  len(HarfangGUISceneGraph.widgets_containers_stack) > 0:
 			return HarfangGUISceneGraph.widgets_containers_stack.pop()
 		return None
@@ -1886,8 +1948,6 @@ class HarfangUI:
 			widget["new_scroll_position"].y = max(widget["workspace_min"].y, min(y, scroll_max.y))
 			widget["new_scroll_position"].z = max(widget["workspace_min"].z, min(z, scroll_max.z))
 
-	
-	
 	@classmethod
 	def move_widgets_container(cls, widgets_container, pointer_id):
 		parent = widgets_container["parent"]
@@ -1963,7 +2023,16 @@ class HarfangUI:
 
 	@classmethod
 	def begin_widget_group(cls, widget_id, position:hg.Vec3 , rotation:hg.Vec3, scale:float = 1, widget_group_flags:int = 0):
-		
+		"""
+		Begin the creation of a new widget group with the given parameters.
+		The widget group flags can be combined to customize the widget group. The flags include:
+		- HGUIWF_2D: If set, the widget group will be 2D.
+		- HGUIWF_Overlay: If set, the widget group will be an overlay.
+		- HGUIWF_HideTitle: If set, the title of the widget group will be hidden.
+		- HGUIWF_HideScrollbars: If set, the scrollbars of the widget group will be hidden.
+
+		The method first checks the current container's depth and orientation (2D or 3D). It then retrieves the widget group with the given ID and sets its properties according to the parameters and flags. The widget group is then pushed onto the stack of widget containers, marking the start of its definition.
+		"""
 		flag_2D = False if (widget_group_flags & cls.HGUIWF_2D) == 0 else True
 		flag_overlay = False if (widget_group_flags & cls.HGUIWF_Overlay) == 0 else True
 		flag_hide_title = False if (widget_group_flags & cls.HGUIWF_HideTitle) == 0 else True
@@ -2009,10 +2078,7 @@ class HarfangUI:
 		if widget["flag_new"]:
 			widget["position"].x, widget["position"].y, widget["position"].z = position.x, position.y * pyf, position.z
 			widget["rotation"].x, widget["rotation"].y, widget["rotation"].z = rotation.x * rxf, rotation.y, rotation.z * rzf
-			
-			
-		
-			
+
 			widget["default_cursor_start_line"].x = widget["margins"].x
 			widget["default_cursor_start_line"].y = widget["margins"].y
 			widget["objects_dict"]["widget_group_title.text"]["text"] = cls.get_label_from_id(widget["name"])
