@@ -1,5 +1,15 @@
 import harfang as hg
-from harfang_gui import HarfangUI as hgui
+from harfangui import HarfangUI as hgui
+from os import getcwd, path
+import harfang.bin
+import harfangui
+from shutil import copy
+
+# Build the assets locally
+
+harfangui_path = path.dirname(path.abspath(harfangui.__file__))
+harfang.bin.assetc(path.join(harfangui_path, 'assets'), 'assets_compiled')
+copy(path.join(harfangui_path, 'properties.json'), 'properties.json')
 
 # Init Harfang
 
@@ -9,7 +19,7 @@ hg.WindowSystemInit()
 width, height = 1280, 720 
 window = hg.RenderInit('Harfang - GUI', width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
-hg.AddAssetsFolder("source/assets_compiled")
+hg.AddAssetsFolder("assets_compiled")
 
 res = hg.PipelineResources()
 pipeline = hg.CreateForwardPipeline()

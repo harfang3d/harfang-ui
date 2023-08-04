@@ -1,5 +1,15 @@
 import harfang as hg
-from harfang_gui import HarfangUI as hgui
+from harfangui import HarfangUI as hgui
+from os import getcwd, path
+import harfang.bin
+import harfangui
+from shutil import copy
+
+# Build the assets locally
+
+harfangui_path = path.dirname(path.abspath(harfangui.__file__))
+harfang.bin.assetc(path.join(harfangui_path, 'assets'), 'assets_compiled')
+copy(path.join(harfangui_path, 'properties.json'), 'properties.json')
 
 # Init Harfang
 

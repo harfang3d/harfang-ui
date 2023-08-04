@@ -12,7 +12,7 @@ def package_files(directory):
             paths.append(os.path.join("..", path, filename))
     return paths
 
-extra_files = package_files("HarfangUI")
+extra_files = package_files("harfangui")
 
 # get version
 with open(os.path.join(here, "version.txt"), encoding="utf-8") as f:
@@ -23,7 +23,7 @@ with open(os.path.join(here, "DESCRIPTION.rst"), encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
-    name="HarfangUI",
+    name="harfangui",
     version=version_string,
     description="An immediate mode GUI library built on top of HARFANG® 3D.",
     long_description=long_description,
@@ -44,9 +44,9 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     keywords="2d 3d multimedia development engine realtime rendering design visualization simulation physics vr virtual reality python lua opengl opengles directx",
-    packages=["HarfangUI"],
+    packages=["harfangui"],
     include_package_data=True,
-    package_data={"HarfangUI": extra_files},
+    package_data={"harfangui": extra_files},
     python_requires=">=3.8",
-    install_requires=["harfang==3.2.6"],
+    install_requires=["harfang>=3.2.6"],
 )

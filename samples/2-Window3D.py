@@ -1,8 +1,18 @@
-# Scene using the PBR shader
-
 import harfang as hg
-from harfang_gui import HarfangUI as hgui
-from harfang_gui import HarfangUISkin
+from harfangui import HarfangUI as hgui
+from harfangui import HarfangUISkin
+from os import getcwd, path
+import harfang.bin
+import harfangui
+from shutil import copy
+
+# Build the assets locally
+
+harfangui_path = path.dirname(path.abspath(harfangui.__file__))
+harfang.bin.assetc(path.join(harfangui_path, 'assets'), 'assets_compiled')
+copy(path.join(harfangui_path, 'properties.json'), 'properties.json')
+
+# Init Harfang
 
 hg.InputInit()
 hg.WindowSystemInit()
@@ -14,7 +24,7 @@ window = hg.RenderInit('Harfang GUI - 3D window', width, height, hg.RF_VSync | h
 pipeline = hg.CreateForwardPipeline()
 res = hg.PipelineResources()
 
-hg.AddAssetsFolder("source/assets_compiled")
+hg.AddAssetsFolder("assets_compiled")
 
 # load scene
 scene = hg.Scene()

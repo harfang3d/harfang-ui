@@ -9,3 +9,5 @@
 /_bin_last_build
 /bin_official
 /bin_latest
+/bdist_wheel/dist
+*.pyc

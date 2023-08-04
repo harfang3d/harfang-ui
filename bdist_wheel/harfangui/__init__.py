@@ -1,1 +1,1 @@
-from .harfangui import HarfangUI
+from .harfangui import HarfangUI, HarfangUISkin

@@ -1,8 +1,8 @@
 import harfang as hg
 from math import sin, cos, inf, pi, floor
-from mouse_pointer_3d import MousePointer3D
+from harfangui.mouse_pointer_3d import MousePointer3D
 import json
-from vr_controllers import VRControllersHandler
+from harfangui.vr_controllers import VRControllersHandler
 
 def min_type(a, b): # Issue
 	if a.__class__ == hg.Vec2:
@@ -420,7 +420,7 @@ class HarfangUISkin:
 
 		cls.keyboard_cursor_color = hg.Color(1, 1, 1, 0.75)
 
-		cls.properties = cls.load_properties("source/properties.json")
+		cls.properties = cls.load_properties("properties.json")
 
 		cls.primitives = {
 			"box":{
