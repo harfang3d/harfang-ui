@@ -1947,7 +1947,7 @@ class HarfangUI:
 			else:
 				parent = HarfangGUISceneGraph.get_current_container()
 				if parent is not None and parent["flag_2D"]:
-					print("HarfangGUI ERROR - 3D container can't be child of 2D container - " + widget_id)
+					print("HarfangUI ERROR - 3D container can't be child of 2D container - " + widget_id)
 					return False
 		else:
 			if HarfangGUISceneGraph.get_current_container_child_depth() == 0:
@@ -1997,7 +1997,7 @@ class HarfangUI:
 	@classmethod
 	def end_widget_group(cls):
 		if len(HarfangGUISceneGraph.widgets_containers_stack) <= 1:
-			print("HarfangGUI ERROR - Widgets containers stack is empty !")
+			print("HarfangUI ERROR - Widgets containers stack is empty !")
 		else:
 			scrollbar_size = 20
 			widget = HarfangGUISceneGraph.get_current_container()
@@ -2128,7 +2128,7 @@ class HarfangUI:
 			else:
 				parent = HarfangGUISceneGraph.get_current_container()
 				if parent is not None and parent["flag_2D"]:
-					print("HarfangGUI ERROR - 3D container can't be child of 2D container - " + widget_id)
+					print("HarfangUI ERROR - 3D container can't be child of 2D container - " + widget_id)
 					return False
 		else:
 			if HarfangGUISceneGraph.get_current_container_child_depth() == 0:
@@ -2193,7 +2193,7 @@ class HarfangUI:
 	@classmethod
 	def end_window(cls):
 		if len(HarfangGUISceneGraph.widgets_containers_stack) <= 1:
-			print("HarfangGUI ERROR - Widgets containers stack is empty !")
+			print("HarfangUI ERROR - Widgets containers stack is empty !")
 		else:
 			scrollbar_size = 20
 			widget = HarfangGUISceneGraph.get_current_container()
