@@ -24,7 +24,7 @@ camera = scene.GetNode("Camera")
 cam_pos = hg.Vec3(0, 1, -2)
 cam_rot = hg.Deg3(-7, 0, 0)
 
-# Setup HarfangGUI
+# Setup HarfangUI
 
 hgui.init(["default.ttf"], [20], width, height)
 
@@ -44,7 +44,7 @@ my_text = "Hello world"
 my_text2 = "Go"
 my_text3 = "Hello !"
 my_text4 = "World"
-my_text31 = "HarfangGUI"
+my_text31 = "HarfangUI"
 
 current_rib = 0
 toggle_btn_idx = 0

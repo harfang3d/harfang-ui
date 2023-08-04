@@ -12,7 +12,7 @@ window = hg.RenderInit('Harfang GUI - 2D window', width, height, hg.RF_VSync | h
 
 hg.AddAssetsFolder("source/assets_compiled")
 
-# Setup HarfangGUI
+# Setup HarfangUI
 
 hgui.init(["default.ttf"], [20], width, height)
 

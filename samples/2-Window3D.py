@@ -23,7 +23,7 @@ camera = scene.GetNode("Camera")
 cam_pos = hg.Vec3(0, 1, -2)
 cam_rot = hg.Deg3(-7, 0, 0)
 
-# Setup HarfangGUI
+# Setup HarfangUI
 
 hgui.init(["default.ttf"], [20], width, height)
 #HarfangUISkin.convert_properties_RGBA32_to_RGB24_APercent()

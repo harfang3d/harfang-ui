@@ -15,7 +15,7 @@ res = hg.PipelineResources()
 pipeline = hg.CreateForwardPipeline()
 render_data = hg.SceneForwardPipelineRenderData()
 
-# Setup HarfangGUI
+# Setup HarfangUI
 
 hgui.init(["default.ttf"], [20], width, height)
 hgui.set_line_space_size(5)
