@@ -11,3 +11,4 @@
 /bin_latest
 /bdist_wheel/dist
 *.pyc
+/assets_compiled
