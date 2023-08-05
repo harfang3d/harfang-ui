@@ -1,7 +1,8 @@
 # Harfang GUI
 
 **Harfang GUI** is a _immediate mode_ GUI library built on top of HARFANG® 3D.
-It supports 2D, 3D & VR (wip).  
+It supports 2D, 3D & VR (wip).<br>
+Harfang GUI was created by [Eric Kernin](https://github.com/ErkMkd)
 
 ![hgui](screenshots/gui.png)
 ___
@@ -13,13 +14,6 @@ ___
 
 * Python 3.6+
 * HARFANG 3D for Python
-* **Harfang Core shaders**
-  * `"shaders/font"` to fonts rendering.  
-  * `"fonts/..."` as fonts library. Copy your fonts here if you need custom ones.
-* **Harfang Gui specific assets**  
-  * `"assets/hgui_textures"` contains core textures (VR mouse pointer, widgets textures...)  
-  * `"assets/hgui_shaders"` contains the shaders.  
-
 ___
 ## Widgets types
 
@@ -42,12 +36,13 @@ The current version of the Harfang GUI API provides the following widgets:
 
 ## How to use Harfang GUI?
 
->Please check the code samples to see how to use the library.
+>Please check the code samples to see how to use the library.<br>
+See the `samples/` folder.
 
 ## How to run the samples?
 
-1. Download or clone this repository to your computer _(eg. in `C:/harfang-gui`)_.
-1. Install the requirements using `pip install -r requirements.txt` or `python -m pip install -r requirements.txt`.
-1. Run `1-compile_content.bat`
-1. Run `2-start-window2d.bat`
-1. Or open the project in VSCode and run each sample (1-Window2D.py, 2-Window3D.py, ...)
+1. Download the [wheel package](https://github.com/harfang3d/harfang-gui/releases)
+2. Clone this repository `git clone https://github.com/harfang3d/harfang-gui.git`
+3. Open the local repository in VSCode
+4. Run the samples found in `samples/`
+   - :warning: The first run might be a bit long, as the graphic assets need to be compiled.
