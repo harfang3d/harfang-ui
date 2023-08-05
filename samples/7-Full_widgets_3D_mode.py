@@ -1,5 +1,12 @@
 import harfang as hg
-from harfang_gui import HarfangUI as hgui
+from harfangui import get_assets_path, HarfangUI as hgui
+from os import path
+import harfang.bin
+from shutil import copy
+
+# Build the assets locally
+
+harfang.bin.assetc(path.join(get_assets_path(), 'assets', '-quiet'), 'assets_compiled')
 
 # Init Harfang
 
@@ -9,7 +16,7 @@ hg.WindowSystemInit()
 width, height = 1600, 900
 window = hg.RenderInit('Harfang - GUI', width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
-hg.AddAssetsFolder("source/assets_compiled")
+hg.AddAssetsFolder("assets_compiled")
 
 res = hg.PipelineResources()
 pipeline = hg.CreateForwardPipeline()
@@ -24,9 +31,9 @@ camera = scene.GetNode("Camera")
 cam_pos = hg.Vec3(0, 1, -2)
 cam_rot = hg.Deg3(-7, 0, 0)
 
-# Setup HarfangGUI
+# Setup HarfangUI
 
-hgui.init(["default.ttf"], [20], width, height)
+hgui.init(["roboto-light.ttf"], [20], width, height)
 
 # Setup inputs
 
@@ -44,7 +51,7 @@ my_text = "Hello world"
 my_text2 = "Go"
 my_text3 = "Hello !"
 my_text4 = "World"
-my_text31 = "HarfangGUI"
+my_text31 = "HarfangUI"
 
 current_rib = 0
 toggle_btn_idx = 0

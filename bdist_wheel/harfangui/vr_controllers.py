@@ -1,6 +1,5 @@
 import harfang as hg
 
-
 class VRControllersHandler:
     
     controllers = None

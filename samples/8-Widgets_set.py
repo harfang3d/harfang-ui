@@ -1,5 +1,12 @@
 import harfang as hg
-from harfang_gui import HarfangUI as hgui
+from harfangui import get_assets_path, HarfangUI as hgui
+from os import path
+import harfang.bin
+from shutil import copy
+
+# Build the assets locally
+
+harfang.bin.assetc(path.join(get_assets_path(), 'assets', '-quiet'), 'assets_compiled')
 
 # Init Harfang
 
@@ -9,15 +16,15 @@ hg.WindowSystemInit()
 width, height = 1600, 900 
 window = hg.RenderInit('Harfang - GUI', width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
-hg.AddAssetsFolder("source/assets_compiled")
+hg.AddAssetsFolder("assets_compiled")
 
 res = hg.PipelineResources()
 pipeline = hg.CreateForwardPipeline()
 render_data = hg.SceneForwardPipelineRenderData()
 
-# Setup HarfangGUI
+# Setup HarfangUI
 
-hgui.init(["default.ttf"], [20], width, height)
+hgui.init(["roboto-light.ttf"], [20], width, height)
 hgui.set_line_space_size(5)
 hgui.set_inner_line_space_size(5)
 
@@ -87,7 +94,7 @@ while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(window):
             f,cb = hgui.check_box("Checkbox##label", cb)
             
             
-            tex_list = ["hgui_textures/Icon_Pause.png", "hgui_textures/Icon_Play.png"]
+            tex_list = ["hgui_textures/icon_pause.png", "hgui_textures/icon_play.png"]
             f, toggle_image_idx = hgui.toggle_image_button("Toggle", tex_list, toggle_image_idx, hg.Vec2(15, 15))
             
             hgui.same_line()

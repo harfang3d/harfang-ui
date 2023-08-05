@@ -1,8 +1,12 @@
 import harfang as hg
 from math import sin, cos, inf, pi, floor
-from mouse_pointer_3d import MousePointer3D
+from harfangui.mouse_pointer_3d import MousePointer3D
 import json
-from vr_controllers import VRControllersHandler
+from harfangui.vr_controllers import VRControllersHandler
+from os import path
+
+def get_assets_path():
+    return path.dirname(path.abspath(__file__))
 
 def min_type(a, b): # Issue
 	if a.__class__ == hg.Vec2:
@@ -438,11 +442,11 @@ class HarfangUISkin:
 		check_t = 0.2
 		edit_t = 0.1
 
-		cls.check_texture, cls.check_texture_info = hg.LoadTextureFromAssets("hgui_textures/check.png", 0)
+		cls.check_texture, cls.check_texture_info = hg.LoadTextureFromAssets("hgui_textures/icon_check.png", 0)
 
 		cls.keyboard_cursor_color = hg.Color(1, 1, 1, 0.75)
 
-		cls.properties = cls.load_properties("source/properties.json")
+		cls.properties = cls.load_properties(path.join(get_assets_path(), 'properties.json'))
 
 		cls.primitives = {
 			"box":{
@@ -711,7 +715,7 @@ class HarfangUISkin:
 				"margins": [50, 15, 0], "space_size": 20
 				},
 			"check_box":{
-				"primitives": [{"type": "filled_rounded_box", "name": "check_box.1"}, {"type": "texture","name": "check_box.2", "texture": "hgui_textures/Icon_Check.png", "texture_size": [15, 15]}],
+				"primitives": [{"type": "filled_rounded_box", "name": "check_box.1"}, {"type": "texture","name": "check_box.2", "texture": "hgui_textures/icon_check.png", "texture_size": [15, 15]}],
 				},
 			"toggle_image": {
 				"primitives": [{"type": "filled_rounded_box", "name": "toggle_image.box"}, {"type": "texture_toggle_fading", "name": "toggle_image.textures"}]
@@ -2049,7 +2053,7 @@ class HarfangUI:
 			else:
 				parent = HarfangGUISceneGraph.get_current_container()
 				if parent is not None and parent["flag_2D"]:
-					print("HarfangGUI ERROR - 3D container can't be child of 2D container - " + widget_id)
+					print("HarfangUI ERROR - 3D container can't be child of 2D container - " + widget_id)
 					return False
 		else:
 			if HarfangGUISceneGraph.get_current_container_child_depth() == 0:
@@ -2104,7 +2108,7 @@ class HarfangUI:
 		"""
 
 		if len(HarfangGUISceneGraph.widgets_containers_stack) <= 1:
-			print("HarfangGUI ERROR - Widgets containers stack is empty !")
+			print("HarfangUI ERROR - Widgets containers stack is empty !")
 		else:
 			scrollbar_size = 20
 			widget = HarfangGUISceneGraph.get_current_container()
@@ -2235,7 +2239,7 @@ class HarfangUI:
 			else:
 				parent = HarfangGUISceneGraph.get_current_container()
 				if parent is not None and parent["flag_2D"]:
-					print("HarfangGUI ERROR - 3D container can't be child of 2D container - " + widget_id)
+					print("HarfangUI ERROR - 3D container can't be child of 2D container - " + widget_id)
 					return False
 		else:
 			if HarfangGUISceneGraph.get_current_container_child_depth() == 0:
@@ -2300,7 +2304,7 @@ class HarfangUI:
 	@classmethod
 	def end_window(cls):
 		if len(HarfangGUISceneGraph.widgets_containers_stack) <= 1:
-			print("HarfangGUI ERROR - Widgets containers stack is empty !")
+			print("HarfangUI ERROR - Widgets containers stack is empty !")
 		else:
 			scrollbar_size = 20
 			widget = HarfangGUISceneGraph.get_current_container()

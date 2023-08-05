@@ -1,6 +1,12 @@
 import harfang as hg
-from harfang_gui import HarfangUI as hgui
-from os import getcwd
+from harfangui import get_assets_path, HarfangUI as hgui
+from os import path
+import harfang.bin
+from shutil import copy
+
+# Build the assets locally
+
+harfang.bin.assetc(path.join(get_assets_path(), 'assets', '-quiet'), 'assets_compiled')
 
 # Init Harfang
 
@@ -10,11 +16,11 @@ hg.WindowSystemInit()
 width, height = 1280, 720 
 window = hg.RenderInit('Harfang GUI - 2D window', width, height, hg.RF_VSync | hg.RF_MSAA4X | hg.RF_MaxAnisotropy)
 
-hg.AddAssetsFolder("source/assets_compiled")
+hg.AddAssetsFolder("assets_compiled")
 
-# Setup HarfangGUI
+# Setup HarfangUI
 
-hgui.init(["default.ttf"], [20], width, height)
+hgui.init(["roboto-light.ttf"], [20], width, height)
 
 # Setup inputs
 
