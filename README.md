@@ -1,6 +1,6 @@
-# Harfang GUI
+# Harfang UI
 
-**Harfang GUI** is a _immediate mode_ GUI library built on top of HARFANG® 3D.
+**Harfang UI** is a _immediate mode_ GUI library built on top of HARFANG® 3D.
 It supports 2D, 3D & VR (wip).<br>
 Harfang GUI was created by [Eric Kernin](https://github.com/ErkMkd)
 
@@ -34,7 +34,7 @@ The current version of the Harfang GUI API provides the following widgets:
 - Slider float
 - Widgets group
 
-## How to use Harfang GUI?
+## How to use Harfang UI?
 
 >Please check the code samples to see how to use the library.<br>
 See the `samples/` folder.
@@ -42,7 +42,8 @@ See the `samples/` folder.
 ## How to run the samples?
 
 1. Download the [wheel package](https://github.com/harfang3d/harfang-gui/releases)
-2. Clone this repository `git clone https://github.com/harfang3d/harfang-gui.git`
-3. Open the local repository in VSCode
-4. Run the samples found in `samples/`
+1. Install Harfang UI : `pip install harfangui-2.0.0-py3-none-any.whl`
+1. Clone this repository : `git clone https://github.com/harfang3d/harfang-gui.git`
+1. Open the local repository in VSCode
+1. Run the samples found in `samples/`
    - :warning: The first run might be a bit long, as the graphic assets need to be compiled.
