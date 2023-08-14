@@ -6,7 +6,7 @@ from shutil import copy
 
 # Build the assets locally
 
-harfang.bin.assetc(path.join(get_assets_path(), 'assets', '-quiet'), 'assets_compiled')
+harfang.bin.assetc(path.join(get_assets_path(), 'assets'), 'assets_compiled', '-quiet')
 
 # Init Harfang
 
